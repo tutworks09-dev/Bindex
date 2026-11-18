@@ -688,26 +688,31 @@
   });
 
   async function resendOtp() {
-    clearMessage('otpMessage');
+  clearMessage('otpMessage');
 
-    const button = $('resendButton');
-    button.disabled = true;
+  const button = $('resendButton');
+  button.disabled = true;
 
-    try {
-      const { error } = await supabaseClient.auth.resend({
-        type: 'email',
-        email: pendingEmail
-      });
+  try {
+    const { data, error } = await supabaseClient.auth.resend({
+      type: 'signup',
+      email: pendingEmail
+    });
 
-      if (error) throw error;
+    if (error) throw error;
 
-      showMessage('کد جدید ارسال شد. ایمیلت رو بررسی کن.', 'success', 'otpMessage');
+    showMessage(
+      'کد تأیید جدید ارسال شد. فقط آخرین کد دریافتی رو وارد کن.',
+      'success',
+      'otpMessage'
+    );
 
-    } catch (error) {
-      showMessage(error.message || 'ارسال مجدد کد ناموفق بود.', 'error', 'otpMessage');
-    } finally {
-      button.disabled = false;
-    }
+  } catch (error) {
+    console.error('Resend OTP error:', error);
+    showMessage(error.message, 'error', 'otpMessage');
+  } finally {
+    button.disabled = false;
+  }
   }
 
   async function forgotPassword() {
