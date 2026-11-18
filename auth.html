@@ -470,8 +470,8 @@
                 placeholder="000000"
                 inputmode="numeric"
                 autocomplete="one-time-code"
-                maxlength="6"
-                pattern="[0-9]{6}"
+                maxlength="8"
+pattern="[0-9]{8}"
                 required
               >
             </div>
@@ -659,7 +659,7 @@
     const button = $('verifyButton');
 
     if (!/^[0-9]{6}$/.test(token)) {
-      showMessage('لطفاً کد ۶ رقمی رو درست وارد کن.', 'error', 'otpMessage');
+      showMessage('لطفاً کد ۸ رقمی رو درست وارد کن.', 'error', 'otpMessage');
       return;
     }
 
