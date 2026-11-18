@@ -888,54 +888,392 @@ pattern="[0-9]{8}"
 
       // ذخیره پروفایل در جدول profiles
       const { error: profileError } = await supabaseClient
-        .from('profiles')
-        .upsert({
-          id: data.user.id,
-          username: username
+
+<script>
+  // =====================================
+  // BINDEX - SUPABASE CONFIG
+  // =====================================
+
+  const SUPABASE_URL = 'https://hlescjwegrtvwgtqsemm.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_9rR5jxE8CFQJMm-oy74wOw_VRtHgguY';
+  const SITE_URL = 'https://tutworks09-dev.github.io/Bindex';
+
+  const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+  let currentMode = 'login';
+  let pendingEmail = '';
+  let pendingUsername = '';
+
+  const $ = id => document.getElementById(id);
+
+  // =====================================
+  // MESSAGES
+  // =====================================
+
+  function showMessage(text, type = 'error', target = 'message') {
+    const box = $(target);
+
+    box.textContent = text;
+    box.className = 'message ' + type;
+    box.style.display = 'block';
+  }
+
+  function clearMessage(target = 'message') {
+    const box = $(target);
+
+    box.style.display = 'none';
+    box.textContent = '';
+  }
+
+  function showError(error, target = 'message') {
+    const message = error?.message || 'خطای ناشناخته رخ داد.';
+
+    showMessage(message, 'error', target);
+  }
+
+  // =====================================
+  // AUTH TABS
+  // =====================================
+
+  function switchTab(mode) {
+    currentMode = mode;
+
+    const isRegister = mode === 'register';
+
+    $('loginTab').classList.toggle('active', !isRegister);
+    $('registerTab').classList.toggle('active', isRegister);
+
+    $('usernameField').style.display = isRegister ? 'block' : 'none';
+    $('confirmField').style.display = isRegister ? 'block' : 'none';
+    $('forgotButton').style.display = isRegister ? 'none' : 'block';
+
+    $('username').required = isRegister;
+    $('confirmPassword').required = isRegister;
+
+    $('formTitle').textContent = isRegister
+      ? 'به ما بپیوند!'
+      : 'خوش برگشتی!';
+
+    $('formSubtitle').textContent = isRegister
+      ? 'حساب BINDEX خودت رو بساز.'
+      : 'برای ورود به حساب خود اطلاعاتت رو وارد کن.';
+
+    $('submitButton').innerHTML = isRegister
+      ? 'ساخت حساب کاربری <i class="fa-solid fa-arrow-left"></i>'
+      : 'ورود به BINDEX <i class="fa-solid fa-arrow-left"></i>';
+
+    $('password').autocomplete = isRegister
+      ? 'new-password'
+      : 'current-password';
+
+    clearMessage();
+  }
+
+  // =====================================
+  // PASSWORD VISIBILITY
+  // =====================================
+
+  function togglePassword(id, button) {
+    const input = $(id);
+    const icon = button.querySelector('i');
+
+    input.type = input.type === 'password'
+      ? 'text'
+      : 'password';
+
+    icon.classList.toggle('fa-eye');
+    icon.classList.toggle('fa-eye-slash');
+  }
+
+  // =====================================
+  // OTP VIEW
+  // =====================================
+
+  function showOtpView(email) {
+    $('authView').classList.add('hidden');
+    $('otpView').classList.remove('hidden');
+
+    $('otpEmail').textContent = email;
+    $('otpCode').value = '';
+
+    clearMessage('otpMessage');
+
+    $('otpCode').focus();
+  }
+
+  function backToAuth() {
+    $('otpView').classList.add('hidden');
+    $('authView').classList.remove('hidden');
+
+    $('otpCode').value = '';
+
+    clearMessage('otpMessage');
+  }
+
+  // =====================================
+  // SIGN UP / SIGN IN
+  // =====================================
+
+  $('authForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    clearMessage();
+
+    const email = $('email').value.trim().toLowerCase();
+    const password = $('password').value;
+    const button = $('submitButton');
+
+    button.disabled = true;
+
+    try {
+
+      // REGISTER
+      if (currentMode === 'register') {
+
+        const username = $('username').value.trim();
+        const confirmPassword = $('confirmPassword').value;
+
+        if (!/^[a-zA-Z0-9_]{3,24}$/.test(username)) {
+          throw new Error(
+            'نام کاربری باید ۳ تا ۲۴ کاراکتر انگلیسی، عدد یا _ باشد.'
+          );
+        }
+
+        if (password.length < 8) {
+          throw new Error('رمز عبور باید حداقل ۸ کاراکتر باشد.');
+        }
+
+        if (password !== confirmPassword) {
+          throw new Error('رمزهای عبور مطابقت ندارند.');
+        }
+
+        // Save data before requesting OTP
+        pendingEmail = email;
+        pendingUsername = username;
+
+        const { data, error } = await supabaseClient.auth.signUp({
+          email: email,
+          password: password,
+          options: {
+            data: {
+              username: username
+            }
+          }
         });
 
-      if (profileError) throw profileError;
+        if (error) throw error;
 
+        if (!data.user) {
+          throw new Error('ساخت حساب کاربری انجام نشد.');
+        }
+
+        // If email confirmation is disabled
+        if (data.session) {
+          await saveProfile(data.user, username);
+
+          showMessage(
+            'حساب کاربری و پروفایل ساخته شد!',
+            'success'
+          );
+
+          setTimeout(() => {
+            location.href = SITE_URL + '/';
+          }, 1500);
+
+          return;
+        }
+
+        // Show OTP screen
+        showOtpView(email);
+
+        showMessage(
+          'کد تأیید به ایمیلت ارسال شد.',
+          'success',
+          'otpMessage'
+        );
+
+      }
+
+      // LOGIN
+      else {
+
+        const { data, error } =
+          await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
+          });
+
+        if (error) throw error;
+
+        showMessage(
+          'ورود موفقیت‌آمیز بود! در حال انتقال...',
+          'success'
+        );
+
+        setTimeout(() => {
+          location.href = SITE_URL + '/';
+        }, 1200);
+
+      }
+
+    } catch (error) {
+
+      showError(error);
+
+    } finally {
+
+      button.disabled = false;
+
+    }
+  });
+
+  // =====================================
+  // SAVE USER PROFILE
+  // =====================================
+
+  async function saveProfile(user, username) {
+
+    if (!user || !user.id) {
+      throw new Error('شناسه کاربر دریافت نشد.');
+    }
+
+    if (!username) {
+      throw new Error('نام کاربری دریافت نشد.');
+    }
+
+    const { data, error } = await supabaseClient
+      .from('profiles')
+      .insert({
+        id: user.id,
+        username: username
+      })
+      .select('id, username')
+      .single();
+
+    if (error) {
+      if (error.code === '23505') {
+        throw new Error(
+          'این نام کاربری قبلاً استفاده شده است.'
+        );
+      }
+
+      throw new Error(
+        'ذخیره پروفایل ناموفق بود: ' + error.message
+      );
+    }
+
+    if (!data) {
+      throw new Error('پروفایل ذخیره شد اما اطلاعات آن دریافت نشد.');
+    }
+
+    return data;
+  }
+
+  // =====================================
+  // VERIFY EMAIL OTP
+  // =====================================
+
+  $('otpForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    clearMessage('otpMessage');
+
+    const token = $('otpCode').value.trim();
+    const button = $('verifyButton');
+
+    if (!/^[0-9]{8}$/.test(token)) {
       showMessage(
-        'ایمیلت تأیید شد! پروفایل BINDEX ساخته شد.',
+        'کد تأیید باید دقیقاً ۸ رقم باشد.',
+        'error',
+        'otpMessage'
+      );
+
+      return;
+    }
+
+    if (!pendingEmail || !pendingUsername) {
+      showMessage(
+        'اطلاعات ثبت‌نام پیدا نشد. لطفاً دوباره ثبت‌نام کن.',
+        'error',
+        'otpMessage'
+      );
+
+      return;
+    }
+
+    button.disabled = true;
+
+    try {
+
+      // Verify OTP
+      const { data, error } = await supabaseClient.auth.verifyOtp({
+        email: pendingEmail,
+        token: token,
+        type: 'signup'
+      });
+
+      if (error) throw error;
+
+      if (!data.user) {
+        throw new Error('اطلاعات حساب کاربری دریافت نشد.');
+      }
+
+      // Save profile
+      const profile = await saveProfile(
+        data.user,
+        pendingUsername
+      );
+
+      // Only show success after profile is saved
+      showMessage(
+        'ایمیل تأیید شد و پروفایل ساخته شد! Username: ' +
+        profile.username,
         'success',
         'otpMessage'
       );
 
       setTimeout(() => {
         location.href = SITE_URL + '/';
-      }, 1500);
+      }, 1800);
 
     } catch (error) {
-      console.error('OTP verification error:', error);
 
-      showMessage(
-        error.message || 'کد تأیید معتبر نیست.',
-        'error',
-        'otpMessage'
-      );
+      showError(error, 'otpMessage');
+
     } finally {
+
       button.disabled = false;
+
     }
   });
 
-  // ارسال مجدد کد
+  // =====================================
+  // RESEND OTP
+  // =====================================
+
   async function resendOtp() {
+
     clearMessage('otpMessage');
 
     if (!pendingEmail) {
       showMessage(
-        'ایمیل ثبت‌نام پیدا نشد. دوباره ثبت‌نام کن.',
+        'ایمیل ثبت‌نام پیدا نشد.',
         'error',
         'otpMessage'
       );
+
       return;
     }
 
     const button = $('resendButton');
+
     button.disabled = true;
 
     try {
+
       const { error } = await supabaseClient.auth.resend({
         type: 'signup',
         email: pendingEmail
@@ -944,32 +1282,40 @@ pattern="[0-9]{8}"
       if (error) throw error;
 
       showMessage(
-        'کد جدید ارسال شد. فقط آخرین کد رو وارد کن.',
+        'کد جدید ارسال شد. فقط آخرین کد را وارد کن.',
         'success',
         'otpMessage'
       );
 
     } catch (error) {
-      console.error('Resend error:', error);
-      showMessage(error.message, 'error', 'otpMessage');
+
+      showError(error, 'otpMessage');
+
     } finally {
+
       button.disabled = false;
+
     }
   }
 
-  // بازیابی رمز عبور
+  // =====================================
+  // FORGOT PASSWORD
+  // =====================================
+
   async function forgotPassword() {
+
     clearMessage();
 
     const email = $('email').value.trim().toLowerCase();
 
     if (!email) {
-      showMessage('اول ایمیلت رو وارد کن.');
+      showMessage('ابتدا ایمیلت رو وارد کن.');
       $('email').focus();
       return;
     }
 
     try {
+
       const { error } =
         await supabaseClient.auth.resetPasswordForEmail(email, {
           redirectTo: SITE_URL + '/auth.html'
@@ -978,25 +1324,37 @@ pattern="[0-9]{8}"
       if (error) throw error;
 
       showMessage(
-        'اگر این ایمیل حساب کاربری داشته باشه، لینک بازیابی براش ارسال می‌شه.',
+        'اگر این ایمیل حساب کاربری داشته باشه، لینک بازیابی ارسال می‌شه.',
         'success'
       );
 
     } catch (error) {
-      console.error('Password recovery error:', error);
-      showMessage(error.message || 'ارسال لینک بازیابی ناموفق بود.');
+
+      showError(error);
+
     }
   }
 
-  // محدودیت کد ۸ رقمی
+  // =====================================
+  // OTP INPUT
+  // =====================================
+
   $('otpCode').addEventListener('input', function() {
+
     this.value = this.value
       .replace(/[^0-9]/g, '')
       .slice(0, 8);
+
   });
 
+  // =====================================
+  // INITIALIZE
+  // =====================================
+
   switchTab('login');
+
 </script>
+
 
 </body>
 </html>
