@@ -658,7 +658,7 @@ pattern="[0-9]{8}"
     const token = $('otpCode').value.trim();
     const button = $('verifyButton');
 
-    if (!/^[0-9]{6}$/.test(token)) {
+    if (!/^[0-9]{8}$/.test(token)) {
       showMessage('لطفاً کد ۸ رقمی رو درست وارد کن.', 'error', 'otpMessage');
       return;
     }
@@ -741,7 +741,7 @@ pattern="[0-9]{8}"
   }
 
   $('otpCode').addEventListener('input', function() {
-    this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);
+    this.value = this.value.replace(/[^0-9]/g, '').slice(0, 8);
   });
 
   switchTab('login');
