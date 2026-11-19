@@ -226,10 +226,11 @@ footer{border-top:1px solid var(--line);background:#060b10;padding:35px 0 22px}.
 <div class="toast" id="toast">این بخش در نسخه نمایشی فعال نیست.</div>
 <script>
 <script>
-const SUPABASE_URL = 'https://hlescjwegrtvwgtqsemm.supabase.co';
 
+const SUPABASE_URL = 'https://hlescjwegrtvwgtqsemm.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_9rR5jxE8CFQJMm-oy74wOw_VRtHgguY';
 
+// Supabase
 const supabaseClient = window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_KEY,
@@ -243,46 +244,37 @@ const supabaseClient = window.supabase.createClient(
   }
 );
 
+// Elements
 const authArea = document.getElementById('authArea');
-
 const menuBtn = document.getElementById('menuBtn');
 const nav = document.getElementById('nav');
 const toast = document.getElementById('toast');
+const searchInput = document.getElementById('searchInput');
 
-menuBtn.addEventListener('click', function(e) {
-  e.preventDefault();
-  e.stopPropagation();
+// Mobile menu
+if (menuBtn && nav) {
+  menuBtn.addEventListener('click', () => {
+    nav.classList.toggle('open');
 
-  const isOpen = nav.classList.toggle('open');
-
-  menuBtn.innerHTML = isOpen
-    ? '<i class="fa-solid fa-xmark"></i>'
-    : '<i class="fa-solid fa-bars"></i>';
-
-  menuBtn.setAttribute('aria-expanded', String(isOpen));
-});
-
-nav.querySelectorAll('a').forEach(link => {
-  link.addEventListener('click', function() {
-    nav.classList.remove('open');
-
-    menuBtn.innerHTML =
-      '<i class="fa-solid fa-bars"></i>';
-
-    menuBtn.setAttribute('aria-expanded', 'false');
+    menuBtn.innerHTML = nav.classList.contains('open')
+      ? '<i class="fa-solid fa-xmark"></i>'
+      : '<i class="fa-solid fa-bars"></i>';
   });
-});
 
-nav.querySelectorAll('a').forEach(a => {
-  a.addEventListener('click', () => {
-    nav.classList.remove('open');
-    menuBtn.innerHTML = '<i class="fa-solid fa-bars"></i>';
+  nav.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      nav.classList.remove('open');
+      menuBtn.innerHTML = '<i class="fa-solid fa-bars"></i>';
+    });
   });
-});
+}
 
+// Toast
 let toastTimer;
 
 function showToast(message = 'این بخش در نسخه نمایشی فعال نیست.') {
+  if (!toast) return;
+
   toast.textContent = message;
   toast.classList.add('show');
 
@@ -293,6 +285,7 @@ function showToast(message = 'این بخش در نسخه نمایشی فعال 
   }, 2300);
 }
 
+// Join buttons
 document.querySelectorAll('a[href="#join"]').forEach(a => {
   a.addEventListener('click', e => {
     e.preventDefault();
@@ -300,18 +293,34 @@ document.querySelectorAll('a[href="#join"]').forEach(a => {
   });
 });
 
-document.getElementById('searchInput').addEventListener('input', e => {
-  const q = e.target.value.trim().toLowerCase();
+// Search
+if (searchInput) {
+  searchInput.addEventListener('input', e => {
+    const q = e.target.value.trim().toLowerCase();
 
-  document.querySelectorAll('.searchable').forEach(el => {
-    el.style.display = el.innerText.toLowerCase().includes(q)
-      ? ''
-      : 'none';
+    document.querySelectorAll('.searchable').forEach(el => {
+      el.style.display = el.innerText.toLowerCase().includes(q)
+        ? ''
+        : 'none';
+    });
   });
-});
+}
 
-// Profile
+// Escape HTML
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, char => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  })[char]);
+}
+
+// Update Navbar
 async function updateNavbar(user) {
+  if (!authArea) return;
+
   if (!user) {
     authArea.innerHTML = `
       <a class="btn btn-soft"
@@ -324,7 +333,6 @@ async function updateNavbar(user) {
         ثبت‌نام
       </a>
     `;
-
     return;
   }
 
@@ -350,7 +358,11 @@ async function updateNavbar(user) {
   authArea.innerHTML = `
     <div class="profile-menu" id="profileMenu">
 
-      <button class="profile-trigger" id="profileTrigger">
+      <button
+        class="profile-trigger"
+        id="profileTrigger"
+        type="button"
+      >
         <img
           src="https://api.dicebear.com/9.x/initials/svg?seed=Bindex"
           alt="Profile"
@@ -364,7 +376,7 @@ async function updateNavbar(user) {
       </button>
 
       <div class="profile-dropdown">
-        <button id="logoutButton">
+        <button id="logoutButton" type="button">
           <i class="fa-solid fa-right-from-bracket"></i>
           خروج از حساب
         </button>
@@ -374,32 +386,24 @@ async function updateNavbar(user) {
   `;
 
   const profileMenu = document.getElementById('profileMenu');
+  const profileTrigger = document.getElementById('profileTrigger');
+  const logoutButton = document.getElementById('logoutButton');
 
-  document.getElementById('profileTrigger').addEventListener('click', () => {
+  profileTrigger.addEventListener('click', () => {
     profileMenu.classList.toggle('open');
   });
 
-  document.getElementById('logoutButton').addEventListener('click', async () => {
+  logoutButton.addEventListener('click', async () => {
     const { error } = await supabaseClient.auth.signOut();
 
     if (error) {
       showToast('خروج انجام نشد. دوباره تلاش کن.');
+      console.error(error);
       return;
     }
 
     showToast('با موفقیت خارج شدی!');
-    updateNavbar(null);
   });
-}
-
-function escapeHTML(value) {
-  return String(value).replace(/[&<>"']/g, char => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;'
-  })[char]);
 }
 
 // Restore session
@@ -407,22 +411,24 @@ async function initializeAuth() {
   const { data, error } = await supabaseClient.auth.getSession();
 
   if (error) {
-    console.error(error);
-    updateNavbar(null);
+    console.error('Session error:', error);
+    await updateNavbar(null);
     return;
   }
 
   await updateNavbar(data.session?.user || null);
 }
 
-// Listen for login/logout
+// Auth state listener
 supabaseClient.auth.onAuthStateChange((event, session) => {
   setTimeout(() => {
     updateNavbar(session?.user || null);
   }, 0);
 });
 
+// Start
 initializeAuth();
+
 </script>
 </script>
 </body></html>
