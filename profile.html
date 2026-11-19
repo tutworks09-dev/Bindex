@@ -478,7 +478,6 @@ header {
 <script>
 
 const SUPABASE_URL = 'https://hlescjwegrtvwgtqsemm.supabase.co';
-
 const SUPABASE_KEY = 'sb_publishable_9rR5jxE8CFQJMm-oy74wOw_VRtHgguY';
 
 const supabaseClient = window.supabase.createClient(
@@ -497,12 +496,11 @@ const supabaseClient = window.supabase.createClient(
 let currentUser = null;
 let currentProfile = null;
 
-// نمایش پیام
 function showMessage(message) {
   alert(message);
 }
 
-// دریافت و نمایش پروفایل
+// دریافت پروفایل
 async function loadProfile() {
   try {
     const { data: sessionData, error: sessionError } =
@@ -512,10 +510,10 @@ async function loadProfile() {
 
     currentUser = sessionData.session?.user || null;
 
-    const params = new URLSearchParams(window.location.search);
-    const requestedUsername = params.get('u');
+    const params = new URLSearchParams(location.search);
+    const username = params.get('u')?.trim();
 
-    if (!requestedUsername || !requestedUsername.trim()) {
+    if (!username) {
       showMessage('نام کاربری در آدرس مشخص نشده است.');
       return;
     }
@@ -523,13 +521,13 @@ async function loadProfile() {
     const { data: profile, error } = await supabaseClient
       .from('profiles')
       .select('*')
-      .ilike('username', requestedUsername.trim())
+      .ilike('username', username)
       .maybeSingle();
 
     if (error) throw error;
 
     if (!profile) {
-      showMessage('کاربری با این نام کاربری پیدا نشد.');
+      showMessage('این کاربر پیدا نشد.');
       return;
     }
 
@@ -537,131 +535,113 @@ async function loadProfile() {
 
     const isOwner = currentUser?.id === profile.id;
 
-    const bannerButton = document.getElementById('bannerButton');
+    // نمایش دکمه‌های ویرایش فقط برای صاحب پروفایل
+    document.getElementById('bannerButton').hidden = !isOwner;
+
     const avatarBox = document.getElementById('avatarBox');
-
-    if (bannerButton) {
-      bannerButton.hidden = !isOwner;
-    }
-
-    if (avatarBox) {
-      avatarBox.style.pointerEvents = isOwner ? 'auto' : 'none';
-      avatarBox.style.cursor = isOwner ? 'pointer' : 'default';
-    }
+    avatarBox.style.cursor = isOwner ? 'pointer' : 'default';
 
     renderProfile(profile);
 
   } catch (error) {
-    console.error('Profile error:', error);
+    console.error('Profile loading error:', error);
     showMessage('خطا در دریافت پروفایل: ' + error.message);
   }
 }
 
 // نمایش اطلاعات پروفایل
-
 function renderProfile(profile) {
-  // نام کاربر
   const name =
     profile.display_name ||
     profile.username ||
-    currentUser?.email?.split('@')[0] ||
     'کاربر BINDEX';
 
-  const profileName = document.getElementById('profileName');
-  const infoName = document.getElementById('infoName');
-  const joinDate = document.getElementById('joinDate');
+  // نام
+  document.getElementById('profileName').textContent = name;
+  document.getElementById('infoName').textContent = name;
 
-  if (profileName) profileName.textContent = name;
-  if (infoName) infoName.textContent = name;
-
-  if (joinDate) {
-    joinDate.textContent = profile.created_at
+  // تاریخ عضویت
+  document.getElementById('joinDate').textContent =
+    profile.created_at
       ? new Date(profile.created_at).toLocaleDateString('fa-IR')
       : 'نامشخص';
-  }
 
   // آواتار
-  const avatar = document.getElementById('avatar');
+  const avatarImage = document.getElementById('avatarImage');
+  const avatarIcon = document.getElementById('avatarIcon');
 
-  if (avatar) {
-    const oldImage = avatar.querySelector('img');
-    if (oldImage) oldImage.remove();
-
-    if (profile.avatar_url) {
-      const img = document.createElement('img');
-      img.src = profile.avatar_url;
-      img.alt = name + ' avatar';
-      img.onerror = () => img.remove();
-      avatar.appendChild(img);
-    }
+  if (profile.avatar_url) {
+    avatarImage.src = profile.avatar_url;
+    avatarImage.classList.remove('hidden');
+    avatarIcon.classList.add('hidden');
+  } else {
+    avatarImage.removeAttribute('src');
+    avatarImage.classList.add('hidden');
+    avatarIcon.classList.remove('hidden');
   }
 
   // بنر
-  const banner = document.getElementById('banner');
+  const cover = document.getElementById('cover');
 
-  if (banner) {
-    if (profile.banner_url) {
-      banner.style.backgroundImage =
-        `url("${profile.banner_url}")`;
-      banner.style.backgroundSize = 'cover';
-      banner.style.backgroundPosition = 'center';
+  if (profile.banner_url) {
+    cover.style.backgroundImage =
+      `url("${profile.banner_url}")`;
 
-      const pattern = banner.querySelector('.banner-pattern');
-      if (pattern) pattern.style.display = 'none';
-    } else {
-      banner.style.backgroundImage = 'none';
-
-      const pattern = banner.querySelector('.banner-pattern');
-      if (pattern) pattern.style.display = '';
-    }
+    cover.style.backgroundSize = 'cover';
+    cover.style.backgroundPosition = 'center';
+    cover.classList.add('has-image');
+  } else {
+    cover.style.backgroundImage = '';
+    cover.classList.remove('has-image');
   }
 
   // نشان تأیید
-  const verified = document.getElementById('verified');
+  const verifiedIcon = document.getElementById('verifiedIcon');
 
-  if (verified) {
-    verified.style.display =
-      profile.is_verified === true ? 'inline-block' : 'none';
+  if (profile.is_verified === true) {
+    verifiedIcon.classList.add('show');
+  } else {
+    verifiedIcon.classList.remove('show');
   }
 }
-
 
 // فشرده‌سازی تصویر
 function compressImage(file, type) {
   return new Promise((resolve, reject) => {
-    const image = new Image();
     const reader = new FileReader();
 
     reader.onload = event => {
+      const image = new Image();
+
       image.onload = () => {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
 
-        let maxWidth = type === 'banner' ? 1600 : 512;
-        let maxHeight = type === 'banner' ? 590 : 512;
-
-        let width = image.width;
-        let height = image.height;
+        const maxWidth = type === 'banner' ? 1600 : 512;
+        const maxHeight = type === 'banner' ? 590 : 512;
 
         const scale = Math.min(
-          maxWidth / width,
-          maxHeight / height,
+          maxWidth / image.width,
+          maxHeight / image.height,
           1
         );
 
-        width = Math.round(width * scale);
-        height = Math.round(height * scale);
+        canvas.width = Math.round(image.width * scale);
+        canvas.height = Math.round(image.height * scale);
 
-        canvas.width = width;
-        canvas.height = height;
-
-        ctx.drawImage(image, 0, 0, width, height);
+        ctx.drawImage(
+          image,
+          0,
+          0,
+          canvas.width,
+          canvas.height
+        );
 
         resolve(canvas.toDataURL('image/webp', 0.78));
       };
 
       image.onerror = () => reject(
-        new Error('خواندن تصویر ناموفق بود.')
+        new Error('تصویر قابل خواندن نیست.')
       );
 
       image.src = event.target.result;
@@ -675,19 +655,22 @@ function compressImage(file, type) {
   });
 }
 
-// ذخیره تصویر در پروفایل
+// ذخیره تصویر
 async function saveImage(file, type) {
   try {
     if (!file) return;
 
-    if (!currentUser || !currentProfile ||
-        currentUser.id !== currentProfile.id) {
-      showMessage('فقط صاحب پروفایل می‌تواند تصاویر را تغییر دهد.');
+    if (
+      !currentUser ||
+      !currentProfile ||
+      currentUser.id !== currentProfile.id
+    ) {
+      showMessage('فقط صاحب پروفایل می‌تواند تصویر را تغییر دهد.');
       return;
     }
 
     if (!file.type.startsWith('image/')) {
-      showMessage('لطفاً یک فایل تصویری انتخاب کن.');
+      showMessage('لطفاً یک تصویر انتخاب کن.');
       return;
     }
 
@@ -706,12 +689,13 @@ async function saveImage(file, type) {
       .from('profiles')
       .update(updateData)
       .eq('id', currentProfile.id)
-      .select()
+      .select('*')
       .single();
 
     if (error) throw error;
 
     currentProfile = data;
+
     renderProfile(data);
 
     showMessage('تصویر با موفقیت ذخیره شد.');
@@ -722,17 +706,15 @@ async function saveImage(file, type) {
   }
 }
 
-// انتخاب آواتار
 function setAvatar(file) {
   saveImage(file, 'avatar');
 }
 
-// انتخاب بنر
 function setBanner(file) {
   saveImage(file, 'banner');
 }
 
-// اتصال دکمه‌ها و ورودی‌ها
+// رویدادهای صفحه
 function setupProfileEvents() {
   const avatarBox = document.getElementById('avatarBox');
   const avatarInput = document.getElementById('avatarInput');
@@ -740,36 +722,47 @@ function setupProfileEvents() {
   const bannerButton = document.getElementById('bannerButton');
   const bannerInput = document.getElementById('bannerInput');
 
-  if (avatarBox && avatarInput) {
-    avatarBox.addEventListener('click', () => {
-      if (currentUser?.id === currentProfile?.id) {
-        avatarInput.click();
-      }
-    });
+  // انتخاب آواتار
+  avatarBox.addEventListener('click', () => {
+    if (currentUser?.id === currentProfile?.id) {
+      avatarInput.click();
+    }
+  });
 
-    avatarInput.addEventListener('change', event => {
-      const file = event.target.files?.[0];
-      if (file) setAvatar(file);
-      event.target.value = '';
-    });
-  }
+  avatarInput.addEventListener('change', event => {
+    const file = event.target.files?.[0];
 
-  if (bannerButton && bannerInput) {
-    bannerButton.addEventListener('click', () => {
-      if (currentUser?.id === currentProfile?.id) {
-        bannerInput.click();
-      }
-    });
+    if (file) setAvatar(file);
 
-    bannerInput.addEventListener('change', event => {
-      const file = event.target.files?.[0];
-      if (file) setBanner(file);
-      event.target.value = '';
-    });
-  }
+    event.target.value = '';
+  });
+
+  // انتخاب بنر
+  bannerButton.addEventListener('click', () => {
+    if (currentUser?.id === currentProfile?.id) {
+      bannerInput.click();
+    }
+  });
+
+  bannerInput.addEventListener('change', event => {
+    const file = event.target.files?.[0];
+
+    if (file) setBanner(file);
+
+    event.target.value = '';
+  });
 }
 
-// شروع برنامه
+// تغییر تب‌ها
+function changeTab(button) {
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.classList.remove('active');
+  });
+
+  button.classList.add('active');
+}
+
+// شروع
 document.addEventListener('DOMContentLoaded', () => {
   setupProfileEvents();
   loadProfile();
