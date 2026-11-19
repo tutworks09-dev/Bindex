@@ -534,6 +534,7 @@ async function loadProfile() {
     }
 
     currentUser = session.user;
+    alert('User ID: ' + currentUser.id);
 
     const { data: profile, error } = await supabaseClient
       .from('profiles')
