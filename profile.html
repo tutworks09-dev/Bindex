@@ -476,11 +476,9 @@ header {
 </main>
 
 <script>
-/* ================================
-   SUPABASE CONFIG
-================================ */
 
 const SUPABASE_URL = 'https://hlescjwegrtvwgtqsemm.supabase.co';
+
 const SUPABASE_KEY = 'sb_publishable_9rR5jxE8CFQJMm-oy74wOw_VRtHgguY';
 
 const supabaseClient = window.supabase.createClient(
@@ -499,25 +497,12 @@ const supabaseClient = window.supabase.createClient(
 let currentUser = null;
 let currentProfile = null;
 
-/* ================================
-   GENERAL
-================================ */
-
+// نمایش پیام
 function showMessage(message) {
   alert(message);
 }
 
-function changeTab(button) {
-  document.querySelectorAll('.tab').forEach(tab => {
-    tab.classList.remove('active');
-  });
-  button.classList.add('active');
-}
-
-/* ================================
-   LOAD PROFILE
-================================ */
-
+// دریافت و نمایش پروفایل
 async function loadProfile() {
   try {
     const { data: sessionData, error: sessionError } =
@@ -525,248 +510,246 @@ async function loadProfile() {
 
     if (sessionError) throw sessionError;
 
-    const session = sessionData.session;
+    currentUser = sessionData.session?.user || null;
 
-    if (!session) {
-      alert('برای مشاهده پروفایل ابتدا وارد حساب خودت شو.');
-      window.location.href = 'auth.html';
+    const params = new URLSearchParams(window.location.search);
+    const requestedUsername = params.get('u');
+
+    if (!requestedUsername || !requestedUsername.trim()) {
+      showMessage('نام کاربری در آدرس مشخص نشده است.');
       return;
     }
-
-    currentUser = session.user;
 
     const { data: profile, error } = await supabaseClient
       .from('profiles')
       .select('*')
-      .eq('id', currentUser.id)
+      .ilike('username', requestedUsername.trim())
       .maybeSingle();
 
     if (error) throw error;
 
     if (!profile) {
-      const username =
-        currentUser.user_metadata?.username ||
-        currentUser.email?.split('@')[0] ||
-        'BINDEX User';
-
-      const { data: newProfile, error: insertError } =
-        await supabaseClient
-          .from('profiles')
-          .insert({
-            id: currentUser.id,
-            username: username
-          })
-          .select()
-          .single();
-
-      if (insertError) throw insertError;
-
-      currentProfile = newProfile;
-    } else {
-      currentProfile = profile;
+      showMessage('کاربری با این نام کاربری پیدا نشد.');
+      return;
     }
 
-    renderProfile(currentProfile);
+    currentProfile = profile;
+
+    const isOwner = currentUser?.id === profile.id;
+
+    const bannerButton = document.getElementById('bannerButton');
+    const avatarBox = document.getElementById('avatarBox');
+
+    if (bannerButton) {
+      bannerButton.hidden = !isOwner;
+    }
+
+    if (avatarBox) {
+      avatarBox.style.pointerEvents = isOwner ? 'auto' : 'none';
+      avatarBox.style.cursor = isOwner ? 'pointer' : 'default';
+    }
+
+    renderProfile(profile);
 
   } catch (error) {
     console.error('Profile error:', error);
-    alert('خطا در دریافت پروفایل: ' + error.message);
+    showMessage('خطا در دریافت پروفایل: ' + error.message);
   }
 }
 
-/* ================================
-   RENDER PROFILE
-================================ */
-
+// نمایش اطلاعات پروفایل
 function renderProfile(profile) {
   const name =
     profile.display_name ||
     profile.username ||
-    currentUser.email?.split('@')[0] ||
+    currentUser?.email?.split('@')[0] ||
     'کاربر BINDEX';
 
-  document.getElementById('profileName').textContent = name;
-  document.getElementById('infoName').textContent = name;
+  const profileName = document.getElementById('profileName');
+  const infoName = document.getElementById('infoName');
+  const joinDate = document.getElementById('joinDate');
+  const avatar = document.getElementById('avatar');
+  const banner = document.getElementById('banner');
+  const verified = document.getElementById('verified');
 
-  const verifiedIcon = document.getElementById('verifiedIcon');
-
-  if (profile.is_verified === true) {
-    verifiedIcon.classList.add('show');
-  } else {
-    verifiedIcon.classList.remove('show');
+  if (profileName) {
+    profileName.textContent = name;
   }
 
-  if (profile.avatar_url) {
-    setAvatar(profile.avatar_url);
+  if (infoName) {
+    infoName.textContent = name;
   }
 
-  if (profile.banner_url) {
-    setBanner(profile.banner_url);
+  if (joinDate) {
+    joinDate.textContent = profile.created_at
+      ? new Date(profile.created_at).toLocaleDateString('fa-IR')
+      : 'نامشخص';
   }
 
-  if (profile.created_at) {
-    const date = new Date(profile.created_at);
+  if (avatar) {
+    avatar.src = profile.avatar_url || '';
+  }
 
-    document.getElementById('joinDate').textContent =
-      date.toLocaleDateString('fa-IR');
-  } else {
-    document.getElementById('joinDate').textContent = 'عضو BINDEX';
+  if (banner) {
+    banner.style.backgroundImage = profile.banner_url
+      ? `url("${profile.banner_url}")`
+      : '';
+  }
+
+  if (verified) {
+    verified.hidden = !profile.is_verified;
   }
 }
 
-/* ================================
-   IMAGE DISPLAY
-================================ */
-
-function setAvatar(dataUrl) {
-  const image = document.getElementById('avatarImage');
-  const icon = document.getElementById('avatarIcon');
-
-  image.src = dataUrl;
-  image.classList.remove('hidden');
-  icon.classList.add('hidden');
-}
-
-function setBanner(dataUrl) {
-  const cover = document.getElementById('cover');
-
-  cover.style.background =
-    `url("${dataUrl}") center/cover no-repeat`;
-
-  cover.classList.add('has-image');
-}
-
-/* ================================
-   IMAGE COMPRESSION
-================================ */
-
+// فشرده‌سازی تصویر
 function compressImage(file, type) {
   return new Promise((resolve, reject) => {
-    if (!file || !file.type.startsWith('image/')) {
-      reject(new Error('لطفاً یک تصویر معتبر انتخاب کن.'));
-      return;
-    }
-
     const image = new Image();
-    const objectUrl = URL.createObjectURL(file);
+    const reader = new FileReader();
 
-    image.onload = function() {
-      let maxWidth = type === 'banner' ? 1600 : 512;
-      let maxHeight = type === 'banner' ? 590 : 512;
+    reader.onload = event => {
+      image.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
 
-      let width = image.width;
-      let height = image.height;
+        let maxWidth = type === 'banner' ? 1600 : 512;
+        let maxHeight = type === 'banner' ? 590 : 512;
 
-      const scale = Math.min(
-        1,
-        maxWidth / width,
-        maxHeight / height
+        let width = image.width;
+        let height = image.height;
+
+        const scale = Math.min(
+          maxWidth / width,
+          maxHeight / height,
+          1
+        );
+
+        width = Math.round(width * scale);
+        height = Math.round(height * scale);
+
+        canvas.width = width;
+        canvas.height = height;
+
+        ctx.drawImage(image, 0, 0, width, height);
+
+        resolve(canvas.toDataURL('image/webp', 0.78));
+      };
+
+      image.onerror = () => reject(
+        new Error('خواندن تصویر ناموفق بود.')
       );
 
-      width = Math.round(width * scale);
-      height = Math.round(height * scale);
-
-      const canvas = document.createElement('canvas');
-      canvas.width = width;
-      canvas.height = height;
-
-      const context = canvas.getContext('2d');
-      context.drawImage(image, 0, 0, width, height);
-
-      URL.revokeObjectURL(objectUrl);
-
-      resolve(canvas.toDataURL('image/webp', 0.78));
+      image.src = event.target.result;
     };
 
-    image.onerror = function() {
-      URL.revokeObjectURL(objectUrl);
-      reject(new Error('خواندن تصویر ناموفق بود.'));
-    };
+    reader.onerror = () => reject(
+      new Error('خواندن فایل ناموفق بود.')
+    );
 
-    image.src = objectUrl;
+    reader.readAsDataURL(file);
   });
 }
 
-/* ================================
-   SAVE IMAGE TO SUPABASE
-================================ */
-
+// ذخیره تصویر در پروفایل
 async function saveImage(file, type) {
-  if (!currentUser) {
-    showMessage('ابتدا وارد حساب خودت شو.');
-    return;
-  }
-
   try {
-    const dataUrl = await compressImage(file, type);
+    if (!file) return;
 
-    const column = type === 'banner'
-      ? 'banner_url'
-      : 'avatar_url';
+    if (!currentUser || !currentProfile ||
+        currentUser.id !== currentProfile.id) {
+      showMessage('فقط صاحب پروفایل می‌تواند تصاویر را تغییر دهد.');
+      return;
+    }
 
-    const { error } = await supabaseClient
+    if (!file.type.startsWith('image/')) {
+      showMessage('لطفاً یک فایل تصویری انتخاب کن.');
+      return;
+    }
+
+    const imageData = await compressImage(file, type);
+
+    const column = type === 'avatar'
+      ? 'avatar_url'
+      : 'banner_url';
+
+    const updateData = {
+      [column]: imageData,
+      updated_at: new Date().toISOString()
+    };
+
+    const { data, error } = await supabaseClient
       .from('profiles')
-      .update({
-        [column]: dataUrl,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', currentUser.id);
+      .update(updateData)
+      .eq('id', currentProfile.id)
+      .select()
+      .single();
 
     if (error) throw error;
 
-    if (type === 'banner') {
-      setBanner(dataUrl);
-    } else {
-      setAvatar(dataUrl);
-    }
+    currentProfile = data;
+    renderProfile(data);
 
-    currentProfile[column] = dataUrl;
-
-    showMessage(
-      type === 'banner'
-        ? 'بنر با موفقیت ذخیره شد!'
-        : 'تصویر پروفایل با موفقیت ذخیره شد!'
-    );
+    showMessage('تصویر با موفقیت ذخیره شد.');
 
   } catch (error) {
-    console.error('Image upload error:', error);
-    showMessage('ذخیره تصویر ناموفق بود: ' + error.message);
+    console.error('Image save error:', error);
+    showMessage('خطا در ذخیره تصویر: ' + error.message);
   }
 }
 
-/* ================================
-   IMAGE INPUTS
-================================ */
+// انتخاب آواتار
+function setAvatar(file) {
+  saveImage(file, 'avatar');
+}
 
-document.getElementById('bannerButton').addEventListener('click', () => {
-  document.getElementById('bannerInput').click();
+// انتخاب بنر
+function setBanner(file) {
+  saveImage(file, 'banner');
+}
+
+// اتصال دکمه‌ها و ورودی‌ها
+function setupProfileEvents() {
+  const avatarBox = document.getElementById('avatarBox');
+  const avatarInput = document.getElementById('avatarInput');
+
+  const bannerButton = document.getElementById('bannerButton');
+  const bannerInput = document.getElementById('bannerInput');
+
+  if (avatarBox && avatarInput) {
+    avatarBox.addEventListener('click', () => {
+      if (currentUser?.id === currentProfile?.id) {
+        avatarInput.click();
+      }
+    });
+
+    avatarInput.addEventListener('change', event => {
+      const file = event.target.files?.[0];
+      if (file) setAvatar(file);
+      event.target.value = '';
+    });
+  }
+
+  if (bannerButton && bannerInput) {
+    bannerButton.addEventListener('click', () => {
+      if (currentUser?.id === currentProfile?.id) {
+        bannerInput.click();
+      }
+    });
+
+    bannerInput.addEventListener('change', event => {
+      const file = event.target.files?.[0];
+      if (file) setBanner(file);
+      event.target.value = '';
+    });
+  }
+}
+
+// شروع برنامه
+document.addEventListener('DOMContentLoaded', () => {
+  setupProfileEvents();
+  loadProfile();
 });
 
-document.getElementById('avatarBox').addEventListener('click', () => {
-  document.getElementById('avatarInput').click();
-});
-
-document.getElementById('bannerInput').addEventListener('change', async function() {
-  const file = this.files[0];
-  if (!file) return;
-
-  await saveImage(file, 'banner');
-  this.value = '';
-});
-
-document.getElementById('avatarInput').addEventListener('change', async function() {
-  const file = this.files[0];
-  if (!file) return;
-
-  await saveImage(file, 'avatar');
-  this.value = '';
-});
-
-/* ================================
-   START
-================================ */
-
-loadProfile();
 </script>
 
 </body>
