@@ -2,329 +2,769 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>BINDEX | Profile</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>پروفایل | BINDEX</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+<style>
+:root {
+  --bg:#080e14;
+  --panel:#0e1821;
+  --panel2:#111f2a;
+  --blue:#009ACE;
+  --cyan:#31b9e8;
+  --text:#f4f8fb;
+  --muted:#91a3b1;
+  --border:rgba(145,163,177,.15);
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+body {
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Vazirmatn',sans-serif;
+  min-height:100vh;
+}
+button { font-family:inherit; cursor:pointer; }
 
-    body {
-      background: #080e14;
-      color: #edf6fc;
-      font-family: Vazirmatn, sans-serif;
-      min-height: 100vh;
-    }
+header {
+  height:95px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 4%;
+}
+.brand {
+  display:flex;
+  align-items:center;
+  gap:13px;
+  direction:ltr;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:32px;
+  font-weight:700;
+}
+.brand-icon {
+  width:56px;
+  height:56px;
+  border-radius:18px;
+  background:linear-gradient(135deg,#16b7e9,#0076a5);
+  display:grid;
+  place-items:center;
+  color:white;
+  font-size:27px;
+}
+.back {
+  color:var(--muted);
+  text-decoration:none;
+  font-size:15px;
+}
+.back:hover { color:var(--cyan); }
 
-    header {
-      height: 65px;
-      background: #0e1821;
-      border-bottom: 1px solid #203441;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 6%;
-    }
+.container {
+  width:calc(100% - 8%);
+  max-width:1565px;
+  margin:47px auto;
+}
 
-    .logo {
-      color: #12a8df;
-      font-size: 25px;
-      font-weight: 800;
-    }
+.cover {
+  width:90%;
+  aspect-ratio:4096 / 1506;
+  min-height:180px;
+  max-height:490px;
+  margin:0 auto;
+  border-radius:38px;
+  border:1px solid rgba(49,185,232,.3);
+  background:
+    radial-gradient(circle at 75% 25%,rgba(0,154,206,.38),transparent 40%),
+    repeating-linear-gradient(45deg,transparent 0 55px,rgba(49,185,232,.08) 56px 57px),
+    linear-gradient(120deg,#0d2939,#123d53,#091b29);
+  background-position:center;
+  background-size:cover;
+  position:relative;
+  overflow:hidden;
+}
+.cover::after {
+  content:"BINDEX";
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(50px,9vw,120px);
+  font-weight:800;
+  letter-spacing:5px;
+  color:rgba(255,255,255,.07);
+  pointer-events:none;
+}
+.cover.has-image::after { display:none; }
 
-    header a {
-      color: #b8d3e2;
-      text-decoration: none;
-    }
+.cover-button {
+  position:absolute;
+  top:30px;
+  left:30px;
+  z-index:2;
+  background:#080e14;
+  color:white;
+  border:0;
+  border-radius:20px;
+  padding:20px 24px;
+  font-size:15px;
+}
 
-    .container {
-      max-width: 950px;
-      width: 92%;
-      margin: 35px auto;
-    }
+.profile-area { position:relative; z-index:3; }
 
-    .card {
-      background: #0e1821;
-      border: 1px solid #203441;
-      border-radius: 18px;
-      overflow: hidden;
-    }
+.identity {
+  display:flex;
+  align-items:flex-start;
+  justify-content:flex-start;
+  gap:15px;
+  padding-right:28px;
+  margin-top:0;
+  min-height:125px;
+}
+.avatar {
+  width:200px;
+  height:200px;
+  flex-shrink:0;
+  border-radius:50%;
+  border:9px solid var(--bg);
+  background:linear-gradient(145deg,#087ca5,#10455a);
+  display:grid;
+  place-items:center;
+  color:#b9edff;
+  font-size:90px;
+  overflow:hidden;
+  transform:translateY(-55px);
+  margin-bottom:-55px;
+  cursor:pointer;
+}
+.avatar img {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.identity-name {
+  font-size:38px;
+  font-weight:800;
+  margin-top:12px;
+  padding:0;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  flex-wrap:wrap;
+}
+.verified {
+  color:var(--blue);
+  font-size:23px;
+  margin-right:5px;
+  display:none;
+}
+.verified.show { display:inline-block; }
 
-    .banner {
-      height: 260px;
-      background: linear-gradient(120deg, #075276, #071b35);
-      background-size: cover;
-      background-position: center;
-    }
+.profile-bottom {
+  border-top:1px solid var(--border);
+  margin-top:25px;
+  padding:19px 24px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  min-height:100px;
+  direction:ltr;
+  width:100%;
+}
+.follow-btn {
+  background:var(--blue);
+  border:1px solid var(--blue);
+  color:white;
+  border-radius:16px;
+  padding:12px 19px;
+  font-size:13px;
+  font-weight:600;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  white-space:nowrap;
+  order:1;
+  flex-shrink:0;
+}
+.follow-btn:hover { background:#08addf; }
 
-    .content {
-      padding: 0 28px 28px;
-    }
+.stats {
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:35px;
+  margin:0;
+  padding:0;
+  border:0;
+  order:2;
+  direction:rtl;
+}
+.stat {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  color:var(--muted);
+  font-size:15px;
+  white-space:nowrap;
+}
+.stat strong { color:white; font-size:22px; }
+.stat i { font-size:20px; }
 
-    .avatar {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      border: 6px solid #0e1821;
-      background: #193344;
-      object-fit: cover;
-      margin-top: -62px;
-      position: relative;
-    }
+.content {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 350px;
+  gap:18px;
+  margin-top:35px;
+}
+.posts-panel,.info-panel {
+  background:linear-gradient(145deg,#0d1925,#0a131c);
+  border:1px solid rgba(0,154,206,.4);
+  border-radius:23px;
+  overflow:hidden;
+}
+.tabs { display:flex; border-bottom:1px solid var(--border); }
+.tab {
+  flex:1;
+  padding:20px 10px;
+  text-align:center;
+  color:var(--muted);
+  background:transparent;
+  border:0;
+  border-bottom:3px solid transparent;
+  font-size:15px;
+}
+.tab.active {
+  color:white;
+  border-bottom-color:var(--blue);
+  background:rgba(0,154,206,.08);
+}
+.tab i { margin-left:8px; }
+.empty {
+  margin:18px;
+  padding:35px 15px;
+  text-align:center;
+  border-radius:17px;
+  background:rgba(255,255,255,.035);
+  border:1px solid var(--border);
+}
+.empty i {
+  font-size:38px;
+  color:#7896ae;
+  margin-bottom:12px;
+}
+.empty h3 { font-size:18px; margin-bottom:8px; }
+.empty p { color:var(--muted); font-size:14px; }
 
-    .name {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      margin-top: 10px;
-      font-size: 24px;
-      font-weight: 800;
-      flex-wrap: wrap;
-    }
+.info-panel {
+  padding:22px;
+  height:max-content;
+}
+.info-title {
+  font-size:19px;
+  font-weight:700;
+  margin-bottom:18px;
+}
+.info-item {
+  padding:16px 0;
+  border-top:1px solid var(--border);
+  color:var(--muted);
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  font-size:14px;
+}
+.info-item i { color:var(--blue); margin-left:7px; }
 
-    .verified {
-      color: #1da9e0;
-      display: none;
-      font-size: 19px;
-    }
+.loading {
+  text-align:center;
+  color:var(--muted);
+  padding:35px;
+}
+.hidden { display:none !important; }
 
-    .username {
-      color: #89a6b8;
-      direction: ltr;
-      text-align: right;
-      margin-top: 5px;
-    }
-
-    .id {
-      color: #708c9e;
-      font-size: 12px;
-      direction: ltr;
-      text-align: right;
-      margin-top: 9px;
-      overflow-wrap: anywhere;
-    }
-
-    .details {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-top: 25px;
-    }
-
-    .item {
-      background: #12212c;
-      border: 1px solid #203441;
-      border-radius: 12px;
-      padding: 15px;
-      min-width: 0;
-    }
-
-    .label {
-      color: #829eaf;
-      font-size: 12px;
-      margin-bottom: 7px;
-    }
-
-    .value {
-      overflow-wrap: anywhere;
-      font-size: 14px;
-    }
-
-    #loading, #error {
-      text-align: center;
-      padding: 60px 15px;
-      color: #9bb7c8;
-    }
-
-    #error { color: #ff7777; }
-
-    .spinner {
-      width: 35px;
-      height: 35px;
-      border: 3px solid #203b4d;
-      border-top-color: #16a9df;
-      border-radius: 50%;
-      animation: spin .8s linear infinite;
-      margin: 0 auto 15px;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    [hidden] { display: none !important; }
-
-    @media(max-width: 600px) {
-      .banner { height: 190px; }
-      .content { padding: 0 18px 22px; }
-      .avatar { width: 105px; height: 105px; }
-      .name { font-size: 21px; }
-      .details { grid-template-columns: 1fr; }
-    }
-  </style>
+@media(max-width:800px) {
+  header { height:75px; }
+  .brand { font-size:25px; }
+  .brand-icon { width:45px; height:45px; }
+  .container { width:94%; margin-top:28px; }
+  .cover {
+    width:94%;
+    min-height:140px;
+    border-radius:22px;
+  }
+  .cover-button {
+    top:12px;
+    left:12px;
+    padding:12px 15px;
+    font-size:12px;
+    border-radius:13px;
+  }
+  .identity {
+    padding-right:12px;
+    gap:9px;
+    margin-top:0;
+    min-height:85px;
+  }
+  .avatar {
+    width:115px;
+    height:115px;
+    font-size:52px;
+    border-width:6px;
+    transform:translateY(-35px);
+    margin-bottom:-35px;
+  }
+  .identity-name { font-size:23px; margin-top:10px; }
+  .verified { font-size:16px; }
+  .profile-bottom {
+    margin-top:18px;
+    padding:17px 5px;
+    min-height:80px;
+    gap:10px;
+    flex-wrap:nowrap;
+  }
+  .follow-btn {
+    padding:11px 13px;
+    font-size:12px;
+    border-radius:13px;
+  }
+  .stats { gap:9px; }
+  .stat { font-size:11px; gap:5px; }
+  .stat strong { font-size:17px; }
+  .stat i { font-size:14px; }
+  .content { grid-template-columns:1fr; margin-top:22px; }
+  .info-panel { order:2; }
+}
+@media(max-width:390px) {
+  .stat { font-size:10px; gap:4px; }
+  .stat i { display:none; }
+  .avatar { width:100px; height:100px; }
+  .identity-name { font-size:20px; }
+  .stats { gap:9px; }
+}
+</style>
 </head>
 
 <body>
 
 <header>
-  <div class="logo">BINDEX</div>
-  <a href="./">صفحه اصلی <i class="fa-solid fa-arrow-left"></i></a>
+  <a href="index.html" class="back">
+    <i class="fa-solid fa-arrow-right"></i>
+    بازگشت به خانه
+  </a>
+
+  <div class="brand">
+    <div class="brand-icon">
+      <i class="fa-solid fa-gamepad"></i>
+    </div>
+    <span>Bindex<span style="color:#31b9e8">.</span></span>
+  </div>
 </header>
 
 <main class="container">
 
-  <div id="loading">
-    <div class="spinner"></div>
-    در حال دریافت پروفایل...
-  </div>
+  <section class="cover" id="cover">
+    <button class="cover-button" id="bannerButton">
+      تغییر بنر
+      <i class="fa-solid fa-camera"></i>
+    </button>
+    <input type="file" id="bannerInput" accept="image/*" hidden>
+  </section>
 
-  <div id="error" hidden></div>
+  <section class="profile-area">
 
-  <section id="profile" class="card" hidden>
-    <div id="banner" class="banner"></div>
+    <div class="identity">
 
-    <div class="content">
-      <img id="avatar" class="avatar" alt="Avatar">
-
-      <div class="name">
-        <span id="displayName"></span>
-        <i id="verified" class="fa-solid fa-circle-check verified"></i>
+      <div class="avatar" id="avatarBox" title="تغییر تصویر پروفایل">
+        <i class="fa-solid fa-user" id="avatarIcon"></i>
+        <img id="avatarImage" class="hidden" alt="تصویر پروفایل">
       </div>
 
-      <div id="username" class="username"></div>
-      <div id="userId" class="id"></div>
+      <input type="file" id="avatarInput" accept="image/*" hidden>
 
-      <div class="details">
-        <div class="item">
-          <div class="label">نام نمایشی</div>
-          <div id="dName" class="value"></div>
+      <h1 class="identity-name">
+        <span id="profileName">در حال بارگذاری...</span>
+        <i class="fa-solid fa-circle-check verified" id="verifiedIcon" title="کاربر تأییدشده"></i>
+      </h1>
+
+    </div>
+
+    <div class="profile-bottom">
+
+      <button class="follow-btn" onclick="showMessage('قابلیت دنبال کردن به‌زودی فعال می‌شود')">
+        <i class="fa-solid fa-user-plus"></i>
+        دنبال کردن
+      </button>
+
+      <div class="stats">
+        <div class="stat">
+          <i class="fa-solid fa-file-lines"></i>
+          <strong>0</strong>
+          <span>پست</span>
         </div>
 
-        <div class="item">
-          <div class="label">نام کاربری</div>
-          <div id="dUsername" class="value"></div>
+        <div class="stat">
+          <i class="fa-solid fa-users"></i>
+          <strong>0</strong>
+          <span>دنبال‌کننده</span>
         </div>
 
-        <div class="item">
-          <div class="label">شناسه کاربر</div>
-          <div id="dId" class="value"></div>
-        </div>
-
-        <div class="item">
-          <div class="label">وضعیت تأیید</div>
-          <div id="dVerified" class="value"></div>
-        </div>
-
-        <div class="item">
-          <div class="label">تاریخ عضویت</div>
-          <div id="dDate" class="value"></div>
+        <div class="stat">
+          <i class="fa-solid fa-user"></i>
+          <strong>0</strong>
+          <span>دنبال‌شونده</span>
         </div>
       </div>
+
     </div>
   </section>
 
+  <section class="content">
+
+    <div class="posts-panel">
+      <div class="tabs">
+        <button class="tab active" onclick="changeTab(this)">
+          <i class="fa-solid fa-grid-2"></i>
+          پست‌ها
+        </button>
+        <button class="tab" onclick="changeTab(this)">
+          <i class="fa-solid fa-gamepad"></i>
+          بازی‌ها
+        </button>
+        <button class="tab" onclick="changeTab(this)">
+          <i class="fa-solid fa-circle-info"></i>
+          درباره
+        </button>
+      </div>
+
+      <div class="empty">
+        <i class="fa-regular fa-file-lines"></i>
+        <h3>هنوز پستی وجود ندارد</h3>
+        <p>وقتی پستی منتشر شود، اینجا نمایش داده می‌شود.</p>
+      </div>
+    </div>
+
+    <aside class="info-panel">
+      <h2 class="info-title">
+        <i class="fa-solid fa-user" style="color:#009ACE"></i>
+        اطلاعات کاربر
+      </h2>
+
+      <div class="info-item">
+        <span><i class="fa-solid fa-gamepad"></i> نام نمایشی</span>
+        <span id="infoName">—</span>
+      </div>
+
+      <div class="info-item">
+        <span><i class="fa-solid fa-calendar-days"></i> عضویت</span>
+        <span id="joinDate">—</span>
+      </div>
+
+      <div class="info-item">
+        <span><i class="fa-solid fa-link"></i> وب‌سایت</span>
+        <span>—</span>
+      </div>
+    </aside>
+
+  </section>
 </main>
 
 <script>
-'use strict';
+/* ================================
+   SUPABASE CONFIG
+================================ */
 
-// BINDEX SUPABASE CONFIG
 const SUPABASE_URL = 'https://hlescjwegrtvwgtqsemm.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_9rR5jxE8CFQJMm-oy74wOw_VRtHgguY';
 
 const supabaseClient = window.supabase.createClient(
   SUPABASE_URL,
-  SUPABASE_KEY
+  SUPABASE_KEY,
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      storage: window.localStorage
+    }
+  }
 );
 
-const el = id => document.getElementById(id);
+let currentUser = null;
+let currentProfile = null;
 
-function showError(message) {
-  el('loading').hidden = true;
-  el('profile').hidden = true;
-  el('error').hidden = false;
-  el('error').textContent = message;
+/* ================================
+   GENERAL
+================================ */
+
+function showMessage(message) {
+  alert(message);
 }
 
-function dateFormat(value) {
-  if (!value) return 'نامشخص';
-
-  const date = new Date(value);
-
-  if (isNaN(date.getTime())) return 'نامشخص';
-
-  return date.toLocaleDateString('fa-IR');
+function changeTab(button) {
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.classList.remove('active');
+  });
+  button.classList.add('active');
 }
 
-function renderProfile(user) {
-  const username = user.username || 'unknown';
-  const displayName = user.display_name || username;
-
-  el('displayName').textContent = displayName;
-  el('username').textContent = '@' + username;
-  el('userId').textContent = 'ID: ' + user.id;
-
-  el('dName').textContent = displayName;
-  el('dUsername').textContent = username;
-  el('dId').textContent = user.id;
-  el('dDate').textContent = dateFormat(user.created_at);
-
-  const verified = user.is_verified === true;
-
-  el('verified').style.display = verified ? 'inline-block' : 'none';
-  el('dVerified').textContent = verified ? 'تأیید شده' : 'تأیید نشده';
-
-  el('avatar').src = user.avatar_url ||
-    'https://ui-avatars.com/api/?name=' +
-    encodeURIComponent(username) +
-    '&background=123247&color=ffffff&size=256';
-
-  if (user.banner_url) {
-    el('banner').style.backgroundImage =
-      'url("' + user.banner_url + '")';
-  }
-
-  el('loading').hidden = true;
-  el('error').hidden = true;
-  el('profile').hidden = false;
-}
+/* ================================
+   LOAD PROFILE
+================================ */
 
 async function loadProfile() {
   try {
-    const params = new URLSearchParams(location.search);
-    const username = params.get('u');
+    const { data: sessionData, error: sessionError } =
+      await supabaseClient.auth.getSession();
 
-    if (!username || !username.trim()) {
-      showError('نام کاربری در آدرس وجود ندارد.');
+    if (sessionError) throw sessionError;
+
+    const session = sessionData.session;
+
+    if (!session) {
+      alert('برای مشاهده پروفایل ابتدا وارد حساب خودت شو.');
+      window.location.href = 'auth.html';
       return;
     }
 
-    const { data, error } = await supabaseClient
+    currentUser = session.user;
+
+    const { data: profile, error } = await supabaseClient
       .from('profiles')
       .select('*')
-      .ilike('username', username.trim())
+      .eq('id', currentUser.id)
       .maybeSingle();
 
-    if (error) {
-      throw error;
+    if (error) throw error;
+
+    if (!profile) {
+      const username =
+        currentUser.user_metadata?.username ||
+        currentUser.email?.split('@')[0] ||
+        'BINDEX User';
+
+      const { data: newProfile, error: insertError } =
+        await supabaseClient
+          .from('profiles')
+          .insert({
+            id: currentUser.id,
+            username: username
+          })
+          .select()
+          .single();
+
+      if (insertError) throw insertError;
+
+      currentProfile = newProfile;
+    } else {
+      currentProfile = profile;
     }
 
-    if (!data) {
-      showError('این کاربر در BINDEX پیدا نشد.');
+    renderProfile(currentProfile);
+
+  } catch (error) {
+    console.error('Profile error:', error);
+    alert('خطا در دریافت پروفایل: ' + error.message);
+  }
+}
+
+/* ================================
+   RENDER PROFILE
+================================ */
+
+function renderProfile(profile) {
+  const name =
+    profile.display_name ||
+    profile.username ||
+    currentUser.email?.split('@')[0] ||
+    'کاربر BINDEX';
+
+  document.getElementById('profileName').textContent = name;
+  document.getElementById('infoName').textContent = name;
+
+  const verifiedIcon = document.getElementById('verifiedIcon');
+
+  if (profile.is_verified === true) {
+    verifiedIcon.classList.add('show');
+  } else {
+    verifiedIcon.classList.remove('show');
+  }
+
+  if (profile.avatar_url) {
+    setAvatar(profile.avatar_url);
+  }
+
+  if (profile.banner_url) {
+    setBanner(profile.banner_url);
+  }
+
+  if (profile.created_at) {
+    const date = new Date(profile.created_at);
+
+    document.getElementById('joinDate').textContent =
+      date.toLocaleDateString('fa-IR');
+  } else {
+    document.getElementById('joinDate').textContent = 'عضو BINDEX';
+  }
+}
+
+/* ================================
+   IMAGE DISPLAY
+================================ */
+
+function setAvatar(dataUrl) {
+  const image = document.getElementById('avatarImage');
+  const icon = document.getElementById('avatarIcon');
+
+  image.src = dataUrl;
+  image.classList.remove('hidden');
+  icon.classList.add('hidden');
+}
+
+function setBanner(dataUrl) {
+  const cover = document.getElementById('cover');
+
+  cover.style.background =
+    `url("${dataUrl}") center/cover no-repeat`;
+
+  cover.classList.add('has-image');
+}
+
+/* ================================
+   IMAGE COMPRESSION
+================================ */
+
+function compressImage(file, type) {
+  return new Promise((resolve, reject) => {
+    if (!file || !file.type.startsWith('image/')) {
+      reject(new Error('لطفاً یک تصویر معتبر انتخاب کن.'));
       return;
     }
 
-    renderProfile(data);
+    const image = new Image();
+    const objectUrl = URL.createObjectURL(file);
+
+    image.onload = function() {
+      let maxWidth = type === 'banner' ? 1600 : 512;
+      let maxHeight = type === 'banner' ? 590 : 512;
+
+      let width = image.width;
+      let height = image.height;
+
+      const scale = Math.min(
+        1,
+        maxWidth / width,
+        maxHeight / height
+      );
+
+      width = Math.round(width * scale);
+      height = Math.round(height * scale);
+
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+
+      const context = canvas.getContext('2d');
+      context.drawImage(image, 0, 0, width, height);
+
+      URL.revokeObjectURL(objectUrl);
+
+      resolve(canvas.toDataURL('image/webp', 0.78));
+    };
+
+    image.onerror = function() {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error('خواندن تصویر ناموفق بود.'));
+    };
+
+    image.src = objectUrl;
+  });
+}
+
+/* ================================
+   SAVE IMAGE TO SUPABASE
+================================ */
+
+async function saveImage(file, type) {
+  if (!currentUser) {
+    showMessage('ابتدا وارد حساب خودت شو.');
+    return;
+  }
+
+  try {
+    const dataUrl = await compressImage(file, type);
+
+    const column = type === 'banner'
+      ? 'banner_url'
+      : 'avatar_url';
+
+    const { error } = await supabaseClient
+      .from('profiles')
+      .update({
+        [column]: dataUrl,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', currentUser.id);
+
+    if (error) throw error;
+
+    if (type === 'banner') {
+      setBanner(dataUrl);
+    } else {
+      setAvatar(dataUrl);
+    }
+
+    currentProfile[column] = dataUrl;
+
+    showMessage(
+      type === 'banner'
+        ? 'بنر با موفقیت ذخیره شد!'
+        : 'تصویر پروفایل با موفقیت ذخیره شد!'
+    );
 
   } catch (error) {
-    console.error('BINDEX Profile:', error);
-    showError('خطا در دریافت پروفایل: ' + error.message);
+    console.error('Image upload error:', error);
+    showMessage('ذخیره تصویر ناموفق بود: ' + error.message);
   }
 }
+
+/* ================================
+   IMAGE INPUTS
+================================ */
+
+document.getElementById('bannerButton').addEventListener('click', () => {
+  document.getElementById('bannerInput').click();
+});
+
+document.getElementById('avatarBox').addEventListener('click', () => {
+  document.getElementById('avatarInput').click();
+});
+
+document.getElementById('bannerInput').addEventListener('change', async function() {
+  const file = this.files[0];
+  if (!file) return;
+
+  await saveImage(file, 'banner');
+  this.value = '';
+});
+
+document.getElementById('avatarInput').addEventListener('change', async function() {
+  const file = this.files[0];
+  if (!file) return;
+
+  await saveImage(file, 'avatar');
+  this.value = '';
+});
+
+/* ================================
+   START
+================================ */
 
 loadProfile();
 </script>
