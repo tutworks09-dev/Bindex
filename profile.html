@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 :root {
@@ -21,26 +22,15 @@
   --muted:#91a3b1;
   --border:rgba(145,163,177,.15);
 }
-
-* {
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-}
-
+* { box-sizing:border-box; margin:0; padding:0; }
 body {
   background:var(--bg);
   color:var(--text);
   font-family:'Vazirmatn',sans-serif;
   min-height:100vh;
 }
+button { font-family:inherit; cursor:pointer; }
 
-button {
-  font-family:inherit;
-  cursor:pointer;
-}
-
-/* Header */
 header {
   height:95px;
   border-bottom:1px solid var(--border);
@@ -49,7 +39,6 @@ header {
   justify-content:space-between;
   padding:0 4%;
 }
-
 .brand {
   display:flex;
   align-items:center;
@@ -59,7 +48,6 @@ header {
   font-size:32px;
   font-weight:700;
 }
-
 .brand-icon {
   width:56px;
   height:56px;
@@ -70,25 +58,19 @@ header {
   color:white;
   font-size:27px;
 }
-
 .back {
   color:var(--muted);
   text-decoration:none;
   font-size:15px;
 }
+.back:hover { color:var(--cyan); }
 
-.back:hover {
-  color:var(--cyan);
-}
-
-/* Main */
 .container {
   width:calc(100% - 8%);
   max-width:1565px;
   margin:47px auto;
 }
 
-/* Cover */
 .cover {
   width:90%;
   aspect-ratio:4096 / 1506;
@@ -99,16 +81,13 @@ header {
   border:1px solid rgba(49,185,232,.3);
   background:
     radial-gradient(circle at 75% 25%,rgba(0,154,206,.38),transparent 40%),
-    repeating-linear-gradient(
-      45deg,
-      transparent 0 55px,
-      rgba(49,185,232,.08) 56px 57px
-    ),
+    repeating-linear-gradient(45deg,transparent 0 55px,rgba(49,185,232,.08) 56px 57px),
     linear-gradient(120deg,#0d2939,#123d53,#091b29);
+  background-position:center;
+  background-size:cover;
   position:relative;
   overflow:hidden;
 }
-
 .cover::after {
   content:"BINDEX";
   position:absolute;
@@ -122,6 +101,7 @@ header {
   color:rgba(255,255,255,.07);
   pointer-events:none;
 }
+.cover.has-image::after { display:none; }
 
 .cover-button {
   position:absolute;
@@ -136,22 +116,17 @@ header {
   font-size:15px;
 }
 
-/* Profile identity */
-.profile-area {
-  position:relative;
-  z-index:3;
-}
+.profile-area { position:relative; z-index:3; }
 
 .identity {
   display:flex;
-  align-items:center;
+  align-items:flex-start;
   justify-content:flex-start;
   gap:15px;
   padding-right:28px;
-  margin-top:-85px;
-  min-height:200px;
+  margin-top:0;
+  min-height:125px;
 }
-
 .avatar {
   width:200px;
   height:200px;
@@ -163,20 +138,34 @@ header {
   place-items:center;
   color:#b9edff;
   font-size:90px;
+  overflow:hidden;
+  transform:translateY(-55px);
+  margin-bottom:-55px;
+  cursor:pointer;
 }
-
+.avatar img {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
 .identity-name {
   font-size:38px;
   font-weight:800;
+  margin-top:12px;
+  padding:0;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  flex-wrap:wrap;
 }
-
 .verified {
   color:var(--blue);
   font-size:23px;
   margin-right:5px;
+  display:none;
 }
+.verified.show { display:inline-block; }
 
-/* Bottom row: follow left, stats right */
 .profile-bottom {
   border-top:1px solid var(--border);
   margin-top:25px;
@@ -186,8 +175,9 @@ header {
   justify-content:space-between;
   gap:20px;
   min-height:100px;
+  direction:ltr;
+  width:100%;
 }
-
 .follow-btn {
   background:var(--blue);
   border:1px solid var(--blue);
@@ -200,13 +190,11 @@ header {
   align-items:center;
   gap:8px;
   white-space:nowrap;
+  order:1;
+  flex-shrink:0;
 }
+.follow-btn:hover { background:#08addf; }
 
-.follow-btn:hover {
-  background:#08addf;
-}
-
-/* Stats */
 .stats {
   display:flex;
   align-items:center;
@@ -215,8 +203,9 @@ header {
   margin:0;
   padding:0;
   border:0;
+  order:2;
+  direction:rtl;
 }
-
 .stat {
   display:flex;
   align-items:center;
@@ -225,37 +214,22 @@ header {
   font-size:15px;
   white-space:nowrap;
 }
+.stat strong { color:white; font-size:22px; }
+.stat i { font-size:20px; }
 
-.stat strong {
-  color:white;
-  font-size:22px;
-}
-
-.stat i {
-  font-size:20px;
-}
-
-/* Content */
 .content {
   display:grid;
   grid-template-columns:minmax(0,1fr) 350px;
   gap:18px;
   margin-top:35px;
 }
-
-.posts-panel,
-.info-panel {
+.posts-panel,.info-panel {
   background:linear-gradient(145deg,#0d1925,#0a131c);
   border:1px solid rgba(0,154,206,.4);
   border-radius:23px;
   overflow:hidden;
 }
-
-.tabs {
-  display:flex;
-  border-bottom:1px solid var(--border);
-}
-
+.tabs { display:flex; border-bottom:1px solid var(--border); }
 .tab {
   flex:1;
   padding:20px 10px;
@@ -266,17 +240,12 @@ header {
   border-bottom:3px solid transparent;
   font-size:15px;
 }
-
 .tab.active {
   color:white;
   border-bottom-color:var(--blue);
   background:rgba(0,154,206,.08);
 }
-
-.tab i {
-  margin-left:8px;
-}
-
+.tab i { margin-left:8px; }
 .empty {
   margin:18px;
   padding:35px 15px;
@@ -285,35 +254,23 @@ header {
   background:rgba(255,255,255,.035);
   border:1px solid var(--border);
 }
-
 .empty i {
   font-size:38px;
   color:#7896ae;
   margin-bottom:12px;
 }
+.empty h3 { font-size:18px; margin-bottom:8px; }
+.empty p { color:var(--muted); font-size:14px; }
 
-.empty h3 {
-  font-size:18px;
-  margin-bottom:8px;
-}
-
-.empty p {
-  color:var(--muted);
-  font-size:14px;
-}
-
-/* Sidebar */
 .info-panel {
   padding:22px;
   height:max-content;
 }
-
 .info-title {
   font-size:19px;
   font-weight:700;
   margin-bottom:18px;
 }
-
 .info-item {
   padding:16px 0;
   border-top:1px solid var(--border);
@@ -323,38 +280,25 @@ header {
   gap:10px;
   font-size:14px;
 }
+.info-item i { color:var(--blue); margin-left:7px; }
 
-.info-item i {
-  color:var(--blue);
-  margin-left:7px;
+.loading {
+  text-align:center;
+  color:var(--muted);
+  padding:35px;
 }
+.hidden { display:none !important; }
 
-/* Mobile */
 @media(max-width:800px) {
-  header {
-    height:75px;
-  }
-
-  .brand {
-    font-size:25px;
-  }
-
-  .brand-icon {
-    width:45px;
-    height:45px;
-  }
-
-  .container {
-    width:94%;
-    margin-top:28px;
-  }
-
+  header { height:75px; }
+  .brand { font-size:25px; }
+  .brand-icon { width:45px; height:45px; }
+  .container { width:94%; margin-top:28px; }
   .cover {
     width:94%;
     min-height:140px;
     border-radius:22px;
   }
-
   .cover-button {
     top:12px;
     left:12px;
@@ -362,164 +306,48 @@ header {
     font-size:12px;
     border-radius:13px;
   }
-
   .identity {
     padding-right:12px;
     gap:9px;
-    margin-top:-48px;
-    min-height:125px;
+    margin-top:0;
+    min-height:85px;
   }
-
   .avatar {
     width:115px;
     height:115px;
     font-size:52px;
     border-width:6px;
+    transform:translateY(-35px);
+    margin-bottom:-35px;
   }
-
-  .identity-name {
-    font-size:23px;
-  }
-
-  .verified {
-    font-size:16px;
-  }
-
+  .identity-name { font-size:23px; margin-top:10px; }
+  .verified { font-size:16px; }
   .profile-bottom {
     margin-top:18px;
     padding:17px 5px;
     min-height:80px;
     gap:10px;
+    flex-wrap:nowrap;
   }
-
   .follow-btn {
     padding:11px 13px;
     font-size:12px;
     border-radius:13px;
   }
-
-  .stats {
-    gap:12px;
-  }
-
-  .stat {
-    font-size:11px;
-    gap:5px;
-  }
-
-  .stat strong {
-    font-size:17px;
-  }
-
-  .stat i {
-    font-size:14px;
-  }
-
-  .content {
-    grid-template-columns:1fr;
-    margin-top:22px;
-  }
-
-  .info-panel {
-    order:2;
-  }
+  .stats { gap:9px; }
+  .stat { font-size:11px; gap:5px; }
+  .stat strong { font-size:17px; }
+  .stat i { font-size:14px; }
+  .content { grid-template-columns:1fr; margin-top:22px; }
+  .info-panel { order:2; }
 }
-
 @media(max-width:390px) {
-  .stat {
-    font-size:10px;
-    gap:4px;
-  }
-
-  .stat i {
-    display:none;
-  }
-
-  .avatar {
-    width:100px;
-    height:100px;
-  }
-
-  .identity-name {
-    font-size:20px;
-  }
-
-  .stats {
-    gap:9px;
-  }
+  .stat { font-size:10px; gap:4px; }
+  .stat i { display:none; }
+  .avatar { width:100px; height:100px; }
+  .identity-name { font-size:20px; }
+  .stats { gap:9px; }
 }
-
-  
-/* Final profile layout correction */
-
-.identity {
-  margin-top: 0;
-  min-height: 125px;
-  align-items: flex-start;
-  padding-right: 28px;
-  gap: 15px;
-}
-
-.avatar {
-  transform: translateY(-55px);
-  margin-bottom: -55px;
-}
-
-.identity-name {
-  margin-top: 12px;
-  padding: 0;
-}
-
-/* Force follow button LEFT and statistics RIGHT */
-.profile-bottom {
-  direction: ltr;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.follow-btn {
-  order: 1;
-  flex-shrink: 0;
-}
-
-.stats {
-  order: 2;
-  direction: rtl;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-}
-
-/* Mobile */
-@media(max-width:800px) {
-  .identity {
-    margin-top: 0;
-    min-height: 85px;
-    padding-right: 12px;
-  }
-
-  .avatar {
-    transform: translateY(-35px);
-    margin-bottom: -35px;
-  }
-
-  .identity-name {
-    margin-top: 10px;
-  }
-
-  .profile-bottom {
-    direction: ltr;
-    flex-wrap: nowrap;
-  }
-
-  .stats {
-    direction: rtl;
-    gap: 9px;
-  }
-}
-  
 </style>
 </head>
 
@@ -541,33 +369,32 @@ header {
 
 <main class="container">
 
-  <!-- Banner -->
   <section class="cover" id="cover">
-    <button class="cover-button" onclick="document.getElementById('bannerInput').click()">
+    <button class="cover-button" id="bannerButton">
       تغییر بنر
       <i class="fa-solid fa-camera"></i>
     </button>
-
     <input type="file" id="bannerInput" accept="image/*" hidden>
   </section>
 
-  <!-- Profile identity -->
   <section class="profile-area">
 
     <div class="identity">
 
-      <div class="avatar">
-        <i class="fa-solid fa-user"></i>
+      <div class="avatar" id="avatarBox" title="تغییر تصویر پروفایل">
+        <i class="fa-solid fa-user" id="avatarIcon"></i>
+        <img id="avatarImage" class="hidden" alt="تصویر پروفایل">
       </div>
 
+      <input type="file" id="avatarInput" accept="image/*" hidden>
+
       <h1 class="identity-name">
-        گیمر BINDEX
-        <i class="fa-solid fa-circle-check verified"></i>
+        <span id="profileName">در حال بارگذاری...</span>
+        <i class="fa-solid fa-circle-check verified" id="verifiedIcon" title="کاربر تأییدشده"></i>
       </h1>
 
     </div>
 
-    <!-- Follow button left / Stats right -->
     <div class="profile-bottom">
 
       <button class="follow-btn" onclick="showMessage('قابلیت دنبال کردن به‌زودی فعال می‌شود')">
@@ -576,7 +403,6 @@ header {
       </button>
 
       <div class="stats">
-
         <div class="stat">
           <i class="fa-solid fa-file-lines"></i>
           <strong>0</strong>
@@ -594,35 +420,27 @@ header {
           <strong>0</strong>
           <span>دنبال‌شونده</span>
         </div>
-
       </div>
 
     </div>
-
   </section>
 
-  <!-- Posts and information -->
   <section class="content">
 
     <div class="posts-panel">
-
       <div class="tabs">
-
         <button class="tab active" onclick="changeTab(this)">
           <i class="fa-solid fa-grid-2"></i>
           پست‌ها
         </button>
-
         <button class="tab" onclick="changeTab(this)">
           <i class="fa-solid fa-gamepad"></i>
           بازی‌ها
         </button>
-
         <button class="tab" onclick="changeTab(this)">
           <i class="fa-solid fa-circle-info"></i>
           درباره
         </button>
-
       </div>
 
       <div class="empty">
@@ -630,47 +448,61 @@ header {
         <h3>هنوز پستی وجود ندارد</h3>
         <p>وقتی پستی منتشر شود، اینجا نمایش داده می‌شود.</p>
       </div>
-
     </div>
 
     <aside class="info-panel">
-
       <h2 class="info-title">
         <i class="fa-solid fa-user" style="color:#009ACE"></i>
         اطلاعات کاربر
       </h2>
 
       <div class="info-item">
-        <span>
-          <i class="fa-solid fa-gamepad"></i>
-          نام نمایشی
-        </span>
-        <span>گیمر BINDEX</span>
+        <span><i class="fa-solid fa-gamepad"></i> نام نمایشی</span>
+        <span id="infoName">—</span>
       </div>
 
       <div class="info-item">
-        <span>
-          <i class="fa-solid fa-calendar-days"></i>
-          عضویت
-        </span>
-        <span>عضو کامیونیتی</span>
+        <span><i class="fa-solid fa-calendar-days"></i> عضویت</span>
+        <span id="joinDate">—</span>
       </div>
 
       <div class="info-item">
-        <span>
-          <i class="fa-solid fa-link"></i>
-          وب‌سایت
-        </span>
+        <span><i class="fa-solid fa-link"></i> وب‌سایت</span>
         <span>—</span>
       </div>
-
     </aside>
 
   </section>
-
 </main>
 
 <script>
+/* ================================
+   SUPABASE CONFIG
+================================ */
+
+const SUPABASE_URL = 'https://hlescjwegrtvwgtqsemm.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_9rRjxE8CFQJMm-oy74wOw_VRtHgguY';
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY,
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      storage: window.localStorage
+    }
+  }
+);
+
+let currentUser = null;
+let currentProfile = null;
+
+/* ================================
+   GENERAL
+================================ */
+
 function showMessage(message) {
   alert(message);
 }
@@ -679,35 +511,262 @@ function changeTab(button) {
   document.querySelectorAll('.tab').forEach(tab => {
     tab.classList.remove('active');
   });
-
   button.classList.add('active');
 }
 
-/* Banner preview */
-document.getElementById('bannerInput').addEventListener('change', function() {
-  const file = this.files[0];
+/* ================================
+   LOAD PROFILE
+================================ */
 
+async function loadProfile() {
+  try {
+    const { data: sessionData, error: sessionError } =
+      await supabaseClient.auth.getSession();
+
+    if (sessionError) throw sessionError;
+
+    const session = sessionData.session;
+
+    if (!session) {
+      alert('برای مشاهده پروفایل ابتدا وارد حساب خودت شو.');
+      window.location.href = 'auth.html';
+      return;
+    }
+
+    currentUser = session.user;
+
+    const { data: profile, error } = await supabaseClient
+      .from('profiles')
+      .select('*')
+      .eq('id', currentUser.id)
+      .maybeSingle();
+
+    if (error) throw error;
+
+    if (!profile) {
+      const username =
+        currentUser.user_metadata?.username ||
+        currentUser.email?.split('@')[0] ||
+        'BINDEX User';
+
+      const { data: newProfile, error: insertError } =
+        await supabaseClient
+          .from('profiles')
+          .insert({
+            id: currentUser.id,
+            username: username
+          })
+          .select()
+          .single();
+
+      if (insertError) throw insertError;
+
+      currentProfile = newProfile;
+    } else {
+      currentProfile = profile;
+    }
+
+    renderProfile(currentProfile);
+
+  } catch (error) {
+    console.error('Profile error:', error);
+    alert('خطا در دریافت پروفایل: ' + error.message);
+  }
+}
+
+/* ================================
+   RENDER PROFILE
+================================ */
+
+function renderProfile(profile) {
+  const name =
+    profile.display_name ||
+    profile.username ||
+    currentUser.email?.split('@')[0] ||
+    'کاربر BINDEX';
+
+  document.getElementById('profileName').textContent = name;
+  document.getElementById('infoName').textContent = name;
+
+  const verifiedIcon = document.getElementById('verifiedIcon');
+
+  if (profile.is_verified === true) {
+    verifiedIcon.classList.add('show');
+  } else {
+    verifiedIcon.classList.remove('show');
+  }
+
+  if (profile.avatar_url) {
+    setAvatar(profile.avatar_url);
+  }
+
+  if (profile.banner_url) {
+    setBanner(profile.banner_url);
+  }
+
+  if (profile.created_at) {
+    const date = new Date(profile.created_at);
+
+    document.getElementById('joinDate').textContent =
+      date.toLocaleDateString('fa-IR');
+  } else {
+    document.getElementById('joinDate').textContent = 'عضو BINDEX';
+  }
+}
+
+/* ================================
+   IMAGE DISPLAY
+================================ */
+
+function setAvatar(dataUrl) {
+  const image = document.getElementById('avatarImage');
+  const icon = document.getElementById('avatarIcon');
+
+  image.src = dataUrl;
+  image.classList.remove('hidden');
+  icon.classList.add('hidden');
+}
+
+function setBanner(dataUrl) {
+  const cover = document.getElementById('cover');
+
+  cover.style.background =
+    `url("${dataUrl}") center/cover no-repeat`;
+
+  cover.classList.add('has-image');
+}
+
+/* ================================
+   IMAGE COMPRESSION
+================================ */
+
+function compressImage(file, type) {
+  return new Promise((resolve, reject) => {
+    if (!file || !file.type.startsWith('image/')) {
+      reject(new Error('لطفاً یک تصویر معتبر انتخاب کن.'));
+      return;
+    }
+
+    const image = new Image();
+    const objectUrl = URL.createObjectURL(file);
+
+    image.onload = function() {
+      let maxWidth = type === 'banner' ? 1600 : 512;
+      let maxHeight = type === 'banner' ? 590 : 512;
+
+      let width = image.width;
+      let height = image.height;
+
+      const scale = Math.min(
+        1,
+        maxWidth / width,
+        maxHeight / height
+      );
+
+      width = Math.round(width * scale);
+      height = Math.round(height * scale);
+
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+
+      const context = canvas.getContext('2d');
+      context.drawImage(image, 0, 0, width, height);
+
+      URL.revokeObjectURL(objectUrl);
+
+      resolve(canvas.toDataURL('image/webp', 0.78));
+    };
+
+    image.onerror = function() {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error('خواندن تصویر ناموفق بود.'));
+    };
+
+    image.src = objectUrl;
+  });
+}
+
+/* ================================
+   SAVE IMAGE TO SUPABASE
+================================ */
+
+async function saveImage(file, type) {
+  if (!currentUser) {
+    showMessage('ابتدا وارد حساب خودت شو.');
+    return;
+  }
+
+  try {
+    const dataUrl = await compressImage(file, type);
+
+    const column = type === 'banner'
+      ? 'banner_url'
+      : 'avatar_url';
+
+    const { error } = await supabaseClient
+      .from('profiles')
+      .update({
+        [column]: dataUrl,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', currentUser.id);
+
+    if (error) throw error;
+
+    if (type === 'banner') {
+      setBanner(dataUrl);
+    } else {
+      setAvatar(dataUrl);
+    }
+
+    currentProfile[column] = dataUrl;
+
+    showMessage(
+      type === 'banner'
+        ? 'بنر با موفقیت ذخیره شد!'
+        : 'تصویر پروفایل با موفقیت ذخیره شد!'
+    );
+
+  } catch (error) {
+    console.error('Image upload error:', error);
+    showMessage('ذخیره تصویر ناموفق بود: ' + error.message);
+  }
+}
+
+/* ================================
+   IMAGE INPUTS
+================================ */
+
+document.getElementById('bannerButton').addEventListener('click', () => {
+  document.getElementById('bannerInput').click();
+});
+
+document.getElementById('avatarBox').addEventListener('click', () => {
+  document.getElementById('avatarInput').click();
+});
+
+document.getElementById('bannerInput').addEventListener('change', async function() {
+  const file = this.files[0];
   if (!file) return;
 
-  if (!file.type.startsWith('image/')) {
-    alert('لطفاً یک تصویر انتخاب کن.');
-    return;
-  }
-
-  if (file.size > 8 * 1024 * 1024) {
-    alert('حجم تصویر باید کمتر از ۸ مگابایت باشد.');
-    return;
-  }
-
-  const reader = new FileReader();
-
-  reader.onload = function(event) {
-    document.getElementById('cover').style.background =
-      `url("${event.target.result}") center/cover no-repeat`;
-  };
-
-  reader.readAsDataURL(file);
+  await saveImage(file, 'banner');
+  this.value = '';
 });
+
+document.getElementById('avatarInput').addEventListener('change', async function() {
+  const file = this.files[0];
+  if (!file) return;
+
+  await saveImage(file, 'avatar');
+  this.value = '';
+});
+
+/* ================================
+   START
+================================ */
+
+loadProfile();
 </script>
 
 </body>
