@@ -187,7 +187,7 @@ footer{border-top:1px solid var(--line);background:#060b10;padding:35px 0 22px}.
     </a>
   </div>
 </nav>
-<div class="head-actions"></label></div>
+<div class="head-actions"></div>
 <button class="mobile-toggle" id="menuBtn" aria-label="باز کردن منو"><i class="fa-solid fa-bars"></i></button>
 </div></header>
 <main id="home">
@@ -218,13 +218,11 @@ footer{border-top:1px solid var(--line);background:#060b10;padding:35px 0 22px}.
 <script src="https://www.zarinpal.com/webservice/TrustCode" type="text/javascript"></script>
 </div></div><div class="footer-col"><h4>کامیونیتی</h4><a href="#community">تالار گفتگو</a><a href="#games">بازی‌ها</a><a href="#events">رویدادها</a></div><div class="footer-col"><h4>دسترسی سریع</h4><a href="#home">صفحه اصلی</a><a href="#servers">سرورها</a><a href="#join">عضویت</a></div><div class="footer-col"><h4>بیشتر</h4><a href="#join">قوانین کامیونیتی</a><a href="#join">تماس با ما</a><a href="#join">پشتیبانی</a></div></div><div class="copyright"><span>© 2026 Bindex. تمامی حقوق محفوظ است.</span><span>ساخته‌شده برای گیمرهای ایرانی <i class="fa-solid fa-heart" style="color:#009ace"></i></span></div></div></footer>
 <div class="toast" id="toast">این بخش در نسخه نمایشی فعال نیست.</div>
-<script>
-<script>
 
+<script>
 const SUPABASE_URL = 'https://hlescjwegrtvwgtqsemm.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_9rR5jxE8CFQJMm-oy74wOw_VRtHgguY';
 
-// Supabase
 const supabaseClient = window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_KEY,
@@ -238,12 +236,33 @@ const supabaseClient = window.supabase.createClient(
   }
 );
 
-// Elements
 const authArea = document.getElementById('authArea');
 const menuBtn = document.getElementById('menuBtn');
 const nav = document.getElementById('nav');
 const toast = document.getElementById('toast');
-const searchInput = document.getElementById('searchInput');
+
+function showToast(message = 'این بخش در نسخه نمایشی فعال نیست.') {
+  if (!toast) return;
+
+  toast.textContent = message;
+  toast.classList.add('show');
+
+  clearTimeout(window.toastTimer);
+
+  window.toastTimer = setTimeout(() => {
+    toast.classList.remove('show');
+  }, 2300);
+}
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, char => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  })[char]);
+}
 
 // Mobile menu
 if (menuBtn && nav) {
@@ -263,23 +282,7 @@ if (menuBtn && nav) {
   });
 }
 
-// Toast
-let toastTimer;
-
-function showToast(message = 'این بخش در نسخه نمایشی فعال نیست.') {
-  if (!toast) return;
-
-  toast.textContent = message;
-  toast.classList.add('show');
-
-  clearTimeout(toastTimer);
-
-  toastTimer = setTimeout(() => {
-    toast.classList.remove('show');
-  }, 2300);
-}
-
-// Join buttons
+// Join links
 document.querySelectorAll('a[href="#join"]').forEach(a => {
   a.addEventListener('click', e => {
     e.preventDefault();
@@ -287,31 +290,7 @@ document.querySelectorAll('a[href="#join"]').forEach(a => {
   });
 });
 
-// Search
-if (searchInput) {
-  searchInput.addEventListener('input', e => {
-    const q = e.target.value.trim().toLowerCase();
-
-    document.querySelectorAll('.searchable').forEach(el => {
-      el.style.display = el.innerText.toLowerCase().includes(q)
-        ? ''
-        : 'none';
-    });
-  });
-}
-
-// Escape HTML
-function escapeHTML(value) {
-  return String(value).replace(/[&<>"']/g, char => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;'
-  })[char]);
-}
-
-// Update Navbar
+// Profile
 async function updateNavbar(user) {
   if (!authArea) return;
 
@@ -321,7 +300,6 @@ async function updateNavbar(user) {
          href="https://tutworks09-dev.github.io/Bindex/auth">
         ورود
       </a>
-
       <a class="btn btn-primary"
          href="https://tutworks09-dev.github.io/Bindex/auth">
         ثبت‌نام
@@ -351,21 +329,12 @@ async function updateNavbar(user) {
 
   authArea.innerHTML = `
     <div class="profile-menu" id="profileMenu">
-
-      <button
-        class="profile-trigger"
-        id="profileTrigger"
-        type="button"
-      >
+      <button class="profile-trigger" id="profileTrigger" type="button">
         <img
-          src="https://api.dicebear.com/9.x/initials/svg?seed=Bindex"
+          src="https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(username)}"
           alt="Profile"
         >
-
-        <span class="profile-name">
-          ${escapeHTML(username)}
-        </span>
-
+        <span class="profile-name">${escapeHTML(username)}</span>
         <i class="fa-solid fa-chevron-down"></i>
       </button>
 
@@ -375,23 +344,18 @@ async function updateNavbar(user) {
           خروج از حساب
         </button>
       </div>
-
     </div>
   `;
 
-  const profileMenu = document.getElementById('profileMenu');
-  const profileTrigger = document.getElementById('profileTrigger');
-  const logoutButton = document.getElementById('logoutButton');
-
-  profileTrigger.addEventListener('click', () => {
-    profileMenu.classList.toggle('open');
+  document.getElementById('profileTrigger').addEventListener('click', () => {
+    document.getElementById('profileMenu').classList.toggle('open');
   });
 
-  logoutButton.addEventListener('click', async () => {
+  document.getElementById('logoutButton').addEventListener('click', async () => {
     const { error } = await supabaseClient.auth.signOut();
 
     if (error) {
-      showToast('خروج انجام نشد. دوباره تلاش کن.');
+      showToast('خروج انجام نشد.');
       console.error(error);
       return;
     }
@@ -406,14 +370,13 @@ async function initializeAuth() {
 
   if (error) {
     console.error('Session error:', error);
-    await updateNavbar(null);
     return;
   }
 
   await updateNavbar(data.session?.user || null);
 }
 
-// Auth state listener
+// Auth listener
 supabaseClient.auth.onAuthStateChange((event, session) => {
   setTimeout(() => {
     updateNavbar(session?.user || null);
@@ -422,7 +385,6 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
 
 // Start
 initializeAuth();
+</script>
 
-</script>
-</script>
 </body></html>
