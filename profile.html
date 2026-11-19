@@ -558,7 +558,9 @@ async function loadProfile() {
 }
 
 // نمایش اطلاعات پروفایل
+
 function renderProfile(profile) {
+  // نام کاربر
   const name =
     profile.display_name ||
     profile.username ||
@@ -568,17 +570,9 @@ function renderProfile(profile) {
   const profileName = document.getElementById('profileName');
   const infoName = document.getElementById('infoName');
   const joinDate = document.getElementById('joinDate');
-  const avatar = document.getElementById('avatar');
-  const banner = document.getElementById('banner');
-  const verified = document.getElementById('verified');
 
-  if (profileName) {
-    profileName.textContent = name;
-  }
-
-  if (infoName) {
-    infoName.textContent = name;
-  }
+  if (profileName) profileName.textContent = name;
+  if (infoName) infoName.textContent = name;
 
   if (joinDate) {
     joinDate.textContent = profile.created_at
@@ -586,20 +580,51 @@ function renderProfile(profile) {
       : 'نامشخص';
   }
 
+  // آواتار
+  const avatar = document.getElementById('avatar');
+
   if (avatar) {
-    avatar.src = profile.avatar_url || '';
+    const oldImage = avatar.querySelector('img');
+    if (oldImage) oldImage.remove();
+
+    if (profile.avatar_url) {
+      const img = document.createElement('img');
+      img.src = profile.avatar_url;
+      img.alt = name + ' avatar';
+      img.onerror = () => img.remove();
+      avatar.appendChild(img);
+    }
   }
+
+  // بنر
+  const banner = document.getElementById('banner');
 
   if (banner) {
-    banner.style.backgroundImage = profile.banner_url
-      ? `url("${profile.banner_url}")`
-      : '';
+    if (profile.banner_url) {
+      banner.style.backgroundImage =
+        `url("${profile.banner_url}")`;
+      banner.style.backgroundSize = 'cover';
+      banner.style.backgroundPosition = 'center';
+
+      const pattern = banner.querySelector('.banner-pattern');
+      if (pattern) pattern.style.display = 'none';
+    } else {
+      banner.style.backgroundImage = 'none';
+
+      const pattern = banner.querySelector('.banner-pattern');
+      if (pattern) pattern.style.display = '';
+    }
   }
 
+  // نشان تأیید
+  const verified = document.getElementById('verified');
+
   if (verified) {
-    verified.hidden = !profile.is_verified;
+    verified.style.display =
+      profile.is_verified === true ? 'inline-block' : 'none';
   }
 }
+
 
 // فشرده‌سازی تصویر
 function compressImage(file, type) {
