@@ -564,42 +564,45 @@ pattern="[0-9]{8}"
     $(target).textContent = '';
   }
 
-  // تغییر تب ورود و ثبت‌نام
-  window.switchTab = function(mode) {
-    if (mode !== 'login' && mode !== 'register') return;
+// تغییر تب ورود و ثبت‌نام
+window.switchTab = function(mode) {
+  if (mode !== 'login' && mode !== 'register') return;
 
-    currentMode = mode;
-    const isRegister = mode === 'register';
+  currentMode = mode;
+  const isRegister = mode === 'register';
 
-    $('loginTab').classList.toggle('active', !isRegister);
-    $('registerTab').classList.toggle('active', isRegister);
+  $('loginTab').classList.toggle('active', !isRegister);
+  $('registerTab').classList.toggle('active', isRegister);
 
-    $('usernameField').style.display = isRegister ? 'block' : 'none';
-    $('confirmField').style.display = isRegister ? 'block' : 'none';
+  $('usernameField').style.display = isRegister ? 'block' : 'none';
+  $('confirmField').style.display = isRegister ? 'block' : 'none';
 
-    $('forgotButton').style.display = isRegister ? 'none' : 'block';
+  // نمایش کپچا در هر دو تب
+  $('captchaField').style.display = 'block';
 
-    $('username').required = isRegister;
-    $('confirmPassword').required = isRegister;
+  $('forgotButton').style.display = isRegister ? 'none' : 'block';
 
-    $('formTitle').textContent = isRegister
-      ? 'به ما بپیوند!'
-      : 'خوش برگشتی!';
+  $('username').required = isRegister;
+  $('confirmPassword').required = isRegister;
 
-    $('formSubtitle').textContent = isRegister
-      ? 'حساب BINDEX خودت رو بساز.'
-      : 'برای ورود به حساب خود اطلاعاتت رو وارد کن.';
+  $('formTitle').textContent = isRegister
+    ? 'به ما بپیوند!'
+    : 'خوش برگشتی!';
 
-    $('submitButton').innerHTML = isRegister
-      ? 'ساخت حساب کاربری <i class="fa-solid fa-arrow-left"></i>'
-      : 'ورود به BINDEX <i class="fa-solid fa-arrow-left"></i>';
+  $('formSubtitle').textContent = isRegister
+    ? 'حساب BINDEX خودت رو بساز.'
+    : 'برای ورود به حساب خود اطلاعاتت رو وارد کن.';
 
-    $('password').autocomplete = isRegister
-      ? 'new-password'
-      : 'current-password';
+  $('submitButton').innerHTML = isRegister
+    ? 'ساخت حساب کاربری <i class="fa-solid fa-arrow-left"></i>'
+    : 'ورود به BINDEX <i class="fa-solid fa-arrow-left"></i>';
 
-    clearMessage();
-  };
+  $('password').autocomplete = isRegister
+    ? 'new-password'
+    : 'current-password';
+
+  clearMessage();
+};
 
   window.togglePassword = function(id, button) {
     const input = $(id);
