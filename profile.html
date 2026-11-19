@@ -570,7 +570,12 @@ async function loadProfile() {
 
   } catch (error) {
     console.error('Profile error:', error);
-    alert('خطا در دریافت پروفایل: ' + error.message);
+    alert(
+  'خطا در دریافت پروفایل:\n' +
+  'Message: ' + error.message + '\n' +
+  'Code: ' + (error.code || '-') + '\n' +
+  'Status: ' + (error.status || '-')
+);
   }
 }
 
