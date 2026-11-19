@@ -683,9 +683,9 @@ pattern="[0-9]{8}"
       'success'
     );
 
-    setTimeout(() => {
-      window.location.href = SITE_URL + '/';
-    }, 1500);
+setTimeout(() => {
+  window.location.href = '../';
+}, 1500);
   }
 
   // ارسال فرم ورود یا ثبت‌نام
@@ -767,12 +767,32 @@ pattern="[0-9]{8}"
           'otpMessage'
         );
 
-      } else {
-        const { data, error } =
-          await supabaseClient.auth.signInWithPassword({
-            email,
-            password
-          });
+} else {
+  if (!arcaptchaToken) {
+    throw new Error('لطفاً ابتدا کپچا را تکمیل کن.');
+  }
+
+  const challengeId = arcaptchaToken;
+  arcaptchaToken = '';
+
+  const { data: captchaResult, error: captchaError } =
+    await supabaseClient.functions.invoke('verify-arcaptcha', {
+      body: { challenge_id: challengeId }
+    });
+
+  if (captchaError) {
+    throw new Error('خطا در بررسی کپچا: ' + captchaError.message);
+  }
+
+  if (!captchaResult || captchaResult.success !== true) {
+    throw new Error('تأیید کپچا ناموفق بود. دوباره تلاش کن.');
+  }
+
+  const { data, error } =
+    await supabaseClient.auth.signInWithPassword({
+      email,
+      password
+    });
 
         if (error) throw error;
 
