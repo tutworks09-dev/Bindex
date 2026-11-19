@@ -448,6 +448,78 @@ header {
     gap:9px;
   }
 }
+
+  
+/* Final profile layout correction */
+
+.identity {
+  margin-top: 0;
+  min-height: 125px;
+  align-items: flex-start;
+  padding-right: 28px;
+  gap: 15px;
+}
+
+.avatar {
+  transform: translateY(-55px);
+  margin-bottom: -55px;
+}
+
+.identity-name {
+  margin-top: 12px;
+  padding: 0;
+}
+
+/* Force follow button LEFT and statistics RIGHT */
+.profile-bottom {
+  direction: ltr;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.follow-btn {
+  order: 1;
+  flex-shrink: 0;
+}
+
+.stats {
+  order: 2;
+  direction: rtl;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+/* Mobile */
+@media(max-width:800px) {
+  .identity {
+    margin-top: 0;
+    min-height: 85px;
+    padding-right: 12px;
+  }
+
+  .avatar {
+    transform: translateY(-35px);
+    margin-bottom: -35px;
+  }
+
+  .identity-name {
+    margin-top: 10px;
+  }
+
+  .profile-bottom {
+    direction: ltr;
+    flex-wrap: nowrap;
+  }
+
+  .stats {
+    direction: rtl;
+    gap: 9px;
+  }
+}
+  
 </style>
 </head>
 
