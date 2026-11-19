@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{--accent:#009ACE;--accent2:#31b9e8;--bg:#080e14;--panel:#0e1821;--panel2:#111f2a;--line:rgba(255,255,255,.075);--muted:#91a3b1;--white:#f4f8fb}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 80% 0%,rgba(0,154,206,.16),transparent 34%),radial-gradient(ellipse at 5% 45%,rgba(0,154,206,.07),transparent 28%),var(--bg);color:var(--white);font-family:Vazirmatn,sans-serif;overflow-x:hidden}a{color:inherit;text-decoration:none}button,input{font:inherit}button{cursor:pointer}.wrap{width:min(1180px,calc(100% - 40px));margin:auto}
@@ -26,6 +27,93 @@ header{position:sticky;top:0;z-index:50;background:rgba(8,14,20,.84);backdrop-fi
 .cta{margin:45px 0 55px;padding:30px 35px;border-radius:22px;border:1px solid #1685a8;background:linear-gradient(110deg,#0b3549,#0d202c 70%);display:flex;align-items:center;justify-content:space-between;gap:20px;position:relative;overflow:hidden}.cta:after{content:"";position:absolute;width:240px;height:240px;border-radius:50%;background:#009ace25;filter:blur(65px);left:15%;top:-140px}.cta h2{margin:0 0 6px;font-size:21px;position:relative;z-index:1}.cta p{margin:0;color:#a8bdc9;font-size:12px;position:relative;z-index:1}.cta .btn{position:relative;z-index:1;white-space:nowrap}
 footer{border-top:1px solid var(--line);background:#060b10;padding:35px 0 22px}.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:30px}.footer-about p{max-width:290px;color:#8396a3;font-size:11px;line-height:2.1}.footer-col h4{font-size:12px;margin:4px 0 14px}.footer-col a{display:block;color:#8497a4;font-size:11px;margin:10px 0}.footer-col a:hover{color:#4bcaf0}.socials{display:flex;gap:9px;margin-top:15px}.socials a{width:34px;height:34px;border:1px solid var(--line);border-radius:10px;display:grid;place-items:center;color:#a8bdc9}.copyright{border-top:1px solid var(--line);margin-top:28px;padding-top:18px;color:#657986;font-size:10px;display:flex;justify-content:space-between;gap:10px}
 .toast{position:fixed;bottom:20px;left:20px;background:#102632;border:1px solid #009ace88;color:white;padding:12px 17px;border-radius:12px;font-size:12px;opacity:0;transform:translateY(15px);transition:.25s;z-index:100;pointer-events:none}.toast.show{opacity:1;transform:translateY(0)}
+.auth-area {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-right: auto;
+  flex-shrink: 0;
+}
+
+.auth-area .btn {
+  white-space: nowrap;
+}
+
+.profile-menu {
+  position: relative;
+}
+
+.profile-trigger {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 11px;
+  border: 1px solid var(--line);
+  background: #ffffff09;
+  border-radius: 13px;
+  color: white;
+  cursor: pointer;
+}
+
+.profile-trigger img {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-name {
+  font-size: 12px;
+  font-weight: 800;
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profile-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  min-width: 150px;
+  padding: 7px;
+  background: #111f2a;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  display: none;
+  z-index: 100;
+}
+
+.profile-menu.open .profile-dropdown {
+  display: block;
+}
+
+.profile-dropdown button {
+  width: 100%;
+  padding: 10px;
+  color: #ff7777;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  text-align: right;
+  font-size: 12px;
+}
+
+.profile-dropdown button:hover {
+  background: #ffffff0b;
+}
+
+@media(max-width:680px) {
+  .auth-area {
+    margin: 12px 0 0;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+  }
+
+  .profile-dropdown {
+    right: 0;
+    left: auto;
+  }
+}
 @media(max-width:900px){.nav{gap:15px}.search{width:165px}.hero-main{padding:35px}.games{grid-template-columns:repeat(2,1fr)}.content-grid{grid-template-columns:1fr  .75fr}.footer-grid{grid-template-columns:1.3fr 1fr 1fr}.footer-col:last-child{display:none}}
 @media(max-width:680px){.wrap{width:min(100% - 28px,560px)}.topline .wrap{justify-content:center}.topline .right-note{display:none}.head{height:65px;gap:10px}.brandname{font-size:23px}.logo{width:38px;height:38px}.mobile-toggle{display:block;margin-right:auto}.head-actions .search,.head-actions>.btn{display:none}.nav{display:none;position:absolute;top:65px;right:0;left:0;padding:12px 20px 18px;background:#0a141d;border-bottom:1px solid var(--line);flex-direction:column;align-items:stretch;gap:0}.nav.open{display:flex}.nav a{padding:12px 4px;border-bottom:1px solid var(--line)}.nav a.active:after{display:none}.hero{padding:25px 0 20px}.hero-grid{grid-template-columns:1fr;gap:12px}.hero-main{min-height:390px;padding:28px 22px;border-radius:21px}.hero h1{font-size:34px;margin-top:17px}.hero p{font-size:12px}.hero-meta{gap:17px;margin-top:25px}.hero-meta strong{font-size:17px}.hero-side{grid-template-columns:1fr 1fr;grid-template-rows:1fr;gap:10px}.feature{padding:16px;border-radius:17px}.feature-icon{width:37px;height:37px;margin-bottom:10px}.feature h3{font-size:13px}.feature p{font-size:10px}.feature a{font-size:10px}.section{padding:25px 0 15px}.section-head h2{font-size:19px}.section-head p{font-size:10px}.games{gap:9px}.game{padding:12px;gap:9px;border-radius:14px}.game-icon{width:40px;height:40px;font-size:17px}.game h3{font-size:11px}.game span{font-size:9px}.content-grid{grid-template-columns:1fr;gap:14px}.post{padding:12px;gap:11px}.post-art{width:82px;min-height:88px;font-size:24px}.post h3{font-size:13px}.post p{font-size:10px}.post-foot{font-size:9px;gap:9px}.side-stack{grid-template-columns:1fr 1fr}.panel{padding:14px}.panel h3{font-size:13px}.event{gap:8px}.datebox{width:38px;height:42px}.event strong{font-size:10px}.event span{font-size:9px}.server{font-size:10px}.status{font-size:8px;padding:4px 6px}.cta{margin:30px 0 35px;padding:23px 18px;align-items:flex-start;flex-direction:column;border-radius:18px}.cta h2{font-size:18px}.cta p{font-size:11px}.footer-grid{grid-template-columns:1fr 1fr;gap:20px}.footer-about{grid-column:1/-1}.footer-col:last-child{display:block}.copyright{font-size:9px;flex-direction:column}.view-all{font-size:10px}}
 @media(max-width:380px){.hero h1{font-size:29px}.hero-side{grid-template-columns:1fr}.feature{padding:14px}.side-stack{grid-template-columns:1fr}.games{grid-template-columns:1fr 1fr}}
@@ -35,8 +123,20 @@ footer{border-top:1px solid var(--line);background:#060b10;padding:35px 0 22px}.
 <div class="topline"><div class="wrap"><div class="live"><span class="dot"></span><span>دنیای گیمرهای ایرانی، یک‌جا</span></div><span class="right-note">بازی کن، ارتباط بگیر، پیشرفت کن</span></div></div>
 <header><div class="wrap head">
 <a class="brand" href="#"><span class="logo"><i class="fa-solid fa-gamepad"></i></span></a>
-<nav class="nav" id="nav"><a class="active" href="#home">خانه</a><a href="#games">بازی‌ها</a><a href="#community">کامیونیتی</a><a href="#events">رویدادها</a><a href="#servers">سرورها</a></nav>
-<div class="head-actions"><label class="search"><i class="fa-solid fa-magnifying-glass"></i><input id="searchInput" placeholder="جستجو در Bindex..."></label><a class="btn btn-primary" href="#community"><i class="fa-solid fa-users"></i> عضویت در کامیونیتی</a></div>
+<nav class="nav" id="nav">
+  <a class="active" href="#home">خانه</a>
+  <a href="#games">بازی‌ها</a>
+  <a href="#community">کامیونیتی</a>
+  <a href="#events">رویدادها</a>
+  <a href="#servers">سرورها</a>
+
+  <div class="auth-area" id="authArea">
+    <a class="btn btn-primary" href="https://tutworks09-dev.github.io/Bindex/auth.html">
+   ورود / ثبت‌نام
+    </a>
+  </div>
+</nav>
+<div class="head-actions"><label class="search"><i class="fa-solid fa-magnifying-glass"></i><input id="searchInput" placeholder="جستجو در Bindex..."></label></div>
 <button class="mobile-toggle" id="menuBtn" aria-label="باز کردن منو"><i class="fa-solid fa-bars"></i></button>
 </div></header>
 <main id="home">
@@ -68,11 +168,187 @@ footer{border-top:1px solid var(--line);background:#060b10;padding:35px 0 22px}.
 </div></div><div class="footer-col"><h4>کامیونیتی</h4><a href="#community">تالار گفتگو</a><a href="#games">بازی‌ها</a><a href="#events">رویدادها</a></div><div class="footer-col"><h4>دسترسی سریع</h4><a href="#home">صفحه اصلی</a><a href="#servers">سرورها</a><a href="#join">عضویت</a></div><div class="footer-col"><h4>بیشتر</h4><a href="#join">قوانین کامیونیتی</a><a href="#join">تماس با ما</a><a href="#join">پشتیبانی</a></div></div><div class="copyright"><span>© 2026 Bindex. تمامی حقوق محفوظ است.</span><span>ساخته‌شده برای گیمرهای ایرانی <i class="fa-solid fa-heart" style="color:#009ace"></i></span></div></div></footer>
 <div class="toast" id="toast">این بخش در نسخه نمایشی فعال نیست.</div>
 <script>
-const menuBtn=document.getElementById('menuBtn'),nav=document.getElementById('nav'),toast=document.getElementById('toast');
-menuBtn.addEventListener('click',()=>{nav.classList.toggle('open');menuBtn.innerHTML=nav.classList.contains('open')?'<i class="fa-solid fa-xmark"></i>':'<i class="fa-solid fa-bars"></i>'});
-nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{nav.classList.remove('open');menuBtn.innerHTML='<i class="fa-solid fa-bars"></i>'}));
-let toastTimer;function showToast(){toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),2300)}
-document.querySelectorAll('a[href="#join"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();showToast()}));
-document.getElementById('searchInput').addEventListener('input',e=>{const q=e.target.value.trim().toLowerCase();document.querySelectorAll('.searchable').forEach(el=>el.style.display=el.innerText.toLowerCase().includes(q)?'':'none')});
+<script>
+const SUPABASE_URL = 'https://hlescjwegrtvwgtqsemm.supabase.co';
+
+const SUPABASE_KEY = 'sb_publishable_9rR5jxE8CFQJMm-oy74wOw_VRtHgguY';
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY,
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      storage: window.localStorage
+    }
+  }
+);
+
+const menuBtn = document.getElementById('menuBtn');
+const nav = document.getElementById('nav');
+const toast = document.getElementById('toast');
+const authArea = document.getElementById('authArea');
+
+menuBtn.addEventListener('click', () => {
+  nav.classList.toggle('open');
+
+  menuBtn.innerHTML = nav.classList.contains('open')
+    ? '<i class="fa-solid fa-xmark"></i>'
+    : '<i class="fa-solid fa-bars"></i>';
+});
+
+nav.querySelectorAll('a').forEach(a => {
+  a.addEventListener('click', () => {
+    nav.classList.remove('open');
+    menuBtn.innerHTML = '<i class="fa-solid fa-bars"></i>';
+  });
+});
+
+let toastTimer;
+
+function showToast(message = 'این بخش در نسخه نمایشی فعال نیست.') {
+  toast.textContent = message;
+  toast.classList.add('show');
+
+  clearTimeout(toastTimer);
+
+  toastTimer = setTimeout(() => {
+    toast.classList.remove('show');
+  }, 2300);
+}
+
+document.querySelectorAll('a[href="#join"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    showToast();
+  });
+});
+
+document.getElementById('searchInput').addEventListener('input', e => {
+  const q = e.target.value.trim().toLowerCase();
+
+  document.querySelectorAll('.searchable').forEach(el => {
+    el.style.display = el.innerText.toLowerCase().includes(q)
+      ? ''
+      : 'none';
+  });
+});
+
+// Profile
+async function updateNavbar(user) {
+  if (!user) {
+    authArea.innerHTML = `
+      <a class="btn btn-soft"
+         href="https://tutworks09-dev.github.io/Bindex/auth">
+        ورود
+      </a>
+
+      <a class="btn btn-primary"
+         href="https://tutworks09-dev.github.io/Bindex/auth">
+        ثبت‌نام
+      </a>
+    `;
+
+    return;
+  }
+
+  let username =
+    user.user_metadata?.username ||
+    user.email?.split('@')[0] ||
+    'کاربر';
+
+  const { data, error } = await supabaseClient
+    .from('profiles')
+    .select('username')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  if (error) {
+    console.error('Profile error:', error.message);
+  }
+
+  if (data?.username) {
+    username = data.username;
+  }
+
+  authArea.innerHTML = `
+    <div class="profile-menu" id="profileMenu">
+
+      <button class="profile-trigger" id="profileTrigger">
+        <img
+          src="https://api.dicebear.com/9.x/initials/svg?seed=Bindex"
+          alt="Profile"
+        >
+
+        <span class="profile-name">
+          ${escapeHTML(username)}
+        </span>
+
+        <i class="fa-solid fa-chevron-down"></i>
+      </button>
+
+      <div class="profile-dropdown">
+        <button id="logoutButton">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          خروج از حساب
+        </button>
+      </div>
+
+    </div>
+  `;
+
+  const profileMenu = document.getElementById('profileMenu');
+
+  document.getElementById('profileTrigger').addEventListener('click', () => {
+    profileMenu.classList.toggle('open');
+  });
+
+  document.getElementById('logoutButton').addEventListener('click', async () => {
+    const { error } = await supabaseClient.auth.signOut();
+
+    if (error) {
+      showToast('خروج انجام نشد. دوباره تلاش کن.');
+      return;
+    }
+
+    showToast('با موفقیت خارج شدی!');
+    updateNavbar(null);
+  });
+}
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, char => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  })[char]);
+}
+
+// Restore session
+async function initializeAuth() {
+  const { data, error } = await supabaseClient.auth.getSession();
+
+  if (error) {
+    console.error(error);
+    updateNavbar(null);
+    return;
+  }
+
+  await updateNavbar(data.session?.user || null);
+}
+
+// Listen for login/logout
+supabaseClient.auth.onAuthStateChange((event, session) => {
+  setTimeout(() => {
+    updateNavbar(session?.user || null);
+  }, 0);
+});
+
+initializeAuth();
+</script>
 </script>
 </body></html>
