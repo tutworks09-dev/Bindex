@@ -3,8 +3,8 @@
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>پروفایل | BINDEX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BINDEX | Profile</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -14,16 +14,16 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: Vazirmatn, sans-serif;
       background: #080e14;
       color: #edf6fc;
+      font-family: Vazirmatn, sans-serif;
       min-height: 100vh;
     }
 
     header {
       height: 65px;
-      background: #0d1720;
-      border-bottom: 1px solid #1c303e;
+      background: #0e1821;
+      border-bottom: 1px solid #203441;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -31,105 +31,116 @@
     }
 
     .logo {
-      color: #19a9df;
+      color: #12a8df;
       font-size: 25px;
       font-weight: 800;
-      letter-spacing: 1px;
     }
 
-    .home {
+    header a {
       color: #b8d3e2;
       text-decoration: none;
-      font-size: 14px;
     }
 
     .container {
-      max-width: 1000px;
+      max-width: 950px;
       width: 92%;
       margin: 35px auto;
     }
 
-    .profile-card {
+    .card {
       background: #0e1821;
-      border: 1px solid #1c303e;
+      border: 1px solid #203441;
       border-radius: 18px;
       overflow: hidden;
     }
 
     .banner {
-      height: 280px;
+      height: 260px;
       background: linear-gradient(120deg, #075276, #071b35);
-      position: relative;
       background-size: cover;
       background-position: center;
     }
 
-    .profile-info {
-      padding: 0 30px 28px;
-      position: relative;
+    .content {
+      padding: 0 28px 28px;
     }
 
     .avatar {
-      width: 125px;
-      height: 125px;
+      width: 120px;
+      height: 120px;
       border-radius: 50%;
       border: 6px solid #0e1821;
-      background: #152b3a;
+      background: #193344;
       object-fit: cover;
-      margin-top: -65px;
+      margin-top: -62px;
       position: relative;
-      display: block;
     }
 
-    .name-row {
+    .name {
       display: flex;
       align-items: center;
       gap: 9px;
-      margin-top: 12px;
+      margin-top: 10px;
+      font-size: 24px;
+      font-weight: 800;
       flex-wrap: wrap;
     }
 
-    .display-name {
-      font-size: 24px;
-      font-weight: 800;
-    }
-
     .verified {
-      color: #20b8ed;
-      font-size: 19px;
+      color: #1da9e0;
       display: none;
+      font-size: 19px;
     }
 
     .username {
-      color: #8ca9ba;
+      color: #89a6b8;
       direction: ltr;
       text-align: right;
-      margin-top: 4px;
-      font-size: 14px;
+      margin-top: 5px;
     }
 
-    .profile-id {
-      color: #6f8b9d;
+    .id {
+      color: #708c9e;
+      font-size: 12px;
       direction: ltr;
       text-align: right;
-      font-size: 12px;
-      margin-top: 10px;
+      margin-top: 9px;
       overflow-wrap: anywhere;
     }
 
-    .status {
-      color: #6f8b9d;
-      font-size: 13px;
-      margin-top: 18px;
+    .details {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 25px;
     }
 
-    .status.error { color: #ff7777; }
+    .item {
+      background: #12212c;
+      border: 1px solid #203441;
+      border-radius: 12px;
+      padding: 15px;
+      min-width: 0;
+    }
 
-    .loading {
+    .label {
+      color: #829eaf;
+      font-size: 12px;
+      margin-bottom: 7px;
+    }
+
+    .value {
+      overflow-wrap: anywhere;
+      font-size: 14px;
+    }
+
+    #loading, #error {
       text-align: center;
-      padding: 70px 15px;
+      padding: 60px 15px;
       color: #9bb7c8;
     }
+
+    #error { color: #ff7777; }
 
     .spinner {
       width: 35px;
@@ -145,39 +156,14 @@
       to { transform: rotate(360deg); }
     }
 
-    .details {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-top: 25px;
-    }
-
-    .detail {
-      background: #101f2a;
-      border: 1px solid #1c3443;
-      border-radius: 12px;
-      padding: 15px;
-      min-width: 0;
-    }
-
-    .detail-label {
-      color: #829eaf;
-      font-size: 12px;
-      margin-bottom: 7px;
-    }
-
-    .detail-value {
-      font-size: 14px;
-      overflow-wrap: anywhere;
-    }
+    [hidden] { display: none !important; }
 
     @media(max-width: 600px) {
       .banner { height: 190px; }
-      .profile-info { padding: 0 18px 22px; }
-      .avatar { width: 105px; height: 105px; margin-top: -53px; }
-      .display-name { font-size: 21px; }
+      .content { padding: 0 18px 22px; }
+      .avatar { width: 105px; height: 105px; }
+      .name { font-size: 21px; }
       .details { grid-template-columns: 1fr; }
-      .container { margin-top: 20px; }
     }
   </style>
 </head>
@@ -186,181 +172,161 @@
 
 <header>
   <div class="logo">BINDEX</div>
-  <a class="home" href="./">صفحه اصلی <i class="fa-solid fa-arrow-left"></i></a>
+  <a href="./">صفحه اصلی <i class="fa-solid fa-arrow-left"></i></a>
 </header>
 
 <main class="container">
 
-  <div id="loading" class="loading">
+  <div id="loading">
     <div class="spinner"></div>
     در حال دریافت پروفایل...
   </div>
 
-  <div id="errorBox" class="loading status error" hidden></div>
+  <div id="error" hidden></div>
 
-  <section id="profileCard" class="profile-card" hidden>
+  <section id="profile" class="card" hidden>
     <div id="banner" class="banner"></div>
 
-    <div class="profile-info">
-      <img id="avatar" class="avatar" alt="Profile avatar">
+    <div class="content">
+      <img id="avatar" class="avatar" alt="Avatar">
 
-      <div class="name-row">
-        <h1 id="displayName" class="display-name"></h1>
-        <i id="verified" class="fa-solid fa-circle-check verified"
-           title="حساب تأیید شده"></i>
+      <div class="name">
+        <span id="displayName"></span>
+        <i id="verified" class="fa-solid fa-circle-check verified"></i>
       </div>
 
       <div id="username" class="username"></div>
-      <div id="profileId" class="profile-id"></div>
+      <div id="userId" class="id"></div>
 
       <div class="details">
-        <div class="detail">
-          <div class="detail-label">نام نمایشی</div>
-          <div id="detailName" class="detail-value">-</div>
+        <div class="item">
+          <div class="label">نام نمایشی</div>
+          <div id="dName" class="value"></div>
         </div>
 
-        <div class="detail">
-          <div class="detail-label">نام کاربری</div>
-          <div id="detailUsername" class="detail-value">-</div>
+        <div class="item">
+          <div class="label">نام کاربری</div>
+          <div id="dUsername" class="value"></div>
         </div>
 
-        <div class="detail">
-          <div class="detail-label">شناسه کاربر (ID)</div>
-          <div id="detailId" class="detail-value">-</div>
+        <div class="item">
+          <div class="label">شناسه کاربر</div>
+          <div id="dId" class="value"></div>
         </div>
 
-        <div class="detail">
-          <div class="detail-label">وضعیت حساب</div>
-          <div id="detailVerified" class="detail-value">-</div>
+        <div class="item">
+          <div class="label">وضعیت تأیید</div>
+          <div id="dVerified" class="value"></div>
         </div>
 
-        <div class="detail">
-          <div class="detail-label">تاریخ عضویت</div>
-          <div id="createdAt" class="detail-value">-</div>
+        <div class="item">
+          <div class="label">تاریخ عضویت</div>
+          <div id="dDate" class="value"></div>
         </div>
       </div>
-
-      <div id="status" class="status"></div>
     </div>
   </section>
 
 </main>
 
 <script>
-  const SUPABASE_URL = 'https://hlescjwegrtvwgtqsemm.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_9rRjxE8CFQJMm-oy74wOw_VRtHgguY';
+'use strict';
 
-  const supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY,
-    {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true,
-        storage: window.localStorage
-      }
-    }
-  );
+// BINDEX SUPABASE CONFIG
+const SUPABASE_URL = 'https://hlescjwegrtvwgtqsemm.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_9rRjxE8CFQJMm-oy74wOw_VRtHgguY';
 
-  const $ = (id) => document.getElementById(id);
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
-  function showError(message) {
-    $('loading').hidden = true;
-    $('profileCard').hidden = true;
-    $('errorBox').hidden = false;
-    $('errorBox').textContent = message;
+const el = id => document.getElementById(id);
+
+function showError(message) {
+  el('loading').hidden = true;
+  el('profile').hidden = true;
+  el('error').hidden = false;
+  el('error').textContent = message;
+}
+
+function dateFormat(value) {
+  if (!value) return 'نامشخص';
+
+  const date = new Date(value);
+
+  if (isNaN(date.getTime())) return 'نامشخص';
+
+  return date.toLocaleDateString('fa-IR');
+}
+
+function renderProfile(user) {
+  const username = user.username || 'unknown';
+  const displayName = user.display_name || username;
+
+  el('displayName').textContent = displayName;
+  el('username').textContent = '@' + username;
+  el('userId').textContent = 'ID: ' + user.id;
+
+  el('dName').textContent = displayName;
+  el('dUsername').textContent = username;
+  el('dId').textContent = user.id;
+  el('dDate').textContent = dateFormat(user.created_at);
+
+  const verified = user.is_verified === true;
+
+  el('verified').style.display = verified ? 'inline-block' : 'none';
+  el('dVerified').textContent = verified ? 'تأیید شده' : 'تأیید نشده';
+
+  el('avatar').src = user.avatar_url ||
+    'https://ui-avatars.com/api/?name=' +
+    encodeURIComponent(username) +
+    '&background=123247&color=ffffff&size=256';
+
+  if (user.banner_url) {
+    el('banner').style.backgroundImage =
+      'url("' + user.banner_url + '")';
   }
 
-  function formatDate(dateValue) {
-    if (!dateValue) return 'نامشخص';
+  el('loading').hidden = true;
+  el('error').hidden = true;
+  el('profile').hidden = false;
+}
 
-    const date = new Date(dateValue);
+async function loadProfile() {
+  try {
+    const params = new URLSearchParams(location.search);
+    const username = params.get('u');
 
-    if (Number.isNaN(date.getTime())) return 'نامشخص';
+    if (!username || !username.trim()) {
+      showError('نام کاربری در آدرس وجود ندارد.');
+      return;
+    }
 
-    return date.toLocaleDateString('fa-IR');
+    const { data, error } = await supabaseClient
+      .from('profiles')
+      .select('*')
+      .ilike('username', username.trim())
+      .maybeSingle();
+
+    if (error) {
+      throw error;
+    }
+
+    if (!data) {
+      showError('این کاربر در BINDEX پیدا نشد.');
+      return;
+    }
+
+    renderProfile(data);
+
+  } catch (error) {
+    console.error('BINDEX Profile:', error);
+    showError('خطا در دریافت پروفایل: ' + error.message);
   }
+}
 
-  function renderProfile(profile) {
-    $('displayName').textContent =
-      profile.display_name || profile.username || 'کاربر BINDEX';
-
-    $('username').textContent = '@' + profile.username;
-    $('profileId').textContent = 'ID: ' + profile.id;
-
-    $('detailName').textContent =
-      profile.display_name || 'ثبت نشده';
-
-    $('detailUsername').textContent =
-      profile.username || 'نامشخص';
-
-    $('detailId').textContent = profile.id || 'نامشخص';
-
-    $('detailVerified').textContent =
-      profile.is_verified === true ? 'تأیید شده' : 'تأیید نشده';
-
-    $('createdAt').textContent = formatDate(profile.created_at);
-
-    if (profile.is_verified === true) {
-      $('verified').style.display = 'inline-block';
-    } else {
-      $('verified').style.display = 'none';
-    }
-
-    if (profile.avatar_url) {
-      $('avatar').src = profile.avatar_url;
-    } else {
-      $('avatar').src =
-        'https://ui-avatars.com/api/?name=' +
-        encodeURIComponent(profile.username || 'BINDEX') +
-        '&background=123247&color=ffffff&size=256';
-    }
-
-    if (profile.banner_url) {
-      $('banner').style.backgroundImage =
-        `url("${profile.banner_url}")`;
-    }
-
-    $('loading').hidden = true;
-    $('errorBox').hidden = true;
-    $('profileCard').hidden = false;
-  }
-
-  async function loadProfile() {
-    try {
-      const params = new URLSearchParams(window.location.search);
-      const requestedUsername = params.get('u');
-
-      if (!requestedUsername || !requestedUsername.trim()) {
-        showError('نام کاربری در آدرس مشخص نشده است.');
-        return;
-      }
-
-      const username = requestedUsername.trim();
-
-      const { data: profile, error } = await supabaseClient
-        .from('profiles')
-        .select('*')
-        .ilike('username', username)
-        .maybeSingle();
-
-      if (error) throw error;
-
-      if (!profile) {
-        showError('کاربری با نام کاربری «' + username + '» پیدا نشد.');
-        return;
-      }
-
-      renderProfile(profile);
-
-    } catch (error) {
-      console.error('BINDEX profile error:', error);
-      showError('خطا در دریافت پروفایل: ' + error.message);
-    }
-  }
-
-  loadProfile();
+loadProfile();
 </script>
 
 </body>
