@@ -145,6 +145,29 @@ footer{border-top:1px solid var(--line);background:#060b10;padding:35px 0 22px}.
     justify-content: flex-start;
   }
 }
+
+@media(max-width:680px) {
+  header {
+    position: sticky;
+    z-index: 999;
+  }
+
+  .head {
+    position: relative;
+  }
+
+  .nav.open {
+    display: flex !important;
+    z-index: 1000;
+  }
+
+  .mobile-toggle {
+    position: relative;
+    z-index: 1001;
+    pointer-events: auto;
+  }
+}
+  
 </style>
 </head>
 <body>
@@ -165,7 +188,13 @@ footer{border-top:1px solid var(--line);background:#060b10;padding:35px 0 22px}.
   </div>
 </nav>
 <div class="head-actions"></label></div>
-<button class="mobile-toggle" id="menuBtn" aria-label="باز کردن منو"><i class="fa-solid fa-bars"></i></button>
+<button
+  class="mobile-toggle"
+  id="menuBtn"
+  type="button"
+  aria-label="باز کردن منو"
+  aria-expanded="false"
+><i class="fa-solid fa-bars"></i></button>
 </div></header>
 <main id="home">
 <section class="hero"><div class="wrap hero-grid">
@@ -214,17 +243,34 @@ const supabaseClient = window.supabase.createClient(
   }
 );
 
+const authArea = document.getElementById('authArea');
+
 const menuBtn = document.getElementById('menuBtn');
 const nav = document.getElementById('nav');
 const toast = document.getElementById('toast');
-const authArea = document.getElementById('authArea');
 
-menuBtn.addEventListener('click', () => {
-  nav.classList.toggle('open');
+menuBtn.addEventListener('click', function(e) {
+  e.preventDefault();
+  e.stopPropagation();
 
-  menuBtn.innerHTML = nav.classList.contains('open')
+  const isOpen = nav.classList.toggle('open');
+
+  menuBtn.innerHTML = isOpen
     ? '<i class="fa-solid fa-xmark"></i>'
     : '<i class="fa-solid fa-bars"></i>';
+
+  menuBtn.setAttribute('aria-expanded', String(isOpen));
+});
+
+nav.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', function() {
+    nav.classList.remove('open');
+
+    menuBtn.innerHTML =
+      '<i class="fa-solid fa-bars"></i>';
+
+    menuBtn.setAttribute('aria-expanded', 'false');
+  });
 });
 
 nav.querySelectorAll('a').forEach(a => {
