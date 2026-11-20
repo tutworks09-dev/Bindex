@@ -1148,13 +1148,6 @@ function openEditModal() {
 
   document.getElementById('editModal').hidden = false;
 }
-  document.getElementById('editWebsite').value =
-  currentProfile.website_url || '';
-
-document.querySelectorAll('[name="favoriteGame"]').forEach(input => {
-  input.checked = (currentProfile.favorite_games || [])
-    .includes(input.value);
-});
 
 // بستن پنجره
 function closeEditModal() {
