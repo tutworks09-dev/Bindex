@@ -1,0 +1,826 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080e14">
+<title>نمایش پست | Bindex</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root {
+  --accent: #009ACE;
+  --accent2: #31b9e8;
+  --bg: #080e14;
+  --panel: #0e1821;
+  --panel2: #111f2a;
+  --line: rgba(255,255,255,.075);
+  --muted: #91a3b1;
+  --white: #f4f8fb;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 80% 0%,rgba(0,154,206,.16),transparent 34%),
+    radial-gradient(ellipse at 5% 45%,rgba(0,154,206,.07),transparent 28%),
+    var(--bg);
+  color: var(--white);
+  font-family: Vazirmatn,sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+.wrap {
+  width: min(900px,calc(100% - 36px));
+  margin: auto;
+}
+
+body:before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: .24;
+  background-image:
+    linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(to bottom,#000,transparent 80%);
+  z-index: -1;
+}
+
+/* Header */
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(8,14,20,.88);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--line);
+}
+
+.header-inner {
+  height: 74px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  background: linear-gradient(145deg,#10b8ec,#0075a7);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 8px 25px #009ace42;
+  font-size: 20px;
+}
+
+.brandname {
+  font: 700 25px "Space Grotesk",sans-serif;
+  letter-spacing: -1.3px;
+}
+
+.brandname b {
+  color: var(--accent2);
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: #aebdc8;
+  font-size: 12px;
+  transition: .2s;
+}
+
+.back-link:hover {
+  color: var(--accent2);
+}
+
+/* Main */
+
+main {
+  padding: 38px 0 65px;
+}
+
+.article {
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: linear-gradient(145deg,#111e28,#0c151d);
+  overflow: hidden;
+  box-shadow: 0 20px 65px #0003;
+}
+
+.article-image {
+  width: 100%;
+  max-height: 460px;
+  aspect-ratio: 16 / 8;
+  background: linear-gradient(140deg,#0b6282,#102b3b);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  color: #8ce4ff;
+  font-size: 65px;
+}
+
+.article-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.article-content {
+  padding: 30px;
+}
+
+.category {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px;
+  border: 1px solid #009ace55;
+  background: #009ace18;
+  border-radius: 30px;
+  color: #67d5f7;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.article h1 {
+  font-size: clamp(23px,4vw,34px);
+  font-weight: 900;
+  line-height: 1.8;
+  margin: 17px 0 12px;
+  overflow-wrap: anywhere;
+}
+
+.description {
+  color: #a9bac5;
+  font-size: 14px;
+  line-height: 2.2;
+  margin: 0 0 23px;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+  padding: 17px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  color: #91a3b1;
+  font-size: 11px;
+}
+
+.meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.meta-item i {
+  color: var(--accent2);
+}
+
+.author-link {
+  color: #dce8ef;
+  font-weight: 700;
+}
+
+.author-link:hover {
+  color: var(--accent2);
+}
+
+/* Post body */
+
+.post-content {
+  padding: 28px 0;
+  color: #d2dce3;
+  font-size: 14px;
+  line-height: 2.5;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.post-content:empty {
+  display: none;
+}
+
+/* Actions */
+
+.article-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding-top: 19px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+
+.like-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 17px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: #ffffff08;
+  color: #b6c5cf;
+  font-size: 12px;
+  font-weight: 800;
+  transition: .2s;
+}
+
+.like-button:hover {
+  border-color: #ff668566;
+  color: #ff6685;
+}
+
+.like-button.liked {
+  color: #ff6685;
+  background: #ff668511;
+  border-color: #ff668544;
+}
+
+.like-button:disabled {
+  opacity: .6;
+  cursor: wait;
+}
+
+.back-posts {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 16px;
+  border-radius: 12px;
+  background: #009ace18;
+  color: #67d5f7;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* Loading / Error */
+
+.state-box {
+  padding: 65px 20px;
+  text-align: center;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: #ffffff05;
+  color: var(--muted);
+}
+
+.state-box i {
+  font-size: 30px;
+  color: var(--accent2);
+  margin-bottom: 17px;
+}
+
+.state-box h2 {
+  color: white;
+  font-size: 20px;
+  margin: 8px 0;
+}
+
+.state-box p {
+  font-size: 12px;
+  line-height: 2;
+}
+
+.state-box a {
+  display: inline-flex;
+  margin-top: 12px;
+  padding: 11px 17px;
+  border-radius: 11px;
+  background: var(--accent);
+  color: white;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background: #102632;
+  border: 1px solid #009ace88;
+  color: white;
+  padding: 12px 17px;
+  border-radius: 12px;
+  font-size: 12px;
+  opacity: 0;
+  transform: translateY(15px);
+  transition: .25s;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+footer {
+  border-top: 1px solid var(--line);
+  background: #060b10;
+  padding: 22px 0;
+  text-align: center;
+  color: #657986;
+  font-size: 10px;
+}
+
+@media(max-width:600px) {
+  main {
+    padding: 23px 0 45px;
+  }
+
+  .header-inner {
+    height: 65px;
+  }
+
+  .logo {
+    width: 38px;
+    height: 38px;
+  }
+
+  .article {
+    border-radius: 17px;
+  }
+
+  .article-image {
+    aspect-ratio: 16 / 10;
+  }
+
+  .article-content {
+    padding: 20px 16px;
+  }
+
+  .description {
+    font-size: 12px;
+  }
+
+  .post-content {
+    font-size: 13px;
+    line-height: 2.3;
+  }
+
+  .meta {
+    gap: 13px;
+  }
+
+  .article-actions {
+    align-items: stretch;
+  }
+
+  .like-button,
+  .back-posts {
+    justify-content: center;
+    flex: 1;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="wrap header-inner">
+    <a class="brand" href="index.html">
+      <span class="logo">
+        <i class="fa-solid fa-gamepad"></i>
+      </span>
+      <span class="brandname">Bindex<b>.</b></span>
+    </a>
+
+    <a class="back-link" href="posts.html">
+      همه پست‌ها
+      <i class="fa-solid fa-arrow-left"></i>
+    </a>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+
+    <div id="pageState" class="state-box">
+      <i class="fa-solid fa-spinner fa-spin"></i>
+      <h2>در حال دریافت پست...</h2>
+      <p>یک لحظه صبر کن.</p>
+    </div>
+
+    <article class="article" id="article" hidden>
+
+      <div class="article-image" id="articleImage">
+        <i class="fa-solid fa-gamepad"></i>
+      </div>
+
+      <div class="article-content">
+
+        <span class="category" id="category">
+          <i class="fa-solid fa-hashtag"></i>
+          عمومی
+        </span>
+
+        <h1 id="title"></h1>
+
+        <p class="description" id="description"></p>
+
+        <div class="meta">
+
+          <a class="meta-item author-link" id="authorLink" href="#">
+            <i class="fa-regular fa-user"></i>
+            <span id="author"></span>
+          </a>
+
+          <span class="meta-item">
+            <i class="fa-regular fa-calendar"></i>
+            <span id="date"></span>
+          </span>
+
+          <span class="meta-item">
+            <i class="fa-regular fa-eye"></i>
+            <span id="views">۰</span>
+            بازدید
+          </span>
+
+        </div>
+
+        <div class="post-content" id="content"></div>
+
+        <div class="article-actions">
+
+          <button class="like-button" id="likeButton" type="button">
+            <i class="fa-regular fa-heart"></i>
+            <span id="likeCount">۰</span>
+            پسندیدن
+          </button>
+
+          <a class="back-posts" href="posts.html">
+            <i class="fa-solid fa-arrow-right"></i>
+            بازگشت به پست‌ها
+          </a>
+
+        </div>
+      </div>
+    </article>
+
+  </div>
+</main>
+
+<footer>
+  © 2026 Bindex. تمامی حقوق محفوظ است.
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL = 'https://hlescjwegrtvwgtqsemm.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_9rR5jxE8CFQJMm-oy74wOw_VRtHgguY';
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+const pageState = document.getElementById('pageState');
+const article = document.getElementById('article');
+const likeButton = document.getElementById('likeButton');
+const toast = document.getElementById('toast');
+
+const postId = new URLSearchParams(location.search).get('id');
+
+let currentUser = null;
+let currentPost = null;
+let isLiked = false;
+let isLoadingLike = false;
+
+function escapeHTML(value) {
+  return String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  })[char]);
+}
+
+function showToast(message) {
+  toast.textContent = message;
+  toast.classList.add('show');
+
+  clearTimeout(window.toastTimer);
+
+  window.toastTimer = setTimeout(() => {
+    toast.classList.remove('show');
+  }, 2500);
+}
+
+function formatDate(value) {
+  if (!value) return 'نامشخص';
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) return 'نامشخص';
+
+  return new Intl.DateTimeFormat('fa-IR', {
+    dateStyle: 'long'
+  }).format(date);
+}
+
+function safeImageURL(value) {
+  if (!value) return '';
+
+  try {
+    const url = new URL(value);
+
+    if (!['http:', 'https:'].includes(url.protocol)) {
+      return '';
+    }
+
+    return url.href;
+  } catch {
+    return '';
+  }
+}
+
+function showError(title, message) {
+  pageState.innerHTML = `
+    <i class="fa-solid fa-circle-exclamation"></i>
+    <h2>${escapeHTML(title)}</h2>
+    <p>${escapeHTML(message)}</p>
+    <a href="posts.html">
+      بازگشت به پست‌ها
+      <i class="fa-solid fa-arrow-left"></i>
+    </a>
+  `;
+
+  pageState.hidden = false;
+  article.hidden = true;
+}
+
+function renderLike() {
+  likeButton.classList.toggle('liked', isLiked);
+
+  likeButton.innerHTML = `
+    <i class="${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+    <span id="likeCount">
+      ${Number(currentPost.likes_count || 0).toLocaleString('fa-IR')}
+    </span>
+    ${isLiked ? 'پسندیده‌شده' : 'پسندیدن'}
+  `;
+}
+
+async function loadLikeStatus() {
+  if (!currentUser || !currentPost) {
+    isLiked = false;
+    renderLike();
+    return;
+  }
+
+  const { data, error } = await supabaseClient
+    .from('post_likes')
+    .select('id')
+    .eq('post_id', currentPost.id)
+    .eq('user_id', currentUser.id)
+    .maybeSingle();
+
+  if (error) {
+    console.error('Like status error:', error.message);
+    return;
+  }
+
+  isLiked = !!data;
+  renderLike();
+}
+
+async function loadPost() {
+  if (!postId) {
+    showError('پست پیدا نشد!', 'شناسه پست در آدرس صفحه وجود ندارد.');
+    return;
+  }
+
+  const { data: sessionData } =
+    await supabaseClient.auth.getSession();
+
+  currentUser = sessionData.session?.user || null;
+
+  const { data: post, error } = await supabaseClient
+    .from('posts')
+    .select(`
+      id,
+      author_id,
+      title,
+      description,
+      content,
+      image_url,
+      category,
+      status,
+      views,
+      likes_count,
+      created_at
+    `)
+    .eq('id', postId)
+    .eq('status', 'approved')
+    .maybeSingle();
+
+  if (error) {
+    console.error('Post loading error:', error.message);
+    showError('خطا در دریافت پست', 'دریافت اطلاعات پست ناموفق بود.');
+    return;
+  }
+
+  if (!post) {
+    showError('پست پیدا نشد!', 'این پست وجود ندارد یا هنوز تأیید نشده است.');
+    return;
+  }
+
+  currentPost = post;
+
+  // Increase view count
+  const { error: viewError } = await supabaseClient.rpc(
+    'increment_post_view',
+    { p_post_id: post.id }
+  );
+
+  if (viewError) {
+    console.error('View count error:', viewError.message);
+  } else {
+    currentPost.views = Number(currentPost.views || 0) + 1;
+  }
+
+  // Load author profile
+  let authorName = 'کاربر کامیونیتی';
+  let username = '';
+
+  if (post.author_id) {
+    const { data: profile, error: profileError } =
+      await supabaseClient
+        .from('profiles')
+        .select('username, display_name')
+        .eq('id', post.author_id)
+        .maybeSingle();
+
+    if (profileError) {
+      console.error('Author profile error:', profileError.message);
+    }
+
+    if (profile) {
+      authorName =
+        profile.display_name ||
+        profile.username ||
+        authorName;
+
+      username = profile.username || '';
+    }
+  }
+
+  // Render post
+  document.title = `${post.title || 'پست'} | Bindex`;
+
+  document.getElementById('title').textContent =
+    post.title || 'بدون عنوان';
+
+  document.getElementById('description').textContent =
+    post.description || '';
+
+  document.getElementById('content').textContent =
+    post.content || '';
+
+  document.getElementById('category').innerHTML = `
+    <i class="fa-solid fa-hashtag"></i>
+    ${escapeHTML(post.category || 'عمومی')}
+  `;
+
+  document.getElementById('author').textContent = authorName;
+
+  document.getElementById('authorLink').href =
+    username
+      ? `profile.html?u=${encodeURIComponent(username)}`
+      : '#';
+
+  document.getElementById('date').textContent =
+    formatDate(post.created_at);
+
+  document.getElementById('views').textContent =
+    Number(currentPost.views || 0).toLocaleString('fa-IR');
+
+  document.getElementById('likeCount').textContent =
+    Number(post.likes_count || 0).toLocaleString('fa-IR');
+
+  // Image
+  const imageURL = safeImageURL(post.image_url);
+
+  if (imageURL) {
+    const image = document.createElement('img');
+
+    image.src = imageURL;
+    image.alt = post.title || 'تصویر پست';
+    image.loading = 'eager';
+
+    image.onerror = () => {
+      document.getElementById('articleImage').innerHTML =
+        '<i class="fa-solid fa-gamepad"></i>';
+    };
+
+    document.getElementById('articleImage').replaceChildren(image);
+  }
+
+  await loadLikeStatus();
+
+  pageState.hidden = true;
+  article.hidden = false;
+}
+
+// Like / Unlike
+likeButton.addEventListener('click', async () => {
+  if (!currentPost || isLoadingLike) return;
+
+  if (!currentUser) {
+    showToast('برای لایک کردن ابتدا وارد حساب کاربری شو.');
+    return;
+  }
+
+  isLoadingLike = true;
+  likeButton.disabled = true;
+
+  let error;
+
+  if (isLiked) {
+    const result = await supabaseClient
+      .from('post_likes')
+      .delete()
+      .eq('post_id', currentPost.id)
+      .eq('user_id', currentUser.id);
+
+    error = result.error;
+  } else {
+    const result = await supabaseClient
+      .from('post_likes')
+      .insert({
+        post_id: currentPost.id,
+        user_id: currentUser.id
+      });
+
+    error = result.error;
+  }
+
+  if (error) {
+    console.error('Like action error:', error.message);
+    showToast('تغییر وضعیت لایک انجام نشد.');
+  } else {
+    isLiked = !isLiked;
+
+    currentPost.likes_count = Math.max(
+      0,
+      Number(currentPost.likes_count || 0) + (isLiked ? 1 : -1)
+    );
+
+    renderLike();
+  }
+
+  isLoadingLike = false;
+  likeButton.disabled = false;
+});
+
+// Start
+loadPost();
+</script>
+
+</body>
+</html>
