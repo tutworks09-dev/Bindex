@@ -530,7 +530,7 @@ header {
 .favorite-games-list {
   display: flex;
   flex-direction: row;
-  direction: rtl;
+  direction: ltr;
   gap: 15px;
 
   width: 100%;
@@ -568,13 +568,15 @@ header {
 
   display: flex;
   align-items: flex-end;
+  justify-content: flex-start;
+
   padding: 18px;
 
   border-radius: 19px;
   overflow: hidden;
 
   color: white;
-  text-align: right;
+  text-align: left;
 
   background-color: #142432;
   background-size: cover;
@@ -598,8 +600,8 @@ header {
   background: linear-gradient(
     0deg,
     rgba(3,10,17,.95) 0%,
-    rgba(3,10,17,.55) 45%,
-    rgba(3,10,17,.12) 100%
+    rgba(3,10,17,.45) 45%,
+    rgba(3,10,17,.08) 100%
   );
 }
 
@@ -611,20 +613,23 @@ header {
 .game-card-content {
   position: relative;
   z-index: 1;
+
   direction: ltr;
   text-align: left;
+  width: 100%;
 }
 
 .game-card-content i {
-  display: block;
   font-size: 23px;
   margin-bottom: 7px;
+  display: block;
 }
 
 .game-card-content h3 {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 19px;
   font-weight: 700;
+  text-align: left;
 }
 
 /* Minecraft */
