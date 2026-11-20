@@ -515,29 +515,68 @@ header {
   overflow-wrap: anywhere;
 }
 
-  /* Games section */
+
+/* Games section */
 #gamesContent {
   padding: 18px;
+  min-width: 0;
 }
 
 #noFavoriteGames {
   margin: 0;
 }
 
+/* Horizontal game list - RTL */
+.favorite-games-list {
+  display: flex;
+  flex-direction: row;
+  direction: rtl;
+  gap: 15px;
+
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  padding: 5px 2px 16px;
+  scroll-behavior: smooth;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #087da5 #101c27;
+}
+
+.favorite-games-list::-webkit-scrollbar {
+  height: 7px;
+}
+
+.favorite-games-list::-webkit-scrollbar-track {
+  background: #101c27;
+  border-radius: 20px;
+}
+
+.favorite-games-list::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #087da5, #31b9e8);
+  border-radius: 20px;
+}
+
+/* Game cards */
 .favorite-game-item {
   position: relative;
+  isolation: isolate;
+
   flex: 0 0 280px;
   height: 165px;
-  border-radius: 19px;
-  overflow: hidden;
 
   display: flex;
   align-items: flex-end;
   padding: 18px;
 
-  color: white;
-  text-align: left;
+  border-radius: 19px;
+  overflow: hidden;
 
+  color: white;
+  text-align: right;
+
+  background-color: #142432;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -545,18 +584,22 @@ header {
   border: 1px solid rgba(49,185,232,.3);
   box-shadow: 0 8px 25px rgba(0,0,0,.3);
 
-  transition: transform .25s, border-color .25s;
+  transition:
+    transform .25s ease,
+    border-color .25s ease;
 }
 
 .favorite-game-item::before {
   content: "";
   position: absolute;
   inset: 0;
+  z-index: 0;
+
   background: linear-gradient(
     0deg,
     rgba(3,10,17,.95) 0%,
-    rgba(3,10,17,.45) 45%,
-    rgba(3,10,17,.08) 100%
+    rgba(3,10,17,.55) 45%,
+    rgba(3,10,17,.12) 100%
   );
 }
 
@@ -568,12 +611,14 @@ header {
 .game-card-content {
   position: relative;
   z-index: 1;
+  direction: ltr;
+  text-align: left;
 }
 
 .game-card-content i {
+  display: block;
   font-size: 23px;
   margin-bottom: 7px;
-  display: block;
 }
 
 .game-card-content h3 {
@@ -585,8 +630,12 @@ header {
 /* Minecraft */
 .game-minecraft {
   background-image:
-    linear-gradient(rgba(66,130,48,.35), rgba(20,55,25,.35)),
-    url('https://www.theguardian.com/technology/gamesblog/2011/dec/09/minecraft-pc-mac-review');
+    linear-gradient(
+      0deg,
+      rgba(20,55,25,.55),
+      rgba(66,130,48,.12)
+    ),
+    url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSAVLqA4MmaWwl2taOjAtlcP-vrW70_-Z5AxmNrJSQacFCMAu6y43Xi9Nfd&s=10');
 }
 
 .game-minecraft .game-card-content i {
@@ -596,8 +645,12 @@ header {
 /* Call of Duty */
 .game-call-of-duty {
   background-image:
-    linear-gradient(rgba(150,120,55,.35), rgba(40,35,20,.4)),
-    url('https://www.activision.com/games/call-of-duty/call-of-duty-warzone');
+    linear-gradient(
+      0deg,
+      rgba(40,35,20,.65),
+      rgba(150,120,55,.12)
+    ),
+    url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRadLWZuGRteLZ9T05WGcU0GZhXo41xs1KYx023X6WpXpHi-e_aJ3YWnbE&s=10');
 }
 
 .game-call-of-duty .game-card-content i {
@@ -607,8 +660,12 @@ header {
 /* Fortnite */
 .game-fortnite {
   background-image:
-    linear-gradient(rgba(80,90,210,.35), rgba(30,35,100,.4)),
-    url('https://www.bbc.co.uk/news/technology-44477524');
+    linear-gradient(
+      0deg,
+      rgba(30,35,100,.65),
+      rgba(80,90,210,.12)
+    ),
+    url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8g5KsmWX_2OgDs3ewWpF5bIofHgsUcPHJqKYgCMjysDRFo_KdpHrGPC4T&s=10');
 }
 
 .game-fortnite .game-card-content i {
@@ -618,13 +675,26 @@ header {
 /* Valorant */
 .game-valorant {
   background-image:
-    linear-gradient(rgba(210,45,65,.35), rgba(90,15,35,.4)),
-    url('https://playvalorant.com/en-us/news/game-updates/valorant-patch-notes-1-0/');
+    linear-gradient(
+      0deg,
+      rgba(90,15,35,.65),
+      rgba(210,45,65,.12)
+    ),
+    url('https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/67fbd4c273f3d5e92a18666c6379db09e74b7cda-1920x1080.jpg?accountingTag=VAL&fm=jpg&q=80&w=1920');
 }
 
 .game-valorant .game-card-content i {
   color: #ff8998;
 }
+
+/* Mobile */
+@media(max-width: 600px) {
+  .favorite-game-item {
+    flex-basis: 245px;
+    height: 150px;
+  }
+}
+
 </style>
 </head>
 
