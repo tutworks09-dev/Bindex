@@ -348,6 +348,125 @@ header {
   .identity-name { font-size:20px; }
   .stats { gap:9px; }
 }
+
+  
+[hidden] {
+  display: none !important;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0,0,0,.78);
+  backdrop-filter: blur(9px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-box {
+  width: 100%;
+  max-width: 490px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #0e1821;
+  border: 1px solid rgba(49,185,232,.35);
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 20px 70px rgba(0,0,0,.5);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+
+.modal-header h2 {
+  font-size: 21px;
+}
+
+.modal-close {
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 12px;
+  background: #1b2b38;
+  color: white;
+  font-size: 18px;
+}
+
+.modal-box label {
+  display: block;
+  color: #b7c8d4;
+  font-size: 13px;
+  margin: 17px 0 8px;
+}
+
+.modal-box input,
+.modal-box textarea {
+  width: 100%;
+  background: #09131c;
+  border: 1px solid rgba(145,163,177,.2);
+  border-radius: 12px;
+  color: white;
+  padding: 13px;
+  outline: none;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.modal-box input:focus,
+.modal-box textarea:focus {
+  border-color: #009ACE;
+}
+
+.modal-box textarea {
+  resize: vertical;
+  min-height: 95px;
+}
+
+.edit-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.edit-image-btn {
+  background: #132635;
+  color: #31b9e8;
+  border: 1px solid rgba(49,185,232,.25);
+  border-radius: 13px;
+  padding: 14px 8px;
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.edit-image-btn i {
+  margin-left: 5px;
+}
+
+.save-profile-btn {
+  width: 100%;
+  margin-top: 22px;
+  padding: 14px;
+  background: #009ACE;
+  border: 0;
+  border-radius: 13px;
+  color: white;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.save-profile-btn:disabled {
+  opacity: .6;
+  cursor: wait;
+}
+
 </style>
 </head>
 
@@ -397,10 +516,10 @@ header {
 
     <div class="profile-bottom">
 
-      <button class="follow-btn" onclick="showMessage('قابلیت دنبال کردن به‌زودی فعال می‌شود')">
-        <i class="fa-solid fa-user-plus"></i>
-        دنبال کردن
-      </button>
+<button class="follow-btn" id="accountActionButton">
+  <i class="fa-solid fa-user-plus"></i>
+  دنبال کردن
+</button>
 
       <div class="stats">
         <div class="stat">
@@ -443,11 +562,19 @@ header {
         </button>
       </div>
 
-      <div class="empty">
-        <i class="fa-regular fa-file-lines"></i>
-        <h3>هنوز پستی وجود ندارد</h3>
-        <p>وقتی پستی منتشر شود، اینجا نمایش داده می‌شود.</p>
-      </div>
+
+<div class="empty" id="postsContent">
+  <i class="fa-regular fa-file-lines"></i>
+  <h3>هنوز پستی وجود ندارد</h3>
+  <p>وقتی پستی منتشر شود، اینجا نمایش داده می‌شود.</p>
+</div>
+
+<div class="empty hidden" id="bioContent">
+  <i class="fa-solid fa-user-pen"></i>
+  <h3>درباره کاربر</h3>
+  <p id="profileBio">هنوز بیوگرافی ثبت نشده است.</p>
+</div>
+
     </div>
 
     <aside class="info-panel">
@@ -475,6 +602,48 @@ header {
   </section>
 </main>
 
+
+<div class="modal" id="editModal" hidden>
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2>ویرایش اکانت</h2>
+      <button type="button" class="modal-close" id="closeEditModal">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="edit-options">
+      <button type="button" class="edit-image-btn" id="editAvatarButton">
+        <i class="fa-solid fa-camera"></i>
+        تغییر عکس پروفایل
+      </button>
+
+      <button type="button" class="edit-image-btn" id="editBannerButton">
+        <i class="fa-solid fa-panorama"></i>
+        تغییر بنر
+      </button>
+    </div>
+
+    <label for="editDisplayName">نام نمایشی</label>
+    <input id="editDisplayName" type="text" maxlength="40"
+      placeholder="نام نمایشی خود را وارد کن">
+
+    <label for="editUsername">نام کاربری</label>
+    <input id="editUsername" type="text" maxlength="20"
+      placeholder="مثلاً ili_craft94" dir="ltr">
+
+    <label for="editBio">بیوگرافی</label>
+    <textarea id="editBio" maxlength="300" rows="4"
+      placeholder="کمی درباره خودت بنویس..."></textarea>
+
+    <button type="button" class="save-profile-btn" id="saveProfileButton">
+      <i class="fa-solid fa-floppy-disk"></i>
+      ذخیره تغییرات
+    </button>
+  </div>
+</div>
+
+  
 <script>
 
 const SUPABASE_URL = 'https://hlescjwegrtvwgtqsemm.supabase.co';
@@ -534,6 +703,16 @@ async function loadProfile() {
     currentProfile = profile;
 
     const isOwner = currentUser?.id === profile.id;
+
+    const actionButton = document.getElementById('accountActionButton');
+
+if (isOwner) {
+  actionButton.innerHTML =
+    '<i class="fa-solid fa-pen"></i> ویرایش اکانت';
+} else {
+  actionButton.innerHTML =
+    '<i class="fa-solid fa-user-plus"></i> دنبال کردن';
+}
 
     // نمایش دکمه‌های ویرایش فقط برای صاحب پروفایل
     document.getElementById('bannerButton').hidden = !isOwner;
@@ -603,6 +782,13 @@ function renderProfile(profile) {
   } else {
     verifiedIcon.classList.remove('show');
   }
+// user bio
+  const profileBio = document.getElementById('profileBio');
+
+if (profileBio) {
+  profileBio.textContent =
+    profile.bio || 'هنوز بیوگرافی ثبت نشده است.';
+}
 }
 
 // فشرده‌سازی تصویر
@@ -751,6 +937,42 @@ function setupProfileEvents() {
 
     event.target.value = '';
   });
+
+  // دکمه ویرایش اکانت یا دنبال کردن
+document.getElementById('accountActionButton')
+  .addEventListener('click', () => {
+    if (currentUser?.id === currentProfile?.id) {
+      openEditModal();
+    } else {
+      showMessage('قابلیت دنبال کردن به‌زودی فعال می‌شود.');
+    }
+  });
+
+// دکمه‌های پاپ‌آپ
+document.getElementById('closeEditModal')
+  .addEventListener('click', closeEditModal);
+
+document.getElementById('saveProfileButton')
+  .addEventListener('click', saveProfileChanges);
+
+// تغییر عکس و بنر از داخل پاپ‌آپ
+document.getElementById('editAvatarButton')
+  .addEventListener('click', () => {
+    document.getElementById('avatarInput').click();
+  });
+
+document.getElementById('editBannerButton')
+  .addEventListener('click', () => {
+    document.getElementById('bannerInput').click();
+  });
+
+// بستن با کلیک روی پس‌زمینه
+document.getElementById('editModal')
+  .addEventListener('click', event => {
+    if (event.target.id === 'editModal') {
+      closeEditModal();
+    }
+  });
 }
 
 // تغییر تب‌ها
@@ -760,8 +982,116 @@ function changeTab(button) {
   });
 
   button.classList.add('active');
+
+  const index = [...button.parentElement.children].indexOf(button);
+
+  document.getElementById('postsContent').classList.toggle(
+    'hidden', index !== 0
+  );
+
+  document.getElementById('bioContent').classList.toggle(
+    'hidden', index !== 2
+  );
 }
 
+  
+// باز کردن پنجره ویرایش
+function openEditModal() {
+  if (!currentUser || currentUser.id !== currentProfile?.id) {
+    return;
+  }
+
+  document.getElementById('editDisplayName').value =
+    currentProfile.display_name || '';
+
+  document.getElementById('editUsername').value =
+    currentProfile.username || '';
+
+  document.getElementById('editBio').value =
+    currentProfile.bio || '';
+
+  document.getElementById('editModal').hidden = false;
+}
+
+// بستن پنجره
+function closeEditModal() {
+  document.getElementById('editModal').hidden = true;
+}
+
+// ذخیره اطلاعات اکانت
+async function saveProfileChanges() {
+  const saveButton = document.getElementById('saveProfileButton');
+
+  try {
+    if (
+      !currentUser ||
+      !currentProfile ||
+      currentUser.id !== currentProfile.id
+    ) {
+      throw new Error('اجازه ویرایش این پروفایل را نداری.');
+    }
+
+    const displayName =
+      document.getElementById('editDisplayName').value.trim();
+
+    const username =
+      document.getElementById('editUsername').value.trim();
+
+    const bio =
+      document.getElementById('editBio').value.trim();
+
+    if (!displayName) {
+      throw new Error('نام نمایشی نمی‌تواند خالی باشد.');
+    }
+
+    if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) {
+      throw new Error(
+        'نام کاربری باید ۳ تا ۲۰ کاراکتر و شامل حروف انگلیسی، عدد یا _ باشد.'
+      );
+    }
+
+    saveButton.disabled = true;
+    saveButton.textContent = 'در حال ذخیره...';
+
+    const { data, error } = await supabaseClient
+      .from('profiles')
+      .update({
+        display_name: displayName,
+        username: username,
+        bio: bio,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', currentUser.id)
+      .select('*')
+      .single();
+
+    if (error) throw error;
+
+    currentProfile = data;
+
+    renderProfile(data);
+
+    // به‌روزرسانی آدرس پروفایل
+    const newUrl = new URL(window.location.href);
+    newUrl.searchParams.set('u', data.username);
+    history.replaceState({}, '', newUrl);
+
+    closeEditModal();
+
+    showMessage('اطلاعات اکانت با موفقیت ذخیره شد.');
+
+  } catch (error) {
+    console.error('Profile update error:', error);
+    showMessage('خطا در ذخیره اطلاعات: ' + error.message);
+
+  } finally {
+    saveButton.disabled = false;
+    saveButton.innerHTML =
+      '<i class="fa-solid fa-floppy-disk"></i> ذخیره تغییرات';
+  }
+}
+
+  
 // شروع
 document.addEventListener('DOMContentLoaded', () => {
   setupProfileEvents();
