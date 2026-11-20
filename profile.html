@@ -692,6 +692,36 @@ header {
   color: #ff8998;
 }
 
+  /* Roblox */
+.game-roblox {
+  background-image:
+    linear-gradient(
+      0deg,
+      rgba(15,15,20,.75),
+      rgba(190,35,45,.25)
+    ),
+    url('https://platform.theverge.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/22366485/VRG_ILLO_4472_RobloxExplainer.jpg?quality=90&strip=all&crop=0%2C0%2C100%2C100&w=2400');
+}
+
+.game-roblox .game-card-content i {
+  color: #ff5555;
+}
+
+/* Pesar Khandeh */
+.game-pesar-khande {
+  background-image:
+    linear-gradient(
+      0deg,
+      rgba(20,10,35,.85),
+      rgba(130,75,180,.25)
+    ),
+    url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbvY69g-dm0eh9ef0VyK9ogza7g9ueuFN-VYUP_d9ddg&s=10');
+}
+
+.game-pesar-khande .game-card-content i {
+  color: #c69aff;
+}
+
 /* Mobile */
 @media(max-width: 600px) {
   .favorite-game-item {
@@ -913,6 +943,16 @@ header {
     <input type="checkbox" name="favoriteGame" value="Valorant">
     Valorant
   </label>
+
+  <label>
+  <input type="checkbox" name="favoriteGame" value="Roblox">
+  Roblox
+</label>
+
+<label>
+  <input type="checkbox" name="favoriteGame" value="پسرخوانده">
+  پسرخوانده
+</label>
 </div>
 
     <button type="button" class="save-profile-btn" id="saveProfileButton">
@@ -1114,7 +1154,15 @@ const gameData = {
   'Valorant': {
     className: 'game-valorant',
     icon: 'fa-bolt'
-  }
+  },
+  'Roblox': {
+  className: 'game-roblox',
+  icon: 'fa-cube'
+},
+'پسرخوانده': {
+  className: 'game-pesar-khande',
+  icon: 'fa-crown'
+}
 };
 
 favoriteGames.forEach(game => {
