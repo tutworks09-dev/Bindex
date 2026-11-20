@@ -730,6 +730,80 @@ header {
   }
 }
 
+
+  /* Profile posts */
+.profile-posts-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 15px;
+  padding: 18px;
+}
+
+.profile-post-card {
+  background: #132635;
+  border: 1px solid rgba(49,185,232,.2);
+  border-radius: 17px;
+  overflow: hidden;
+  transition: .2s;
+  min-width: 0;
+}
+
+.profile-post-card:hover {
+  transform: translateY(-4px);
+  border-color: #31b9e8;
+}
+
+.profile-post-image {
+  width: 100%;
+  height: 145px;
+  object-fit: cover;
+  display: block;
+}
+
+.profile-post-body {
+  padding: 15px;
+}
+
+.profile-post-category {
+  color: #31b9e8;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.profile-post-title {
+  font-size: 17px;
+  margin-bottom: 8px;
+  overflow-wrap: anywhere;
+}
+
+.profile-post-description {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.9;
+  overflow-wrap: anywhere;
+}
+
+.profile-post-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 15px;
+}
+
+.profile-post-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.profile-post-loading {
+  padding: 35px;
+  text-align: center;
+  color: var(--muted);
+  grid-column: 1 / -1;
+}
 </style>
 </head>
 
@@ -828,12 +902,16 @@ header {
       </button>
     </div>
 
-<div class="empty" id="postsContent">
-  <i class="fa-regular fa-file-lines"></i>
-  <h3>هنوز پستی وجود ندارد</h3>
-  <p>وقتی پستی منتشر شود، اینجا نمایش داده می‌شود.</p>
+<div id="postsContent">
+  <div class="profile-posts-list" id="profilePostsList">
+    <div class="profile-post-loading">
+      <i class="fa-solid fa-spinner fa-spin"></i>
+      در حال دریافت پست‌ها...
+    </div>
+  </div>
 </div>
 
+    
 <div id="gamesContent" class="hidden">
   <div id="favoriteGamesList" class="favorite-games-list"></div>
 
@@ -1041,6 +1119,8 @@ if (isOwner) {
 
     renderProfile(profile);
 
+    loadUserPosts(profile.id);
+
   } catch (error) {
     console.error('Profile loading error:', error);
     showMessage('خطا در دریافت پروفایل: ' + error.message);
@@ -1194,6 +1274,126 @@ noGames.classList.toggle(
   
 }
 
+// دریافت پست‌های منتشرشده کاربر
+async function loadUserPosts(userId) {
+  const list = document.getElementById('profilePostsList');
+
+  try {
+    const { data: posts, error } = await supabaseClient
+      .from('posts')
+      .select(`
+        id,
+        title,
+        description,
+        image_url,
+        category,
+        views,
+        likes_count,
+        created_at
+      `)
+      .eq('author_id', userId)
+      .eq('status', 'approved')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    // تعداد پست‌های منتشرشده
+    document.querySelector(
+      '.stats .stat:first-child strong'
+    ).textContent = posts.length;
+
+    if (!posts.length) {
+      list.innerHTML = `
+        <div class="empty" style="grid-column:1/-1">
+          <i class="fa-regular fa-file-lines"></i>
+          <h3>هنوز پستی وجود ندارد</h3>
+          <p>وقتی پستی منتشر شود، اینجا نمایش داده می‌شود.</p>
+        </div>
+      `;
+      return;
+    }
+
+    list.innerHTML = posts.map(post => {
+      const image = post.image_url &&
+        /^https?:\/\//i.test(post.image_url)
+        ? `
+          <img
+            class="profile-post-image"
+            src="${escapePostHTML(post.image_url)}"
+            alt=""
+            loading="lazy"
+          >
+        `
+        : '';
+
+      return `
+        <a
+          class="profile-post-link"
+          href="posts.html?id=${encodeURIComponent(post.id)}"
+        >
+          <article class="profile-post-card">
+            ${image}
+
+            <div class="profile-post-body">
+              <div class="profile-post-category">
+                ${escapePostHTML(post.category || 'عمومی')}
+              </div>
+
+              <h3 class="profile-post-title">
+                ${escapePostHTML(post.title)}
+              </h3>
+
+              <p class="profile-post-description">
+                ${escapePostHTML(post.description || '')}
+              </p>
+
+              <div class="profile-post-meta">
+                <span>
+                  <i class="fa-solid fa-eye"></i>
+                  ${Number(post.views) || 0}
+                </span>
+
+                <span>
+                  <i class="fa-solid fa-heart"></i>
+                  ${Number(post.likes_count) || 0}
+                </span>
+
+                <span>
+                  ${post.created_at
+                    ? new Date(post.created_at).toLocaleDateString('fa-IR')
+                    : ''}
+                </span>
+              </div>
+            </div>
+          </article>
+        </a>
+      `;
+    }).join('');
+
+  } catch (error) {
+    console.error('Profile posts error:', error);
+
+    list.innerHTML = `
+      <div class="empty" style="grid-column:1/-1">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <h3>خطا در دریافت پست‌ها</h3>
+        <p>${escapePostHTML(error.message)}</p>
+      </div>
+    `;
+  }
+}
+
+// جلوگیری از تزریق HTML
+function escapePostHTML(value) {
+  return String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  })[char]);
+}
+  
 // فشرده‌سازی تصویر
 function compressImage(file, type) {
   return new Promise((resolve, reject) => {
