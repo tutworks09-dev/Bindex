@@ -467,6 +467,54 @@ header {
   cursor: wait;
 }
 
+  .games-select {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.games-select label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: #132635;
+  border: 1px solid rgba(49,185,232,.2);
+  border-radius: 12px;
+  padding: 12px;
+  color: white;
+  cursor: pointer;
+  margin: 0;
+}
+
+.games-select input {
+  width: 17px;
+  height: 17px;
+  accent-color: #009ACE;
+}
+.favorite-games-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  padding-top: 15px;
+}
+
+.favorite-game-item {
+  background: #132635;
+  border: 1px solid rgba(49,185,232,.25);
+  border-radius: 14px;
+  padding: 16px;
+  color: white;
+  text-align: center;
+}
+
+#profileWebsite {
+  color: #31b9e8;
+  text-decoration: none;
+  direction: ltr;
+  overflow-wrap: anywhere;
+}
+  
 </style>
 </head>
 
@@ -544,62 +592,74 @@ header {
     </div>
   </section>
 
-  <section class="content">
+  
+<section class="content">
 
-    <div class="posts-panel">
-      <div class="tabs">
-        <button class="tab active" onclick="changeTab(this)">
-          <i class="fa-solid fa-grid-2"></i>
-          پست‌ها
-        </button>
-        <button class="tab" onclick="changeTab(this)">
-          <i class="fa-solid fa-gamepad"></i>
-          بازی‌ها
-        </button>
-        <button class="tab" onclick="changeTab(this)">
-          <i class="fa-solid fa-circle-info"></i>
-          درباره
-        </button>
-      </div>
+  <div class="posts-panel">
+    <div class="tabs">
+      <button class="tab active" onclick="changeTab(this)">
+        <i class="fa-solid fa-grid-2"></i>
+        پست‌ها
+      </button>
 
+      <button class="tab" onclick="changeTab(this)">
+        <i class="fa-solid fa-gamepad"></i>
+        بازی‌ها
+      </button>
 
-<div class="empty" id="postsContent">
-  <i class="fa-regular fa-file-lines"></i>
-  <h3>هنوز پستی وجود ندارد</h3>
-  <p>وقتی پستی منتشر شود، اینجا نمایش داده می‌شود.</p>
-</div>
-
-<div class="empty hidden" id="bioContent">
-  <i class="fa-solid fa-user-pen"></i>
-  <h3>درباره کاربر</h3>
-  <p id="profileBio">هنوز بیوگرافی ثبت نشده است.</p>
-</div>
-
+      <button class="tab" onclick="changeTab(this)">
+        <i class="fa-solid fa-circle-info"></i>
+        درباره
+      </button>
     </div>
 
-    <aside class="info-panel">
-      <h2 class="info-title">
-        <i class="fa-solid fa-user" style="color:#009ACE"></i>
-        اطلاعات کاربر
-      </h2>
+    <div class="empty" id="postsContent">
+      <i class="fa-regular fa-file-lines"></i>
+      <h3>هنوز پستی وجود ندارد</h3>
+      <p>وقتی پستی منتشر شود، اینجا نمایش داده می‌شود.</p>
+    </div>
 
-      <div class="info-item">
-        <span><i class="fa-solid fa-gamepad"></i> نام نمایشی</span>
-        <span id="infoName">—</span>
+    <div id="gamesContent" class="hidden">
+      <div id="favoriteGamesList" class="favorite-games-list"></div>
+      <div class="empty" id="noFavoriteGames">
+        <i class="fa-solid fa-gamepad"></i>
+        <h3>هنوز بازی‌ای انتخاب نشده</h3>
+        <p>بازی‌های موردعلاقه کاربر اینجا نمایش داده می‌شوند.</p>
       </div>
+    </div>
 
-      <div class="info-item">
-        <span><i class="fa-solid fa-calendar-days"></i> عضویت</span>
-        <span id="joinDate">—</span>
-      </div>
+    <div class="empty hidden" id="bioContent">
+      <i class="fa-solid fa-user-pen"></i>
+      <h3>درباره کاربر</h3>
+      <p id="profileBio">هنوز بیوگرافی ثبت نشده است.</p>
+    </div>
+  </div>
 
-      <div class="info-item">
-        <span><i class="fa-solid fa-link"></i> وب‌سایت</span>
-        <span>—</span>
-      </div>
-    </aside>
+  <aside class="info-panel">
+    <h2 class="info-title">
+      <i class="fa-solid fa-user" style="color:#009ACE"></i>
+      اطلاعات کاربر
+    </h2>
 
-  </section>
+    <div class="info-item">
+      <span><i class="fa-solid fa-gamepad"></i> نام نمایشی</span>
+      <span id="infoName">—</span>
+    </div>
+
+    <div class="info-item">
+      <span><i class="fa-solid fa-calendar-days"></i> عضویت</span>
+      <span id="joinDate">—</span>
+    </div>
+
+    <div class="info-item">
+      <span><i class="fa-solid fa-link"></i> وب‌سایت</span>
+      <a id="profileWebsite" href="#" target="_blank"
+         rel="noopener noreferrer" hidden>—</a>
+    </div>
+  </aside>
+
+</section>
+
 </main>
 
 
@@ -635,6 +695,39 @@ header {
     <label for="editBio">بیوگرافی</label>
     <textarea id="editBio" maxlength="300" rows="4"
       placeholder="کمی درباره خودت بنویس..."></textarea>
+
+    <label for="editWebsite">وب‌سایت شخصی</label>
+<input
+  id="editWebsite"
+  type="url"
+  maxlength="200"
+  placeholder="https://bindexgaming.ir"
+  dir="ltr"
+>
+
+    <label>بازی‌های موردعلاقه</label>
+
+<div class="games-select">
+  <label>
+    <input type="checkbox" name="favoriteGame" value="Minecraft">
+    Minecraft
+  </label>
+
+  <label>
+    <input type="checkbox" name="favoriteGame" value="Call of Duty">
+    Call of Duty
+  </label>
+
+  <label>
+    <input type="checkbox" name="favoriteGame" value="Fortnite">
+    Fortnite
+  </label>
+
+  <label>
+    <input type="checkbox" name="favoriteGame" value="Valorant">
+    Valorant
+  </label>
+</div>
 
     <button type="button" class="save-profile-btn" id="saveProfileButton">
       <i class="fa-solid fa-floppy-disk"></i>
@@ -789,6 +882,45 @@ if (profileBio) {
   profileBio.textContent =
     profile.bio || 'هنوز بیوگرافی ثبت نشده است.';
 }
+
+  // نمایش وب‌سایت
+const profileWebsite = document.getElementById('profileWebsite');
+
+if (profile.website_url) {
+  try {
+    const url = new URL(profile.website_url);
+
+    if (url.protocol === 'https:' || url.protocol === 'http:') {
+      profileWebsite.href = url.href;
+      profileWebsite.textContent = url.hostname;
+      profileWebsite.hidden = false;
+    } else {
+      profileWebsite.hidden = true;
+    }
+  } catch {
+    profileWebsite.hidden = true;
+  }
+} else {
+  profileWebsite.hidden = true;
+}
+
+// نمایش بازی‌های موردعلاقه
+const gamesList = document.getElementById('favoriteGamesList');
+const noGames = document.getElementById('noFavoriteGames');
+
+gamesList.replaceChildren();
+
+const favoriteGames = profile.favorite_games || [];
+
+favoriteGames.forEach(game => {
+  const item = document.createElement('div');
+  item.className = 'favorite-game-item';
+  item.textContent = game;
+  gamesList.appendChild(item);
+});
+
+noGames.classList.toggle('hidden', favoriteGames.length > 0);
+  
 }
 
 // فشرده‌سازی تصویر
@@ -977,21 +1109,17 @@ document.getElementById('editModal')
 
 // تغییر تب‌ها
 function changeTab(button) {
-  document.querySelectorAll('.tab').forEach(tab => {
-    tab.classList.remove('active');
-  });
+  document.querySelectorAll('.tab').forEach(tab =>
+    tab.classList.remove('active')
+  );
 
   button.classList.add('active');
 
   const index = [...button.parentElement.children].indexOf(button);
 
-  document.getElementById('postsContent').classList.toggle(
-    'hidden', index !== 0
-  );
-
-  document.getElementById('bioContent').classList.toggle(
-    'hidden', index !== 2
-  );
+  document.getElementById('postsContent').classList.toggle('hidden', index !== 0);
+  document.getElementById('gamesContent').classList.toggle('hidden', index !== 1);
+  document.getElementById('bioContent').classList.toggle('hidden', index !== 2);
 }
 
   
@@ -1012,6 +1140,14 @@ function openEditModal() {
 
   document.getElementById('editModal').hidden = false;
 }
+
+  document.getElementById('editWebsite').value =
+  currentProfile.website_url || '';
+
+document.querySelectorAll('[name="favoriteGame"]').forEach(input => {
+  input.checked = (currentProfile.favorite_games || [])
+    .includes(input.value);
+});
 
 // بستن پنجره
 function closeEditModal() {
@@ -1040,6 +1176,12 @@ async function saveProfileChanges() {
     const bio =
       document.getElementById('editBio').value.trim();
 
+    const website = document.getElementById('editWebsite').value.trim();
+
+const favoriteGames = [
+  ...document.querySelectorAll('[name="favoriteGame"]:checked')
+].map(input => input.value);
+
     if (!displayName) {
       throw new Error('نام نمایشی نمی‌تواند خالی باشد.');
     }
@@ -1059,6 +1201,8 @@ async function saveProfileChanges() {
         display_name: displayName,
         username: username,
         bio: bio,
+        website_url: website || null,
+favorite_games: favoriteGames,
         updated_at: new Date().toISOString()
       })
       .eq('id', currentUser.id)
