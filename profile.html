@@ -524,52 +524,28 @@ header {
   margin: 0;
 }
 
-.favorite-games-list {
-  display: flex;
-  flex-direction: row;
-  direction: ltr;
-  gap: 15px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  padding: 4px 2px 16px;
-  scroll-behavior: smooth;
-  scrollbar-width: thin;
-  scrollbar-color: #087da5 #101c27;
-}
-
-.favorite-games-list::-webkit-scrollbar {
-  height: 8px;
-}
-
-.favorite-games-list::-webkit-scrollbar-track {
-  background: #101c27;
-  border-radius: 20px;
-}
-
-.favorite-games-list::-webkit-scrollbar-thumb {
-  background: linear-gradient(90deg, #087da5, #31b9e8);
-  border-radius: 20px;
-}
-
 .favorite-game-item {
   position: relative;
-  flex: 0 0 260px;
-  height: 155px;
+  flex: 0 0 280px;
+  height: 165px;
   border-radius: 19px;
   overflow: hidden;
+
   display: flex;
   align-items: flex-end;
   padding: 18px;
+
   color: white;
   text-align: left;
-  border: 1px solid rgba(49,185,232,.3);
-  box-shadow: 0 8px 25px rgba(0,0,0,.25);
-  transition: transform .25s, border-color .25s;
-}
 
-.favorite-game-item:hover {
-  transform: translateY(-5px);
-  border-color: #31b9e8;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  border: 1px solid rgba(49,185,232,.3);
+  box-shadow: 0 8px 25px rgba(0,0,0,.3);
+
+  transition: transform .25s, border-color .25s;
 }
 
 .favorite-game-item::before {
@@ -578,9 +554,15 @@ header {
   inset: 0;
   background: linear-gradient(
     0deg,
-    rgba(3,10,17,.95),
-    rgba(3,10,17,.05)
+    rgba(3,10,17,.95) 0%,
+    rgba(3,10,17,.45) 45%,
+    rgba(3,10,17,.08) 100%
   );
+}
+
+.favorite-game-item:hover {
+  transform: translateY(-5px);
+  border-color: #31b9e8;
 }
 
 .game-card-content {
@@ -592,7 +574,6 @@ header {
   font-size: 23px;
   margin-bottom: 7px;
   display: block;
-  color: #65d5ff;
 }
 
 .game-card-content h3 {
@@ -601,29 +582,48 @@ header {
   font-weight: 700;
 }
 
-/* Game themes */
+/* Minecraft */
 .game-minecraft {
-  background:
-    radial-gradient(circle at 75% 20%, #76a947, transparent 35%),
-    linear-gradient(135deg, #294d30, #172c20 55%, #101b19);
+  background-image:
+    linear-gradient(rgba(66,130,48,.35), rgba(20,55,25,.35)),
+    url('https://www.theguardian.com/technology/gamesblog/2011/dec/09/minecraft-pc-mac-review');
 }
 
+.game-minecraft .game-card-content i {
+  color: #9ce875;
+}
+
+/* Call of Duty */
 .game-call-of-duty {
-  background:
-    radial-gradient(circle at 75% 20%, #a68b50, transparent 40%),
-    linear-gradient(135deg, #514a36, #282b25 60%, #111916);
+  background-image:
+    linear-gradient(rgba(150,120,55,.35), rgba(40,35,20,.4)),
+    url('https://www.activision.com/games/call-of-duty/call-of-duty-warzone');
 }
 
+.game-call-of-duty .game-card-content i {
+  color: #e5c77d;
+}
+
+/* Fortnite */
 .game-fortnite {
-  background:
-    radial-gradient(circle at 75% 20%, #7b75db, transparent 40%),
-    linear-gradient(135deg, #354b8d, #252b5b 60%, #111827);
+  background-image:
+    linear-gradient(rgba(80,90,210,.35), rgba(30,35,100,.4)),
+    url('https://www.bbc.co.uk/news/technology-44477524');
 }
 
+.game-fortnite .game-card-content i {
+  color: #aaaaff;
+}
+
+/* Valorant */
 .game-valorant {
-  background:
-    radial-gradient(circle at 75% 20%, #e75a66, transparent 40%),
-    linear-gradient(135deg, #7b2937, #3a1d2a 60%, #15151e);
+  background-image:
+    linear-gradient(rgba(210,45,65,.35), rgba(90,15,35,.4)),
+    url('https://playvalorant.com/en-us/news/game-updates/valorant-patch-notes-1-0/');
+}
+
+.game-valorant .game-card-content i {
+  color: #ff8998;
 }
 </style>
 </head>
