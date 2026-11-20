@@ -1138,9 +1138,16 @@ function openEditModal() {
   document.getElementById('editBio').value =
     currentProfile.bio || '';
 
+  document.getElementById('editWebsite').value =
+    currentProfile.website_url || '';
+
+  document.querySelectorAll('[name="favoriteGame"]').forEach(input => {
+    input.checked = (currentProfile.favorite_games || [])
+      .includes(input.value);
+  });
+
   document.getElementById('editModal').hidden = false;
 }
-
   document.getElementById('editWebsite').value =
   currentProfile.website_url || '';
 
@@ -1173,6 +1180,8 @@ async function saveProfileChanges() {
     const username =
       document.getElementById('editUsername').value.trim();
 
+    
+
     const bio =
       document.getElementById('editBio').value.trim();
 
@@ -1191,6 +1200,18 @@ const favoriteGames = [
         'نام کاربری باید ۳ تا ۲۰ کاراکتر و شامل حروف انگلیسی، عدد یا _ باشد.'
       );
     }
+
+    if (website) {
+  try {
+    const url = new URL(website);
+
+    if (!['http:', 'https:'].includes(url.protocol)) {
+      throw new Error();
+    }
+  } catch {
+    throw new Error('آدرس وب‌سایت معتبر نیست.');
+  }
+}
 
     saveButton.disabled = true;
     saveButton.textContent = 'در حال ذخیره...';
