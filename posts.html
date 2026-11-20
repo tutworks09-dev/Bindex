@@ -1,0 +1,1042 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080e14">
+<title>پست‌های کامیونیتی | Bindex</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root {
+  --accent: #009ACE;
+  --accent2: #31b9e8;
+  --bg: #080e14;
+  --panel: #0e1821;
+  --panel2: #111f2a;
+  --line: rgba(255,255,255,.075);
+  --muted: #91a3b1;
+  --white: #f4f8fb;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 80% 0%,rgba(0,154,206,.16),transparent 34%),
+    radial-gradient(ellipse at 5% 45%,rgba(0,154,206,.07),transparent 28%),
+    var(--bg);
+  color: var(--white);
+  font-family: Vazirmatn,sans-serif;
+}
+
+a { color: inherit; text-decoration: none; }
+button,input,select { font: inherit; }
+button { cursor: pointer; }
+
+.wrap {
+  width: min(1180px,calc(100% - 36px));
+  margin: auto;
+}
+
+body:before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: .24;
+  background-image:
+    linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(to bottom,#000,transparent 80%);
+  z-index: -1;
+}
+
+/* Header */
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(8,14,20,.88);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--line);
+}
+
+.header-inner {
+  height: 74px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  background: linear-gradient(145deg,#10b8ec,#0075a7);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 8px 25px #009ace42;
+  font-size: 20px;
+}
+
+.brandname {
+  font: 700 25px "Space Grotesk",sans-serif;
+  letter-spacing: -1.3px;
+}
+
+.brandname b { color: var(--accent2); }
+
+.header-links {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+  font-size: 12px;
+  color: #aebdc8;
+}
+
+.header-links a:hover { color: var(--accent2); }
+
+.btn {
+  border: 0;
+  border-radius: 12px;
+  padding: 11px 16px;
+  font-size: 12px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: .2s;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: white;
+  box-shadow: 0 8px 24px #009ace35;
+}
+
+.btn-primary:hover {
+  background: #12afe2;
+  transform: translateY(-2px);
+}
+
+/* Page */
+
+main { padding: 43px 0 70px; }
+
+.page-heading { margin-bottom: 25px; }
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border: 1px solid #009ace55;
+  background: #009ace18;
+  border-radius: 30px;
+  color: #67d5f7;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.page-heading h1 {
+  font-size: 31px;
+  font-weight: 900;
+  margin: 16px 0 6px;
+}
+
+.page-heading p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 2;
+  margin: 0;
+}
+
+/* Toolbar */
+
+.toolbar {
+  padding: 17px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: linear-gradient(145deg,#111e28,#0c151d);
+  display: grid;
+  grid-template-columns: minmax(180px,1.5fr) 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.search-box {
+  position: relative;
+}
+
+.search-box i {
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  color: #8296a5;
+  font-size: 13px;
+}
+
+.control {
+  width: 100%;
+  height: 43px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #ffffff08;
+  color: white;
+  padding: 0 14px;
+  outline: none;
+  font-size: 11px;
+}
+
+.search-box .control { padding-right: 39px; }
+
+.control:focus { border-color: #009ace99; }
+
+.control::placeholder { color: #718594; }
+
+select.control {
+  cursor: pointer;
+}
+
+select.control option {
+  background: #111f2a;
+  color: white;
+}
+
+/* Results */
+
+.results-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 15px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.results-heading strong {
+  color: white;
+  font-size: 13px;
+}
+
+.post-list {
+  display: grid;
+  gap: 13px;
+}
+
+.post-card {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #ffffff05;
+  transition: .22s;
+}
+
+.post-card:hover {
+  border-color: #009ace70;
+  background: #009ace08;
+  transform: translateY(-2px);
+}
+
+.post-image {
+  display: grid;
+  place-items: center;
+  flex: 0 0 125px;
+  width: 125px;
+  height: 105px;
+  border-radius: 13px;
+  overflow: hidden;
+  background: linear-gradient(140deg,#0b6282,#102b3b);
+  color: #8ce4ff;
+  font-size: 30px;
+}
+
+.post-image img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.post-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.tag {
+  display: inline-block;
+  color: #4bcaf0;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.post-title {
+  font-size: 15px;
+  line-height: 1.8;
+  margin: 5px 0;
+  overflow-wrap: anywhere;
+}
+
+.post-description {
+  color: #9aabb6;
+  font-size: 11px;
+  line-height: 1.9;
+  margin: 0 0 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.post-meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  color: #8195a3;
+  font-size: 10px;
+}
+
+.post-meta i { margin-left: 4px; }
+
+.like-button {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: #91a3b1;
+  font-size: 10px;
+}
+
+.like-button.liked { color: #ff6685; }
+
+.like-button:disabled {
+  opacity: .5;
+  cursor: wait;
+}
+
+.post-open {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  background: #009ace18;
+  color: #67d5f7;
+  transition: .2s;
+}
+
+.post-open:hover {
+  background: var(--accent);
+  color: white;
+}
+
+/* States */
+
+.state-box {
+  padding: 55px 20px;
+  text-align: center;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #ffffff05;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 2;
+}
+
+.state-box i {
+  display: block;
+  font-size: 28px;
+  color: var(--accent2);
+  margin-bottom: 14px;
+}
+
+.state-box h3 {
+  color: white;
+  font-size: 17px;
+  margin: 5px 0;
+}
+
+.load-more {
+  display: none;
+  margin: 25px auto 0;
+  background: #ffffff09;
+  color: white;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 22px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.load-more:hover {
+  border-color: var(--accent);
+  color: var(--accent2);
+}
+
+/* Toast */
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background: #102632;
+  border: 1px solid #009ace88;
+  color: white;
+  padding: 12px 17px;
+  border-radius: 12px;
+  font-size: 12px;
+  opacity: 0;
+  transform: translateY(15px);
+  transition: .25s;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+footer {
+  border-top: 1px solid var(--line);
+  background: #060b10;
+  padding: 22px 0;
+  text-align: center;
+  color: #657986;
+  font-size: 10px;
+}
+
+/* Responsive */
+
+@media(max-width:700px) {
+  .wrap { width: calc(100% - 28px); }
+
+  .header-inner { height: 65px; }
+
+  .logo {
+    width: 38px;
+    height: 38px;
+  }
+
+  .header-links { gap: 10px; }
+
+  .header-links .optional { display: none; }
+
+  main { padding: 28px 0 50px; }
+
+  .page-heading h1 { font-size: 26px; }
+
+  .toolbar {
+    grid-template-columns: 1fr 1fr;
+    padding: 13px;
+    gap: 9px;
+  }
+
+  .search-box { grid-column: 1/-1; }
+
+  .post-card {
+    gap: 11px;
+    padding: 12px;
+  }
+
+  .post-image {
+    flex-basis: 82px;
+    width: 82px;
+    height: 88px;
+    font-size: 23px;
+  }
+
+  .post-title { font-size: 12px; }
+
+  .post-description { font-size: 10px; }
+
+  .post-meta { gap: 9px; font-size: 9px; }
+
+  .post-open {
+    width: 31px;
+    height: 31px;
+  }
+}
+
+@media(max-width:390px) {
+  .post-card { gap: 9px; }
+  .post-image {
+    flex-basis: 70px;
+    width: 70px;
+    height: 80px;
+  }
+  .post-meta { gap: 7px; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="wrap header-inner">
+    <a class="brand" href="index.html">
+      <span class="logo"><i class="fa-solid fa-gamepad"></i></span>
+      <span class="brandname">Bindex<b>.</b></span>
+    </a>
+
+    <div class="header-links">
+      <a class="optional" href="index.html">صفحه اصلی</a>
+      <a class="btn btn-primary" href="create-post.html">
+        <i class="fa-solid fa-plus"></i>
+        ساخت پست
+      </a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+
+    <div class="page-heading">
+      <span class="eyebrow">
+        <i class="fa-solid fa-comments"></i>
+        BINDEX COMMUNITY
+      </span>
+
+      <h1>پست‌های کامیونیتی</h1>
+      <p>مطالب، تجربه‌ها و بحث‌های گیمرهای ایرانی رو کشف کن.</p>
+    </div>
+
+    <section class="toolbar">
+
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input
+          class="control"
+          id="searchInput"
+          type="search"
+          placeholder="جست‌وجوی عنوان، توضیحات و متن..."
+        >
+      </div>
+
+      <select class="control" id="categoryFilter">
+        <option value="">همه دسته‌بندی‌ها</option>
+        <option value="ماینکرفت">ماینکرفت</option>
+        <option value="گیمینگ">گیمینگ</option>
+        <option value="بحث آزاد">بحث آزاد</option>
+        <option value="راهنما">راهنما و آموزش</option>
+        <option value="هم‌تیمی">پیدا کردن هم‌تیمی</option>
+        <option value="اخبار بازی">اخبار بازی</option>
+        <option value="سخت‌افزار">سخت‌افزار</option>
+        <option value="سایر">سایر</option>
+      </select>
+
+      <select class="control" id="sortSelect">
+        <option value="newest">جدیدترین</option>
+        <option value="oldest">قدیمی‌ترین</option>
+        <option value="views">پربازدیدترین</option>
+        <option value="popular">محبوب‌ترین</option>
+      </select>
+
+    </section>
+
+    <div class="results-heading">
+      <strong>مطالب منتشرشده</strong>
+      <span id="resultCount">در حال دریافت...</span>
+    </div>
+
+    <div class="post-list" id="postList">
+      <div class="state-box">
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        در حال دریافت پست‌ها...
+      </div>
+    </div>
+
+    <button class="load-more" id="loadMore" type="button">
+      نمایش پست‌های بیشتر
+      <i class="fa-solid fa-chevron-down"></i>
+    </button>
+
+  </div>
+</main>
+
+<footer>
+  © 2026 Bindex. تمامی حقوق محفوظ است.
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL = 'https://hlescjwegrtvwgtqsemm.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_9rR5jxE8CFQJMm-oy74wOw_VRtHgguY';
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+const postList = document.getElementById('postList');
+const searchInput = document.getElementById('searchInput');
+const categoryFilter = document.getElementById('categoryFilter');
+const sortSelect = document.getElementById('sortSelect');
+const resultCount = document.getElementById('resultCount');
+const loadMoreButton = document.getElementById('loadMore');
+const toast = document.getElementById('toast');
+
+let currentUser = null;
+let allPosts = [];
+let filteredPosts = [];
+let likedPosts = new Set();
+
+let visibleCount = 10;
+const PAGE_SIZE = 10;
+
+function escapeHTML(value) {
+  return String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  })[char]);
+}
+
+function safeImageURL(value) {
+  if (!value) return '';
+
+  try {
+    const url = new URL(value);
+
+    return ['https:', 'http:'].includes(url.protocol)
+      ? url.href
+      : '';
+  } catch {
+    return '';
+  }
+}
+
+function formatDate(value) {
+  if (!value) return 'نامشخص';
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) return 'نامشخص';
+
+  return new Intl.DateTimeFormat('fa-IR', {
+    dateStyle: 'medium'
+  }).format(date);
+}
+
+function showToast(message) {
+  toast.textContent = message;
+  toast.classList.add('show');
+
+  clearTimeout(window.toastTimer);
+
+  window.toastTimer = setTimeout(() => {
+    toast.classList.remove('show');
+  }, 2400);
+}
+
+function showState(title, message, icon = 'fa-circle-info') {
+  postList.innerHTML = `
+    <div class="state-box">
+      <i class="fa-solid ${icon}"></i>
+      <h3>${escapeHTML(title)}</h3>
+      ${escapeHTML(message)}
+    </div>
+  `;
+
+  resultCount.textContent = '۰ پست';
+  loadMoreButton.style.display = 'none';
+}
+
+// Load current user's likes
+async function loadMyLikes() {
+  likedPosts.clear();
+
+  if (!currentUser || !allPosts.length) return;
+
+  const postIds = allPosts.map(post => post.id);
+
+  const { data, error } = await supabaseClient
+    .from('post_likes')
+    .select('post_id')
+    .eq('user_id', currentUser.id)
+    .in('post_id', postIds);
+
+  if (error) {
+    console.error('Likes error:', error.message);
+    return;
+  }
+
+  (data || []).forEach(item => {
+    likedPosts.add(item.post_id);
+  });
+}
+
+// Load all approved posts
+async function loadPosts() {
+  postList.innerHTML = `
+    <div class="state-box">
+      <i class="fa-solid fa-spinner fa-spin"></i>
+      در حال دریافت پست‌ها...
+    </div>
+  `;
+
+  const { data, error } = await supabaseClient
+    .from('posts')
+    .select(`
+      id,
+      author_id,
+      title,
+      description,
+      content,
+      image_url,
+      category,
+      views,
+      likes_count,
+      created_at
+    `)
+    .eq('status', 'approved')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Posts error:', error.message);
+
+    showState(
+      'دریافت پست‌ها ناموفق بود',
+      'لطفاً اتصال اینترنت و دسترسی دیتابیس رو بررسی کن.',
+      'fa-triangle-exclamation'
+    );
+
+    return;
+  }
+
+  allPosts = data || [];
+
+  // Load authors
+  const authorIds = [
+    ...new Set(allPosts.map(post => post.author_id).filter(Boolean))
+  ];
+
+  if (authorIds.length) {
+    const { data: profiles, error: profileError } =
+      await supabaseClient
+        .from('profiles')
+        .select('id, username, display_name')
+        .in('id', authorIds);
+
+    if (profileError) {
+      console.error('Profiles error:', profileError.message);
+    }
+
+    const profileMap = new Map(
+      (profiles || []).map(profile => [
+        profile.id,
+        {
+          name: profile.display_name || profile.username || 'کاربر کامیونیتی',
+          username: profile.username || ''
+        }
+      ])
+    );
+
+    allPosts = allPosts.map(post => {
+      const profile = profileMap.get(post.author_id);
+
+      return {
+        ...post,
+        author_name: profile?.name || 'کاربر کامیونیتی',
+        author_username: profile?.username || ''
+      };
+    });
+  } else {
+    allPosts = allPosts.map(post => ({
+      ...post,
+      author_name: 'کاربر کامیونیتی',
+      author_username: ''
+    }));
+  }
+
+  await loadMyLikes();
+
+  visibleCount = PAGE_SIZE;
+  applyFilters();
+}
+
+// Filter and sort
+function applyFilters() {
+  const search = searchInput.value.trim().toLocaleLowerCase('fa');
+  const category = categoryFilter.value;
+  const sort = sortSelect.value;
+
+  filteredPosts = allPosts.filter(post => {
+    const matchesCategory =
+      !category || post.category === category;
+
+    const searchableText = [
+      post.title,
+      post.description,
+      post.content,
+      post.author_name,
+      post.category
+    ].join(' ').toLocaleLowerCase('fa');
+
+    const matchesSearch =
+      !search || searchableText.includes(search);
+
+    return matchesCategory && matchesSearch;
+  });
+
+  filteredPosts.sort((a, b) => {
+    if (sort === 'oldest') {
+      return new Date(a.created_at) - new Date(b.created_at);
+    }
+
+    if (sort === 'views') {
+      return Number(b.views || 0) - Number(a.views || 0);
+    }
+
+    if (sort === 'popular') {
+      return Number(b.likes_count || 0) - Number(a.likes_count || 0);
+    }
+
+    return new Date(b.created_at) - new Date(a.created_at);
+  });
+
+  renderPosts();
+}
+
+// Render cards
+function renderPosts() {
+  const visiblePosts = filteredPosts.slice(0, visibleCount);
+
+  resultCount.textContent =
+    `${filteredPosts.length.toLocaleString('fa-IR')} پست`;
+
+  if (!filteredPosts.length) {
+    showState(
+      'پستی پیدا نشد!',
+      'عبارت جست‌وجو یا دسته‌بندی دیگری رو امتحان کن.',
+      'fa-newspaper'
+    );
+    return;
+  }
+
+  postList.innerHTML = visiblePosts.map(post => {
+    const image = safeImageURL(post.image_url);
+    const liked = likedPosts.has(post.id);
+
+    const imageHTML = image
+      ? `<img src="${escapeHTML(image)}" alt="${escapeHTML(post.title)}" loading="lazy">`
+      : `<i class="fa-solid fa-gamepad"></i>`;
+
+    const authorURL = post.author_username
+      ? `profile.html?u=${encodeURIComponent(post.author_username)}`
+      : '#';
+
+    return `
+      <article class="post-card">
+
+        <a
+          class="post-image"
+          href="post.html?id=${encodeURIComponent(post.id)}"
+          aria-label="مشاهده پست"
+        >
+          ${imageHTML}
+        </a>
+
+        <div class="post-body">
+
+          <span class="tag">
+            ${escapeHTML(post.category || 'عمومی')}
+          </span>
+
+          <h2 class="post-title">
+            <a href="post.html?id=${encodeURIComponent(post.id)}">
+              ${escapeHTML(post.title || 'بدون عنوان')}
+            </a>
+          </h2>
+
+          <p class="post-description">
+            ${escapeHTML(post.description || post.content || 'بدون توضیحات')}
+          </p>
+
+          <div class="post-meta">
+
+            <a href="${authorURL}">
+              <i class="fa-regular fa-user"></i>
+              ${escapeHTML(post.author_name)}
+            </a>
+
+            <span>
+              <i class="fa-regular fa-calendar"></i>
+              ${formatDate(post.created_at)}
+            </span>
+
+            <span>
+              <i class="fa-regular fa-eye"></i>
+              ${Number(post.views || 0).toLocaleString('fa-IR')}
+            </span>
+
+            <button
+              class="like-button ${liked ? 'liked' : ''}"
+              data-like="${escapeHTML(post.id)}"
+              type="button"
+            >
+              <i class="${liked ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+              ${Number(post.likes_count || 0).toLocaleString('fa-IR')}
+            </button>
+
+          </div>
+        </div>
+
+        <a
+          class="post-open"
+          href="post.html?id=${encodeURIComponent(post.id)}"
+          aria-label="مشاهده جزئیات"
+        >
+          <i class="fa-solid fa-arrow-left"></i>
+        </a>
+
+      </article>
+    `;
+  }).join('');
+
+  loadMoreButton.style.display =
+    visibleCount < filteredPosts.length ? 'block' : 'none';
+}
+
+// Search
+searchInput.addEventListener('input', () => {
+  visibleCount = PAGE_SIZE;
+  applyFilters();
+});
+
+// Category
+categoryFilter.addEventListener('change', () => {
+  visibleCount = PAGE_SIZE;
+  applyFilters();
+});
+
+// Sorting
+sortSelect.addEventListener('change', () => {
+  visibleCount = PAGE_SIZE;
+  applyFilters();
+});
+
+// Load more
+loadMoreButton.addEventListener('click', () => {
+  visibleCount += PAGE_SIZE;
+  renderPosts();
+});
+
+// Like / Unlike
+postList.addEventListener('click', async event => {
+  const button = event.target.closest('[data-like]');
+
+  if (!button) return;
+
+  event.preventDefault();
+  event.stopPropagation();
+
+  if (!currentUser) {
+    showToast('برای لایک کردن ابتدا وارد حساب کاربری شو.');
+    return;
+  }
+
+  const postId = button.dataset.like;
+  const post = allPosts.find(item => item.id === postId);
+
+  if (!post || button.disabled) return;
+
+  button.disabled = true;
+
+  const alreadyLiked = likedPosts.has(postId);
+
+  let error;
+
+  if (alreadyLiked) {
+    const result = await supabaseClient
+      .from('post_likes')
+      .delete()
+      .eq('post_id', postId)
+      .eq('user_id', currentUser.id);
+
+    error = result.error;
+  } else {
+    const result = await supabaseClient
+      .from('post_likes')
+      .insert({
+        post_id: postId,
+        user_id: currentUser.id
+      });
+
+    error = result.error;
+  }
+
+  if (error) {
+    console.error('Like error:', error.message);
+    showToast('ثبت لایک انجام نشد.');
+    button.disabled = false;
+    return;
+  }
+
+  if (alreadyLiked) {
+    likedPosts.delete(postId);
+    post.likes_count = Math.max(0, Number(post.likes_count || 0) - 1);
+  } else {
+    likedPosts.add(postId);
+    post.likes_count = Number(post.likes_count || 0) + 1;
+  }
+
+  renderPosts();
+});
+
+// Initialize
+async function initialize() {
+  const { data, error } = await supabaseClient.auth.getSession();
+
+  if (error) {
+    console.error('Session error:', error.message);
+  }
+
+  currentUser = data?.session?.user || null;
+
+  await loadPosts();
+}
+
+supabaseClient.auth.onAuthStateChange((event, session) => {
+  setTimeout(async () => {
+    currentUser = session?.user || null;
+    await loadMyLikes();
+    applyFilters();
+  }, 0);
+});
+
+initialize();
+</script>
+
+</body>
+</html>
