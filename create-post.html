@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080e14">
+<title>ساخت پست جدید | Bindex</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root {
+  --accent: #009ACE;
+  --accent2: #31b9e8;
+  --bg: #080e14;
+  --panel: #0e1821;
+  --panel2: #111f2a;
+  --line: rgba(255,255,255,.075);
+  --muted: #91a3b1;
+  --white: #f4f8fb;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 80% 0%,rgba(0,154,206,.16),transparent 34%),
+    radial-gradient(ellipse at 5% 45%,rgba(0,154,206,.07),transparent 28%),
+    var(--bg);
+  color: var(--white);
+  font-family: Vazirmatn,sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,input,textarea,select {
+  font: inherit;
+}
+
+.wrap {
+  width: min(850px,calc(100% - 36px));
+  margin: auto;
+}
+
+body:before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: .24;
+  background-image:
+    linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(to bottom,#000,transparent 80%);
+  z-index: -1;
+}
+
+/* Header */
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(8,14,20,.84);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--line);
+}
+
+.header-inner {
+  height: 74px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  background: linear-gradient(145deg,#10b8ec,#0075a7);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 8px 25px #009ace42;
+  font-size: 20px;
+}
+
+.brandname {
+  font: 700 25px "Space Grotesk",sans-serif;
+  letter-spacing: -1.3px;
+}
+
+.brandname b {
+  color: var(--accent2);
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: #aebdc8;
+  font-size: 12px;
+  transition: .2s;
+}
+
+.back-link:hover {
+  color: var(--accent2);
+}
+
+/* Main */
+
+main {
+  padding: 48px 0 65px;
+}
+
+.page-heading {
+  margin-bottom: 25px;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border: 1px solid #009ace55;
+  background: #009ace18;
+  border-radius: 30px;
+  color: #67d5f7;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.page-heading h1 {
+  font-size: 32px;
+  font-weight: 900;
+  margin: 17px 0 7px;
+}
+
+.page-heading p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 2;
+  margin: 0;
+}
+
+/* Form */
+
+.form-card {
+  padding: 30px;
+  border: 1px solid var(--line);
+  border-radius: 23px;
+  background: linear-gradient(145deg,#111e28,#0c151d);
+  box-shadow: 0 20px 65px #0003;
+}
+
+.form-group {
+  margin-bottom: 22px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.required {
+  color: #ff7777;
+}
+
+.form-control {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: #ffffff08;
+  color: white;
+  padding: 13px 15px;
+  outline: none;
+  font-size: 12px;
+  transition: .2s;
+}
+
+.form-control:focus {
+  border-color: #009aceaa;
+  background: #009ace0b;
+  box-shadow: 0 0 0 3px #009ace13;
+}
+
+.form-control::placeholder {
+  color: #718594;
+}
+
+select.form-control {
+  cursor: pointer;
+}
+
+select.form-control option {
+  background: #111f2a;
+  color: white;
+}
+
+textarea.form-control {
+  min-height: 115px;
+  resize: vertical;
+  line-height: 2;
+}
+
+#content {
+  min-height: 220px;
+}
+
+.field-hint {
+  color: #718594;
+  font-size: 10px;
+  margin-top: 8px;
+  line-height: 1.8;
+}
+
+.form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+
+.review-note {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.9;
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  max-width: 350px;
+}
+
+.review-note i {
+  color: var(--accent2);
+  margin-top: 4px;
+}
+
+.submit-btn {
+  border: 0;
+  border-radius: 12px;
+  padding: 13px 23px;
+  background: var(--accent);
+  color: white;
+  font-size: 12px;
+  font-weight: 900;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  box-shadow: 0 8px 24px #009ace35;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.submit-btn:hover {
+  background: #12afe2;
+  transform: translateY(-2px);
+}
+
+.submit-btn:disabled {
+  opacity: .6;
+  cursor: wait;
+  transform: none;
+}
+
+/* Alerts */
+
+.alert {
+  display: none;
+  padding: 13px 15px;
+  border-radius: 12px;
+  font-size: 12px;
+  line-height: 1.9;
+  margin-bottom: 20px;
+}
+
+.alert.show {
+  display: block;
+}
+
+.alert.error {
+  background: #ff555515;
+  border: 1px solid #ff555550;
+  color: #ff9999;
+}
+
+.alert.success {
+  background: #20c99715;
+  border: 1px solid #20c99755;
+  color: #69e0b5;
+}
+
+.alert.info {
+  background: #009ace15;
+  border: 1px solid #009ace55;
+  color: #7bdcff;
+}
+
+/* Success state */
+
+.success-card {
+  display: none;
+  text-align: center;
+  padding: 45px 25px;
+  border: 1px solid #20c99740;
+  border-radius: 23px;
+  background: linear-gradient(145deg,#10251f,#0c1718);
+}
+
+.success-card.show {
+  display: block;
+}
+
+.success-icon {
+  width: 75px;
+  height: 75px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: #20c99718;
+  color: #54d6a5;
+  font-size: 30px;
+}
+
+.success-card h2 {
+  font-size: 23px;
+  margin: 0 0 10px;
+}
+
+.success-card p {
+  color: #9bb5aa;
+  font-size: 12px;
+  line-height: 2;
+  margin: 0 auto 25px;
+  max-width: 440px;
+}
+
+.success-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  border: 0;
+  border-radius: 12px;
+  padding: 11px 17px;
+  font-size: 12px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: white;
+}
+
+.btn-soft {
+  background: #ffffff0a;
+  border: 1px solid var(--line);
+  color: #dce8ef;
+}
+
+footer {
+  border-top: 1px solid var(--line);
+  background: #060b10;
+  padding: 22px 0;
+  text-align: center;
+  color: #657986;
+  font-size: 10px;
+}
+
+/* Responsive */
+
+@media(max-width:600px) {
+  main {
+    padding: 30px 0 45px;
+  }
+
+  .page-heading h1 {
+    font-size: 26px;
+  }
+
+  .form-card {
+    padding: 20px 16px;
+    border-radius: 18px;
+  }
+
+  .form-footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .submit-btn {
+    width: 100%;
+  }
+
+  .header-inner {
+    height: 65px;
+  }
+
+  .logo {
+    width: 38px;
+    height: 38px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="wrap header-inner">
+    <a class="brand" href="index.html">
+      <span class="logo">
+        <i class="fa-solid fa-gamepad"></i>
+      </span>
+      <span class="brandname">Bindex<b>.</b></span>
+    </a>
+
+    <a class="back-link" href="index.html">
+      بازگشت به خانه
+      <i class="fa-solid fa-arrow-left"></i>
+    </a>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+
+    <div class="page-heading">
+      <span class="eyebrow">
+        <i class="fa-solid fa-pen-to-square"></i>
+        BINDEX COMMUNITY
+      </span>
+
+      <h1>ساخت پست جدید</h1>
+
+      <p>
+        تجربه‌ها، مطالب و بحث‌های گیمینگ خودت رو با جامعه Bindex به اشتراک بذار.
+      </p>
+    </div>
+
+    <div class="alert" id="alertBox"></div>
+
+    <form class="form-card" id="postForm">
+
+      <div class="form-group">
+        <label for="title">
+          عنوان پست <span class="required">*</span>
+        </label>
+
+        <input
+          class="form-control"
+          id="title"
+          name="title"
+          type="text"
+          maxlength="120"
+          placeholder="مثلاً بهترین بازی‌های چندنفره..."
+          required
+        >
+        <div class="field-hint">عنوان باید واضح و مرتبط با موضوع پست باشه.</div>
+      </div>
+
+      <div class="form-group">
+        <label for="category">
+          دسته‌بندی <span class="required">*</span>
+        </label>
+
+        <select class="form-control" id="category" name="category" required>
+          <option value="">انتخاب دسته‌بندی</option>
+          <option value="ماینکرفت">ماینکرفت</option>
+          <option value="گیمینگ">گیمینگ</option>
+          <option value="بحث آزاد">بحث آزاد</option>
+          <option value="راهنما">راهنما و آموزش</option>
+          <option value="هم‌تیمی">پیدا کردن هم‌تیمی</option>
+          <option value="اخبار بازی">اخبار بازی</option>
+          <option value="سخت‌افزار">سخت‌افزار</option>
+          <option value="سایر">سایر</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="description">
+          توضیحات کوتاه <span class="required">*</span>
+        </label>
+
+        <textarea
+          class="form-control"
+          id="description"
+          name="description"
+          maxlength="300"
+          placeholder="در چند جمله موضوع پست رو معرفی کن..."
+          required
+        ></textarea>
+
+        <div class="field-hint">حداکثر ۳۰۰ کاراکتر.</div>
+      </div>
+
+      <div class="form-group">
+        <label for="content">
+          متن کامل پست <span class="required">*</span>
+        </label>
+
+        <textarea
+          class="form-control"
+          id="content"
+          name="content"
+          maxlength="10000"
+          placeholder="اینجا متن کامل پستت رو بنویس..."
+          required
+        ></textarea>
+
+        <div class="field-hint">حداکثر ۱۰ هزار کاراکتر.</div>
+      </div>
+
+      <div class="form-group">
+        <label for="image_url">
+          لینک تصویر
+          <span style="color:#718594;font-weight:400">(اختیاری)</span>
+        </label>
+
+        <input
+          class="form-control"
+          id="image_url"
+          name="image_url"
+          type="url"
+          placeholder="https://example.com/image.jpg"
+        >
+
+        <div class="field-hint">
+          لینک مستقیم تصویر رو وارد کن. فعلاً امکان آپلود فایل وجود نداره.
+        </div>
+      </div>
+
+      <div class="form-footer">
+        <div class="review-note">
+          <i class="fa-solid fa-circle-info"></i>
+          <span>
+            پست شما ابتدا برای بررسی مدیر ارسال می‌شه و پس از تأیید در کامیونیتی نمایش داده خواهد شد.
+          </span>
+        </div>
+
+        <button class="submit-btn" id="submitBtn" type="submit">
+          <i class="fa-solid fa-paper-plane"></i>
+          ارسال برای بررسی
+        </button>
+      </div>
+
+    </form>
+
+    <div class="success-card" id="successCard">
+      <div class="success-icon">
+        <i class="fa-solid fa-check"></i>
+      </div>
+
+      <h2>پستت ثبت شد!</h2>
+
+      <p>
+        پست با موفقیت برای بررسی ارسال شد.
+        پس از تأیید مدیر، در کامیونیتی Bindex نمایش داده می‌شه.
+      </p>
+
+      <div class="success-actions">
+        <a class="btn btn-primary" href="index.html">
+          <i class="fa-solid fa-house"></i>
+          بازگشت به خانه
+        </a>
+
+        <button class="btn btn-soft" id="newPostBtn" type="button">
+          <i class="fa-solid fa-plus"></i>
+          ساخت پست دیگر
+        </button>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  © 2026 Bindex. تمامی حقوق محفوظ است.
+</footer>
+
+<script>
+const SUPABASE_URL = 'https://hlescjwegrtvwgtqsemm.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_9rR5jxE8CFQJMm-oy74wOw_VRtHgguY';
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY,
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      storage: window.localStorage
+    }
+  }
+);
+
+const form = document.getElementById('postForm');
+const alertBox = document.getElementById('alertBox');
+const submitBtn = document.getElementById('submitBtn');
+const successCard = document.getElementById('successCard');
+const newPostBtn = document.getElementById('newPostBtn');
+
+let currentUser = null;
+
+function showAlert(message, type = 'error') {
+  alertBox.textContent = message;
+  alertBox.className = `alert ${type} show`;
+
+  alertBox.scrollIntoView({
+    behavior: 'smooth',
+    block: 'center'
+  });
+}
+
+function hideAlert() {
+  alertBox.className = 'alert';
+  alertBox.textContent = '';
+}
+
+function setLoading(loading) {
+  submitBtn.disabled = loading;
+
+  submitBtn.innerHTML = loading
+    ? '<i class="fa-solid fa-spinner fa-spin"></i> در حال ارسال...'
+    : '<i class="fa-solid fa-paper-plane"></i> ارسال برای بررسی';
+}
+
+function isValidImageURL(value) {
+  if (!value) return true;
+
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:' || url.protocol === 'http:';
+  } catch {
+    return false;
+  }
+}
+
+// Check authentication
+async function initializePage() {
+  const { data, error } = await supabaseClient.auth.getSession();
+
+  if (error) {
+    showAlert('بررسی وضعیت حساب ناموفق بود. صفحه رو دوباره بارگذاری کن.');
+    return;
+  }
+
+  currentUser = data.session?.user || null;
+
+  if (!currentUser) {
+    window.location.replace(
+      'https://tutworks09-dev.github.io/Bindex/auth.html'
+    );
+    return;
+  }
+}
+
+// Submit post
+form.addEventListener('submit', async event => {
+  event.preventDefault();
+  hideAlert();
+
+  if (!currentUser) {
+    showAlert('ابتدا وارد حساب کاربری خودت شو.');
+    return;
+  }
+
+  const title = document.getElementById('title').value.trim();
+  const category = document.getElementById('category').value;
+  const description = document.getElementById('description').value.trim();
+  const content = document.getElementById('content').value.trim();
+  const imageUrl = document.getElementById('image_url').value.trim();
+
+  if (!title || !category || !description || !content) {
+    showAlert('لطفاً تمام فیلدهای ضروری رو تکمیل کن.');
+    return;
+  }
+
+  if (!isValidImageURL(imageUrl)) {
+    showAlert('لینک تصویر معتبر نیست.');
+    return;
+  }
+
+  setLoading(true);
+
+  const postData = {
+    author_id: currentUser.id,
+    title,
+    category,
+    description,
+    content,
+    image_url: imageUrl || null,
+    status: 'pending'
+  };
+
+  const { error } = await supabaseClient
+    .from('posts')
+    .insert(postData);
+
+  setLoading(false);
+
+  if (error) {
+    console.error('Post creation error:', error);
+
+    if (error.code === '42501') {
+      showAlert('اجازه ثبت پست وجود نداره. باید Policy ثبت پست در Supabase بررسی بشه.');
+    } else {
+      showAlert('ثبت پست ناموفق بود: ' + error.message);
+    }
+
+    return;
+  }
+
+  form.style.display = 'none';
+  successCard.classList.add('show');
+
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+});
+
+// Create another post
+newPostBtn.addEventListener('click', () => {
+  form.reset();
+  form.style.display = 'block';
+  successCard.classList.remove('show');
+  hideAlert();
+
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+});
+
+// Auth state changes
+supabaseClient.auth.onAuthStateChange((event, session) => {
+  currentUser = session?.user || null;
+
+  if (!currentUser) {
+    window.location.replace(
+      'https://tutworks09-dev.github.io/Bindex/auth.html'
+    );
+  }
+});
+
+// Start
+initializePage();
+</script>
+
+</body>
+</html>
