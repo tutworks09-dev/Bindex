@@ -514,7 +514,117 @@ header {
   direction: ltr;
   overflow-wrap: anywhere;
 }
-  
+
+  /* Games section */
+#gamesContent {
+  padding: 18px;
+}
+
+#noFavoriteGames {
+  margin: 0;
+}
+
+.favorite-games-list {
+  display: flex;
+  flex-direction: row;
+  direction: ltr;
+  gap: 15px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 2px 16px;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: #087da5 #101c27;
+}
+
+.favorite-games-list::-webkit-scrollbar {
+  height: 8px;
+}
+
+.favorite-games-list::-webkit-scrollbar-track {
+  background: #101c27;
+  border-radius: 20px;
+}
+
+.favorite-games-list::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #087da5, #31b9e8);
+  border-radius: 20px;
+}
+
+.favorite-game-item {
+  position: relative;
+  flex: 0 0 260px;
+  height: 155px;
+  border-radius: 19px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  padding: 18px;
+  color: white;
+  text-align: left;
+  border: 1px solid rgba(49,185,232,.3);
+  box-shadow: 0 8px 25px rgba(0,0,0,.25);
+  transition: transform .25s, border-color .25s;
+}
+
+.favorite-game-item:hover {
+  transform: translateY(-5px);
+  border-color: #31b9e8;
+}
+
+.favorite-game-item::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    0deg,
+    rgba(3,10,17,.95),
+    rgba(3,10,17,.05)
+  );
+}
+
+.game-card-content {
+  position: relative;
+  z-index: 1;
+}
+
+.game-card-content i {
+  font-size: 23px;
+  margin-bottom: 7px;
+  display: block;
+  color: #65d5ff;
+}
+
+.game-card-content h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 19px;
+  font-weight: 700;
+}
+
+/* Game themes */
+.game-minecraft {
+  background:
+    radial-gradient(circle at 75% 20%, #76a947, transparent 35%),
+    linear-gradient(135deg, #294d30, #172c20 55%, #101b19);
+}
+
+.game-call-of-duty {
+  background:
+    radial-gradient(circle at 75% 20%, #a68b50, transparent 40%),
+    linear-gradient(135deg, #514a36, #282b25 60%, #111916);
+}
+
+.game-fortnite {
+  background:
+    radial-gradient(circle at 75% 20%, #7b75db, transparent 40%),
+    linear-gradient(135deg, #354b8d, #252b5b 60%, #111827);
+}
+
+.game-valorant {
+  background:
+    radial-gradient(circle at 75% 20%, #e75a66, transparent 40%),
+    linear-gradient(135deg, #7b2937, #3a1d2a 60%, #15151e);
+}
 </style>
 </head>
 
@@ -913,14 +1023,51 @@ gamesList.replaceChildren();
 
 const favoriteGames = profile.favorite_games || [];
 
+const gameData = {
+  'Minecraft': {
+    className: 'game-minecraft',
+    icon: 'fa-cube'
+  },
+  'Call of Duty': {
+    className: 'game-call-of-duty',
+    icon: 'fa-crosshairs'
+  },
+  'Fortnite': {
+    className: 'game-fortnite',
+    icon: 'fa-gamepad'
+  },
+  'Valorant': {
+    className: 'game-valorant',
+    icon: 'fa-bolt'
+  }
+};
+
 favoriteGames.forEach(game => {
-  const item = document.createElement('div');
-  item.className = 'favorite-game-item';
-  item.textContent = game;
-  gamesList.appendChild(item);
+  const info = gameData[game];
+
+  if (!info) return;
+
+  const card = document.createElement('div');
+  card.className = `favorite-game-item ${info.className}`;
+
+  const content = document.createElement('div');
+  content.className = 'game-card-content';
+
+  const icon = document.createElement('i');
+  icon.className = `fa-solid ${info.icon}`;
+
+  const title = document.createElement('h3');
+  title.textContent = game;
+
+  content.append(icon, title);
+  card.appendChild(content);
+  gamesList.appendChild(card);
 });
 
-noGames.classList.toggle('hidden', favoriteGames.length > 0);
+noGames.classList.toggle(
+  'hidden',
+  favoriteGames.length > 0
+);
   
 }
 
