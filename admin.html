@@ -1,241 +1,1130 @@
+
 <!doctype html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#071426">
-  <title>BINDEX | Admin Panel</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    :root{--bg:#071426;--panel:#0d1d32;--panel2:#10243d;--line:#1b3654;--text:#edf6ff;--muted:#91a8c0;--blue:#079bd3;--cyan:#36c5ee;--red:#ef5264;--green:#25c58a;--yellow:#f5b942}
-    *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% -10%,#12385b 0,transparent 38%),var(--bg);color:var(--text);font-family:Vazirmatn,sans-serif;min-height:100vh}
-    button,input,textarea,select{font:inherit}button{cursor:pointer;border:0}.app{display:grid;grid-template-columns:255px minmax(0,1fr);min-height:100vh}
-    aside{background:#08182aee;border-left:1px solid var(--line);padding:22px 16px;position:sticky;top:0;height:100vh}
-    .brand{display:flex;align-items:center;gap:12px;padding:4px 8px 24px}.logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#079bd3,#2454a6);display:grid;place-items:center;font-size:21px;box-shadow:0 8px 25px #079bd344}.brand b{font-size:18px;letter-spacing:1px}.brand small{display:block;color:var(--muted);font-size:11px}
-    .nav-label{color:#66829e;font-size:11px;padding:10px 12px 7px}.nav{display:grid;gap:5px}.nav button{display:flex;align-items:center;gap:12px;width:100%;padding:12px;border-radius:11px;background:transparent;color:#a9bfd5;text-align:right;transition:.18s}.nav button:hover,.nav button.active{background:#103451;color:#fff}.nav button.active{box-shadow:inset -3px 0 var(--cyan)}.nav i{width:20px;text-align:center;color:var(--cyan)}
-    .side-bottom{position:absolute;bottom:18px;right:16px;left:16px;border-top:1px solid var(--line);padding-top:14px}.identity{font-size:12px;color:var(--muted);overflow-wrap:anywhere}.identity strong{color:var(--text);display:block}
-    main{padding:28px;min-width:0;max-width:1500px;width:100%;margin:auto}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:25px}.eyebrow{color:var(--cyan);font-size:12px;font-weight:700}.top h1{font-size:25px;margin:3px 0}.top p{margin:0;color:var(--muted);font-size:13px}.top-actions{display:flex;gap:9px;align-items:center}.pill{border:1px solid var(--line);padding:8px 12px;border-radius:999px;color:#b7cee3;font-size:12px}
-    .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-bottom:22px}.stat,.card{background:linear-gradient(145deg,#10243b,#0b1b2e);border:1px solid var(--line);border-radius:16px}.stat{padding:17px;display:flex;justify-content:space-between;align-items:center}.stat small{color:var(--muted)}.stat strong{font-size:25px;display:block;margin-top:4px}.stat i{font-size:20px;color:var(--cyan);background:#123b57;padding:13px;border-radius:12px}
-    .section{display:none}.section.active{display:block}.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:4px 0 16px}.section-head h2{font-size:19px;margin:0}.section-head p{font-size:12px;color:var(--muted);margin:3px 0 0}
-    .card{padding:18px;margin-bottom:15px}.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}.search{flex:1;min-width:190px}.field,input,textarea,select{width:100%;background:#07182a;border:1px solid #25415f;color:var(--text);border-radius:10px;padding:11px 12px;outline:none}.field:focus,input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 0 3px #36c5ee18}textarea{min-height:110px;resize:vertical}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.form-grid .wide{grid-column:1/-1}label{display:block;color:#a9bfd5;font-size:12px;margin-bottom:6px}
-    .btn{padding:9px 14px;border-radius:10px;background:#123c5b;color:#eaf8ff;font-weight:600}.btn:hover{filter:brightness(1.15)}.btn.primary{background:linear-gradient(135deg,#078fc5,#176bb2)}.btn.danger{background:#542333;color:#ffdce1}.btn.success{background:#124b40;color:#bfffe9}.btn.ghost{background:#10243b;border:1px solid var(--line)}.btn:disabled{opacity:.45;cursor:not-allowed}
-    .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px}table{width:100%;border-collapse:collapse;min-width:650px}th,td{padding:12px 13px;text-align:right;border-bottom:1px solid #1a324b;font-size:12px;vertical-align:middle}th{color:#8fa9c2;background:#0b1b2d;font-weight:600}td{color:#dceafa}tr:last-child td{border-bottom:0}.muted{color:var(--muted)}.actions{display:flex;gap:6px;flex-wrap:wrap}.tag{display:inline-block;padding:4px 9px;border-radius:999px;background:#173b56;color:#a9e8ff;font-size:11px}.tag.red{background:#4a2330;color:#ffb9c3}.tag.green{background:#124537;color:#9af0ce}.tag.yellow{background:#4b3b1c;color:#ffe0a0}
-    .empty{padding:35px 15px;text-align:center;color:var(--muted)}.empty i{font-size:25px;color:#4c779b;margin-bottom:10px}.notice{padding:12px 14px;border:1px solid #24506c;background:#0c2a40;border-radius:11px;color:#bcecff;font-size:12px;margin-bottom:14px}.notice.warn{border-color:#665024;background:#332a17;color:#ffe0a0}.toast{position:fixed;bottom:22px;left:22px;max-width:min(420px,calc(100vw - 44px));padding:12px 16px;background:#102b43;border:1px solid #2b5c7c;border-radius:12px;box-shadow:0 15px 40px #0007;z-index:10;display:none;font-size:13px}.toast.show{display:block}.loading{opacity:.6;pointer-events:none}.mobile-menu{display:none}
-    .login-box{max-width:430px;margin:9vh auto;padding:25px;background:var(--panel);border:1px solid var(--line);border-radius:18px}.login-box h2{margin-top:0}.login-box p{color:var(--muted);font-size:13px}
-    @media(max-width:900px){.app{grid-template-columns:1fr}aside{height:auto;position:relative;padding:12px 14px;border-left:0;border-bottom:1px solid var(--line)}.brand{padding:3px 5px 12px}.nav{display:flex;overflow:auto;padding-bottom:4px}.nav button{white-space:nowrap;width:auto;padding:9px 11px}.nav-label,.side-bottom{display:none}main{padding:19px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
-    @media(max-width:560px){main{padding:14px}.top{align-items:flex-start}.top h1{font-size:21px}.pill{display:none}.form-grid{grid-template-columns:1fr}.form-grid .wide{grid-column:auto}.stats{gap:8px}.stat{padding:12px}.stat strong{font-size:21px}.stat i{padding:10px}}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101b2d">
+<title>BINDEX | Admin Panel</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root {
+  --bg:#101b2d;
+  --sidebar:#142238;
+  --panel:#192941;
+  --panel2:#20334d;
+  --line:#2b405b;
+  --text:#edf3fb;
+  --muted:#9aabc0;
+  --blue:#3978c9;
+  --blue-hover:#3069b5;
+  --green:#23845f;
+  --red:#a94250;
+  --yellow:#94712c;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  min-height:100vh;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Vazirmatn,sans-serif;
+}
+
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+[hidden]{display:none!important}
+
+.app{
+  display:grid;
+  grid-template-columns:250px minmax(0,1fr);
+  min-height:100vh;
+}
+
+aside{
+  background:var(--sidebar);
+  border-left:1px solid var(--line);
+  padding:20px 15px;
+  position:sticky;
+  top:0;
+  height:100vh;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:5px 8px 25px;
+}
+
+.logo{
+  width:40px;
+  height:40px;
+  border-radius:11px;
+  background:var(--blue);
+  display:grid;
+  place-items:center;
+  font-size:18px;
+}
+
+.brand b{font-size:18px}
+.brand small{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+}
+
+.nav-label{
+  color:var(--muted);
+  font-size:11px;
+  padding:12px;
+}
+
+.nav{
+  display:grid;
+  gap:4px;
+}
+
+.nav button{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  width:100%;
+  padding:11px 12px;
+  border:0;
+  border-radius:8px;
+  background:transparent;
+  color:#bdcadd;
+  text-align:right;
+  font-size:13px;
+}
+
+.nav button:hover,
+.nav button.active{
+  background:var(--panel2);
+  color:white;
+}
+
+.nav button.active{
+  border-right:3px solid #6da5ed;
+}
+
+.nav i{
+  width:20px;
+  color:#85aee8;
+  text-align:center;
+}
+
+.side-bottom{
+  position:absolute;
+  bottom:18px;
+  right:15px;
+  left:15px;
+  border-top:1px solid var(--line);
+  padding-top:14px;
+}
+
+.identity{
+  color:var(--muted);
+  font-size:12px;
+  overflow-wrap:anywhere;
+}
+
+.identity strong{
+  display:block;
+  color:var(--text);
+  margin-top:4px;
+}
+
+main{
+  width:100%;
+  max-width:1500px;
+  padding:27px;
+  margin:auto;
+  min-width:0;
+}
+
+.top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  margin-bottom:24px;
+}
+
+.eyebrow{
+  color:#8bb6ee;
+  font-size:12px;
+}
+
+.top h1{
+  font-size:24px;
+  margin:5px 0;
+}
+
+.top p{
+  color:var(--muted);
+  font-size:13px;
+  margin:0;
+}
+
+.top-actions{
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+
+.role-pill{
+  padding:7px 12px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  font-size:11px;
+  color:#b9d5fa;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
+  margin-bottom:23px;
+}
+
+.stat,.card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:11px;
+}
+
+.stat{
+  padding:17px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.stat small{color:var(--muted)}
+.stat strong{
+  display:block;
+  font-size:24px;
+  margin-top:5px;
+}
+
+.stat i{
+  font-size:19px;
+  color:#8bb6ee;
+  background:var(--panel2);
+  padding:12px;
+  border-radius:9px;
+}
+
+.section{display:none}
+.section.active{display:block}
+
+.section-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin:4px 0 15px;
+}
+
+.section-head h2{
+  font-size:18px;
+  margin:0;
+}
+
+.section-head p{
+  color:var(--muted);
+  font-size:12px;
+  margin:4px 0 0;
+}
+
+.card{
+  padding:17px;
+  margin-bottom:15px;
+}
+
+.toolbar{
+  display:flex;
+  gap:10px;
+  margin-bottom:14px;
+}
+
+.search{flex:1;min-width:0}
+
+input,textarea,select{
+  width:100%;
+  background:#111e31;
+  border:1px solid var(--line);
+  color:var(--text);
+  border-radius:8px;
+  padding:10px 12px;
+  outline:none;
+}
+
+input:focus,textarea:focus,select:focus{
+  border-color:#568bd0;
+}
+
+textarea{
+  min-height:110px;
+  resize:vertical;
+}
+
+label{
+  display:block;
+  font-size:12px;
+  color:#bdcadd;
+  margin-bottom:6px;
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:13px;
+}
+
+.wide{grid-column:1/-1}
+
+.btn{
+  padding:9px 13px;
+  border:0;
+  border-radius:8px;
+  background:var(--panel2);
+  color:white;
+  font-size:12px;
+  font-weight:600;
+}
+
+.btn:hover{filter:brightness(1.12)}
+.btn.primary{background:var(--blue)}
+.btn.danger{background:#743441}
+.btn.success{background:#21684f}
+.btn.ghost{border:1px solid var(--line)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+.table-wrap{
+  overflow:auto;
+  border:1px solid var(--line);
+  border-radius:9px;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:620px;
+}
+
+th,td{
+  padding:12px;
+  text-align:right;
+  border-bottom:1px solid var(--line);
+  font-size:12px;
+  vertical-align:middle;
+}
+
+th{
+  color:#a9bdd6;
+  background:#15243a;
+  font-weight:600;
+}
+
+td{color:#e0e9f5}
+tr:last-child td{border-bottom:0}
+
+.actions{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.tag{
+  display:inline-block;
+  padding:4px 9px;
+  border-radius:6px;
+  background:#294c76;
+  color:#c8e0ff;
+  font-size:11px;
+}
+
+.tag.red{background:#59313b;color:#ffd0d5}
+.tag.green{background:#24523f;color:#c4f0d9}
+.tag.yellow{background:#594a2c;color:#ffe4a9}
+
+.empty{
+  padding:35px 15px;
+  text-align:center;
+  color:var(--muted);
+  font-size:13px;
+}
+
+.empty i{
+  display:block;
+  font-size:25px;
+  margin-bottom:10px;
+}
+
+.notice{
+  padding:12px;
+  background:#203b5d;
+  border:1px solid #34577f;
+  border-radius:8px;
+  font-size:12px;
+  color:#d4e6fc;
+  margin-bottom:14px;
+}
+
+.notice.warn{
+  background:#453b27;
+  border-color:#6c5932;
+  color:#ffe2a6;
+}
+
+.toast{
+  position:fixed;
+  bottom:20px;
+  left:20px;
+  max-width:calc(100vw - 40px);
+  padding:12px 16px;
+  border-radius:9px;
+  background:#203b5d;
+  border:1px solid #45658b;
+  z-index:20;
+  display:none;
+  font-size:13px;
+}
+
+.toast.show{display:block}
+.loading{opacity:.65;pointer-events:none}
+
+.login-box{
+  max-width:430px;
+  margin:10vh auto;
+  padding:25px;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:12px;
+}
+
+.login-box h2{font-size:20px}
+.login-box p{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.9;
+}
+
+@media(max-width:900px){
+  .app{grid-template-columns:1fr}
+  aside{
+    height:auto;
+    position:relative;
+    padding:12px;
+    border-left:0;
+    border-bottom:1px solid var(--line);
+  }
+  .brand{padding:3px 5px 12px}
+  .nav{
+    display:flex;
+    overflow-x:auto;
+    padding-bottom:5px;
+  }
+  .nav button{white-space:nowrap;width:auto}
+  .nav-label,.side-bottom{display:none}
+  main{padding:18px}
+}
+
+@media(max-width:600px){
+  main{padding:13px}
+  .top{align-items:flex-start}
+  .top h1{font-size:20px}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .stat{padding:12px}
+  .stat strong{font-size:21px}
+  .stat i{padding:9px}
+  .form-grid{grid-template-columns:1fr}
+  .wide{grid-column:auto}
+  .top-actions{flex-wrap:wrap;justify-content:flex-end}
+}
+</style>
 </head>
+
 <body>
+
 <div id="loginView" class="login-box" hidden>
-  <div class="brand" style="padding:0 0 14px"><div class="logo"><i class="fa-solid fa-shield-halved"></i></div><div><b>BINDEX</b><small>ADMIN PANEL</small></div></div>
+  <div class="brand">
+    <div class="logo"><i class="fa-solid fa-shield-halved"></i></div>
+    <div><b>BINDEX</b><small>ADMIN PANEL</small></div>
+  </div>
   <h2>ورود به پنل مدیریت</h2>
-  <p>برای ورود به پنل، ابتدا از صفحه ورود BINDEX وارد حساب خودت شو.</p>
+  <p>ابتدا وارد حساب BINDEX خود شوید.</p>
   <button class="btn primary" id="goAuth">رفتن به صفحه ورود</button>
 </div>
+
 <div id="deniedView" class="login-box" hidden>
-  <div class="brand" style="padding:0 0 14px"><div class="logo"><i class="fa-solid fa-lock"></i></div><div><b>BINDEX</b><small>ACCESS DENIED</small></div></div>
-  <h2>دسترسی مجاز نیست</h2><p>این حساب دسترسی مدیریت BINDEX را ندارد.</p>
+  <div class="brand">
+    <div class="logo"><i class="fa-solid fa-lock"></i></div>
+    <div><b>BINDEX</b><small>ACCESS DENIED</small></div>
+  </div>
+  <h2>دسترسی مجاز نیست</h2>
+  <p>این حساب اجازه ورود به پنل مدیریت را ندارد.</p>
   <button class="btn ghost" id="signOutDenied">خروج از حساب</button>
 </div>
-<div class="app" id="app" hidden>
-  <aside>
-    <div class="brand"><div class="logo"><i class="fa-solid fa-shield-halved"></i></div><div><b>BINDEX</b><small>CONTROL CENTER</small></div></div>
-    <div class="nav-label">مدیریت محتوا</div>
-    <nav class="nav">
-      <button class="active" data-tab="pending"><i class="fa-regular fa-hourglass-half"></i> پست‌های منتشرنشده</button>
-      <button data-tab="rejected"><i class="fa-regular fa-circle-xmark"></i> پست‌های ردشده</button>
-      <button data-tab="games"><i class="fa-solid fa-gamepad"></i> ساخت پست دانلود بازی</button>
-    </nav>
-    <div class="nav-label">مدیریت کاربران</div>
-    <nav class="nav">
-      <button data-tab="users"><i class="fa-solid fa-users"></i> کاربران</button>
-      <button data-tab="banned"><i class="fa-solid fa-user-slash"></i> کاربران بن‌شده</button>
-      <button data-tab="requests"><i class="fa-solid fa-flag"></i> درخواست‌های بن</button>
-      <button data-tab="admins"><i class="fa-solid fa-user-shield"></i> مدیران</button>
-    </nav>
-    <div class="side-bottom"><div class="identity">واردشده به‌عنوان<strong id="whoami">...</strong></div><button class="btn ghost" id="signOut" style="width:100%;margin-top:10px">خروج <i class="fa-solid fa-arrow-left-from-bracket"></i></button></div>
-  </aside>
-  <main>
-    <header class="top"><div><div class="eyebrow">BINDEX / CONTROL CENTER</div><h1 id="pageTitle">پست‌های منتشرنشده</h1><p id="pageDesc">بررسی مقاله‌های ارسال‌شده توسط کاربران</p></div><div class="top-actions"><span class="pill" id="rolePill">ADMIN</span><button class="btn ghost" id="refresh"><i class="fa-solid fa-rotate"></i> بروزرسانی</button></div></header>
-    <div class="stats">
-      <div class="stat"><div><small>کاربران</small><strong id="statUsers">—</strong></div><i class="fa-solid fa-users"></i></div>
-      <div class="stat"><div><small>در انتظار بررسی</small><strong id="statPending">—</strong></div><i class="fa-regular fa-hourglass-half"></i></div>
-      <div class="stat"><div><small>بن‌شده‌ها</small><strong id="statBanned">—</strong></div><i class="fa-solid fa-user-slash"></i></div>
-      <div class="stat"><div><small>بازی‌های منتشرشده</small><strong id="statGames">—</strong></div><i class="fa-solid fa-gamepad"></i></div>
-    </div>
 
-    <section class="section active" id="tab-pending"><div class="section-head"><div><h2>پست‌های منتشرنشده</h2><p>مقاله‌های در انتظار تأیید مدیر</p></div></div><div class="card" id="pendingBox"></div></section>
-    <section class="section" id="tab-rejected"><div class="section-head"><div><h2>پست‌های ردشده</h2><p>سوابق مقاله‌های ردشده</p></div></div><div class="card" id="rejectedBox"></div></section>
-    <section class="section" id="tab-users"><div class="section-head"><div><h2>کاربران</h2><p>مشاهده اعضای BINDEX</p></div></div><div class="card"><div class="toolbar"><input class="search" id="userSearch" placeholder="جست‌وجو با نام کاربری یا نام نمایشی..."></div><div id="usersBox"></div></div></section>
-    <section class="section" id="tab-banned"><div class="section-head"><div><h2>کاربران بن‌شده</h2><p>رفع بن فقط در اختیار Owner است</p></div></div><div class="card" id="bannedBox"></div></section>
-    <section class="section" id="tab-requests"><div class="section-head"><div><h2>درخواست‌های بن</h2><p>تصمیم نهایی درباره درخواست‌ها فقط با Owner است</p></div></div><div class="card" id="requestsBox"></div></section>
-    <section class="section" id="tab-admins"><div class="section-head"><div><h2>مدیران</h2><p>فهرست مدیران و سطح دسترسی آن‌ها</p></div></div><div class="card"><div id="adminsBox"></div><div id="adminManage" hidden style="margin-top:18px;border-top:1px solid var(--line);padding-top:16px"><div class="notice warn">افزودن یا حذف مدیر فقط از طریق تابع امن دیتابیس انجام می‌شود؛ تغییر مستقیم ستون is_admin از مرورگر مجاز نیست.</div><div class="form-grid"><div><label>شناسه کاربر (UUID)</label><input id="adminUserId" placeholder="UUID کاربر"></div><div><label>عملیات</label><select id="adminAction"><option value="true">ارتقای کاربر به مدیر</option><option value="false">حذف دسترسی مدیریت</option></select></div><div class="wide"><button class="btn primary" id="saveAdmin">اجرای تغییر نقش</button></div></div></div></div></section>
-    <section class="section" id="tab-games"><div class="section-head"><div><h2>ساخت پست دانلود بازی</h2><p>انتشار بازی در بخش دانلودهای BINDEX</p></div></div><div class="card"><form id="gameForm"><div class="form-grid">
-      <div><label>نام بازی *</label><input id="gameTitle" required maxlength="120" placeholder="مثلاً Minecraft"></div>
-      <div><label>نسخه بازی</label><input id="gameVersion" maxlength="60" placeholder="مثلاً 1.21.50"></div>
-      <div><label>پلتفرم</label><select id="gamePlatform"><option value="Android">Android</option><option value="Windows">Windows</option><option value="iOS">iOS</option><option value="PlayStation">PlayStation</option><option value="Xbox">Xbox</option><option value="Multi-platform">چند پلتفرمی</option></select></div>
-      <div><label>لینک تصویر کاور</label><input id="gameCover" type="url" placeholder="https://..."></div>
-      <div class="wide"><label>توضیحات بازی</label><textarea id="gameDescription" placeholder="توضیحات و ویژگی‌های بازی..."></textarea></div>
-      <div class="wide"><label>لینک دانلود *</label><input id="gameDownload" type="url" required placeholder="https://..."></div>
-      <div><label>وضعیت انتشار</label><select id="gameStatus"><option value="draft">پیش‌نویس</option><option value="published">انتشار عمومی</option></select></div>
-      <div style="display:flex;align-items:end"><button class="btn primary" type="submit" style="width:100%">ذخیره پست بازی</button></div>
-    </div></form></div><div class="card"><div class="section-head"><div><h2>بازی‌های ثبت‌شده</h2></div></div><div id="gamesBox"></div></div></section>
-  </main>
+<div class="app" id="app" hidden>
+
+<aside>
+  <div class="brand">
+    <div class="logo"><i class="fa-solid fa-shield-halved"></i></div>
+    <div><b>BINDEX</b><small>CONTROL CENTER</small></div>
+  </div>
+
+  <div class="nav-label">مدیریت محتوا</div>
+  <nav class="nav">
+    <button class="active" data-tab="pending"><i class="fa-regular fa-hourglass-half"></i> پست‌های منتشرنشده</button>
+    <button data-tab="rejected"><i class="fa-regular fa-circle-xmark"></i> پست‌های ردشده</button>
+    <button data-tab="games"><i class="fa-solid fa-gamepad"></i> ساخت پست دانلود بازی</button>
+  </nav>
+
+  <div class="nav-label">مدیریت کاربران</div>
+  <nav class="nav">
+    <button data-tab="users"><i class="fa-solid fa-users"></i> کاربران</button>
+    <button data-tab="banned"><i class="fa-solid fa-user-slash"></i> کاربران بن‌شده</button>
+    <button data-tab="requests"><i class="fa-solid fa-flag"></i> درخواست‌های بن</button>
+    <button data-tab="admins"><i class="fa-solid fa-user-shield"></i> مدیران</button>
+  </nav>
+
+  <div class="side-bottom">
+    <div class="identity">واردشده به‌عنوان<strong id="whoami">...</strong></div>
+    <button class="btn ghost" id="signOut" style="width:100%;margin-top:10px">
+      خروج <i class="fa-solid fa-arrow-left-from-bracket"></i>
+    </button>
+  </div>
+</aside>
+
+<main>
+<header class="top">
+  <div>
+    <div class="eyebrow">BINDEX / CONTROL CENTER</div>
+    <h1 id="pageTitle">پست‌های منتشرنشده</h1>
+    <p id="pageDesc">بررسی مقاله‌های ارسال‌شده توسط کاربران</p>
+  </div>
+  <div class="top-actions">
+    <span class="role-pill" id="rolePill">ADMIN</span>
+    <button class="btn ghost" id="refresh"><i class="fa-solid fa-rotate"></i> بروزرسانی</button>
+  </div>
+</header>
+
+<div class="stats">
+  <div class="stat"><div><small>کاربران</small><strong id="statUsers">—</strong></div><i class="fa-solid fa-users"></i></div>
+  <div class="stat"><div><small>در انتظار بررسی</small><strong id="statPending">—</strong></div><i class="fa-regular fa-hourglass-half"></i></div>
+  <div class="stat"><div><small>بن‌شده‌ها</small><strong id="statBanned">—</strong></div><i class="fa-solid fa-user-slash"></i></div>
+  <div class="stat"><div><small>بازی‌های منتشرشده</small><strong id="statGames">—</strong></div><i class="fa-solid fa-gamepad"></i></div>
 </div>
+
+<section class="section active" id="tab-pending">
+  <div class="section-head"><div><h2>پست‌های منتشرنشده</h2><p>مقاله‌های در انتظار تأیید مدیر</p></div></div>
+  <div class="card" id="pendingBox"></div>
+</section>
+
+<section class="section" id="tab-rejected">
+  <div class="section-head"><div><h2>پست‌های ردشده</h2><p>سوابق مقاله‌های ردشده</p></div></div>
+  <div class="card" id="rejectedBox"></div>
+</section>
+
+<section class="section" id="tab-users">
+  <div class="section-head"><div><h2>کاربران</h2><p>مشاهده اعضای BINDEX</p></div></div>
+  <div class="card">
+    <div class="toolbar"><input class="search" id="userSearch" placeholder="جست‌وجو با نام کاربری یا نام نمایشی..."></div>
+    <div id="usersBox"></div>
+  </div>
+</section>
+
+<section class="section" id="tab-banned">
+  <div class="section-head"><div><h2>کاربران بن‌شده</h2><p>رفع بن فقط در اختیار Owner است</p></div></div>
+  <div class="card" id="bannedBox"></div>
+</section>
+
+<section class="section" id="tab-requests">
+  <div class="section-head"><div><h2>درخواست‌های بن</h2><p>تصمیم نهایی فقط با Owner است</p></div></div>
+  <div class="card" id="requestsBox"></div>
+</section>
+
+<section class="section" id="tab-admins">
+  <div class="section-head"><div><h2>مدیران</h2><p>فهرست مدیران و سطح دسترسی آن‌ها</p></div></div>
+  <div class="card">
+    <div id="adminsBox"></div>
+    <div id="adminManage" hidden style="margin-top:18px;border-top:1px solid var(--line);padding-top:16px">
+      <div class="notice warn">تغییر نقش فقط از طریق تابع امن دیتابیس انجام می‌شود.</div>
+      <div class="form-grid">
+        <div><label>شناسه کاربر (UUID)</label><input id="adminUserId" placeholder="UUID کاربر"></div>
+        <div>
+          <label>عملیات</label>
+          <select id="adminAction">
+            <option value="true">ارتقای کاربر به مدیر</option>
+            <option value="false">حذف دسترسی مدیریت</option>
+          </select>
+        </div>
+        <div class="wide"><button class="btn primary" id="saveAdmin">اجرای تغییر نقش</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="tab-games">
+  <div class="section-head"><div><h2>ساخت پست دانلود بازی</h2><p>انتشار بازی در بخش دانلودهای BINDEX</p></div></div>
+
+  <div class="card">
+    <form id="gameForm">
+      <div class="form-grid">
+        <div><label>نام بازی *</label><input id="gameTitle" required maxlength="120" placeholder="مثلاً Minecraft"></div>
+        <div><label>نسخه بازی</label><input id="gameVersion" maxlength="60" placeholder="مثلاً 1.21.50"></div>
+        <div>
+          <label>پلتفرم</label>
+          <select id="gamePlatform">
+            <option value="Android">Android</option>
+            <option value="Windows">Windows</option>
+            <option value="iOS">iOS</option>
+            <option value="PlayStation">PlayStation</option>
+            <option value="Xbox">Xbox</option>
+            <option value="Multi-platform">چند پلتفرمی</option>
+          </select>
+        </div>
+        <div><label>لینک تصویر کاور</label><input id="gameCover" type="url" placeholder="https://..."></div>
+        <div class="wide"><label>توضیحات بازی</label><textarea id="gameDescription"></textarea></div>
+        <div class="wide"><label>لینک دانلود *</label><input id="gameDownload" type="url" required placeholder="https://..."></div>
+        <div>
+          <label>وضعیت انتشار</label>
+          <select id="gameStatus">
+            <option value="draft">پیش‌نویس</option>
+            <option value="published">انتشار عمومی</option>
+          </select>
+        </div>
+        <div style="display:flex;align-items:end">
+          <button class="btn primary" type="submit" style="width:100%">ذخیره پست بازی</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="section-head"><div><h2>بازی‌های ثبت‌شده</h2></div></div>
+    <div id="gamesBox"></div>
+  </div>
+</section>
+
+</main>
+</div>
+
 <div class="toast" id="toast"></div>
+
 <script>
 (() => {
-  const SUPABASE_URL = 'https://hlescjwegrtvwgtqsemm.supabase.co';
-  const SUPABASE_ANON_KEY = 'sb_publishable_9rR5jxE8CFQJMm-oy74wOw_VRtHgguY';
-  const AUTH_URL = './auth.html';
-  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  let me = null, myProfile = null, profilesCache = [];
+'use strict';
 
-  const $ = id => document.getElementById(id);
-  const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const toast = msg => { const el=$('toast'); el.textContent=msg; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),3500); };
-  const fail = (where,error) => { console.error(where,error); toast((error?.message || 'خطای نامشخص') + ''); };
-  const isOwner = () => myProfile?.is_owner === true;
-  const isAdmin = () => myProfile?.is_admin === true || isOwner();
+const SUPABASE_URL = 'https://hlescjwegrtvwgtqsemm.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_9rR5jxE8CFQJMm-oy74wOw_VRtHgguY';
+const AUTH_URL = './auth.html';
 
-  async function init(){
-    const {data:{session},error}=await db.auth.getSession();
-    if(error) return fail('session',error);
-    if(!session){ $('loginView').hidden=false; $('goAuth').onclick=()=>location.href=AUTH_URL; return; }
-    me=session.user;
-    const {data,error:profileError}=await db.from('profiles').select('*').eq('id',me.id).maybeSingle();
-    if(profileError) return fail('profile',profileError);
-    myProfile=data;
-    if(!isAdmin()){ $('deniedView').hidden=false; $('signOutDenied').onclick=()=>db.auth.signOut().then(()=>location.href=AUTH_URL); return; }
-    $('app').hidden=false;
-    $('whoami').textContent=myProfile.username || me.email || me.id;
-    $('rolePill').textContent=isOwner()?'OWNER':'ADMIN';
-    $('adminManage').hidden=!isOwner();
-    bindNav();
-    await refreshAll();
+const db = window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+
+let me = null;
+let myProfile = null;
+let profilesCache = [];
+
+const $ = id => document.getElementById(id);
+
+const esc = value => String(value ?? '').replace(/[&<>"']/g,c=>({
+  '&':'&amp;',
+  '<':'&lt;',
+  '>':'&gt;',
+  '"':'&quot;',
+  "'":'&#39;'
+}[c]));
+
+const toast = message => {
+  const el = $('toast');
+  el.textContent = message;
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),3500);
+};
+
+const fail = (where,error) => {
+  console.error(where,error);
+  toast(error?.message || 'خطای نامشخص');
+};
+
+const isOwner = () => myProfile?.is_owner === true;
+const isAdmin = () => myProfile?.is_admin === true && myProfile?.is_banned !== true;
+
+function noData(message){
+  return `<div class="empty"><i class="fa-regular fa-folder-open"></i>${esc(message)}</div>`;
+}
+
+function table(headers,rows){
+  return `<div class="table-wrap"><table><thead><tr>
+    ${headers.map(x=>`<th>${x}</th>`).join('')}
+    </tr></thead><tbody>${rows || ''}</tbody></table></div>`;
+}
+
+async function init(){
+  const {data:{session},error} = await db.auth.getSession();
+
+  if(error) return fail('session',error);
+
+  if(!session){
+    $('loginView').hidden = false;
+    $('goAuth').onclick = () => location.href = AUTH_URL;
+    return;
   }
 
-  function bindNav(){
-    document.querySelectorAll('[data-tab]').forEach(btn=>btn.addEventListener('click',()=>{
-      document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===btn));
-      document.querySelectorAll('.section').forEach(x=>x.classList.toggle('active',x.id==='tab-'+btn.dataset.tab));
-      const titles={pending:['پست‌های منتشرنشده','بررسی مقاله‌های کاربران'],rejected:['پست‌های ردشده','سوابق مقاله‌های ردشده'],users:['کاربران','اعضای BINDEX'],banned:['کاربران بن‌شده','مدیریت وضعیت بن'],requests:['درخواست‌های بن','بررسی درخواست مدیران'],admins:['مدیران','سطوح دسترسی مدیریت'],games:['ساخت پست دانلود بازی','مدیریت محتوای دانلود بازی']};
-      $('pageTitle').textContent=titles[btn.dataset.tab][0]; $('pageDesc').textContent=titles[btn.dataset.tab][1];
-    }));
-    $('refresh').onclick=refreshAll;
-    $('signOut').onclick=async()=>{await db.auth.signOut();location.href=AUTH_URL;};
-    $('userSearch').addEventListener('input',()=>renderUsers(profilesCache));
-    $('gameForm').addEventListener('submit',saveGame);
-    $('saveAdmin').addEventListener('click',setAdminRole);
+  me = session.user;
+
+  // دریافت نقش کاربر فقط از RPC امن
+  const {data,statusError} = await db.rpc('get_my_admin_status');
+
+  if(statusError) return fail('admin status',statusError);
+
+  myProfile = Array.isArray(data) ? data[0] : data;
+
+  if(!myProfile || !isAdmin()){
+    $('deniedView').hidden = false;
+    $('signOutDenied').onclick = async()=>{
+      await db.auth.signOut();
+      location.href = AUTH_URL;
+    };
+    return;
   }
 
-  async function refreshAll(){
-    document.body.classList.add('loading');
-    try{
-      await Promise.all([loadStats(),loadPending(),loadRejected(),loadUsers(),loadBanned(),loadRequests(),loadAdmins(),loadGames()]);
-    } finally { document.body.classList.remove('loading'); }
-  }
-  async function loadStats(){
-    const [u,p,b,g]=await Promise.all([
-      db.from('profiles').select('id',{count:'exact',head:true}),
-      db.from('posts').select('id',{count:'exact',head:true}).eq('status','pending'),
-      db.from('profiles').select('id',{count:'exact',head:true}).eq('is_banned',true),
-      db.from('game_downloads').select('id',{count:'exact',head:true}).eq('status','published')
+  // دریافت نام کاربری از RPC مدیران
+  const {data:users,error:userError} = await db.rpc('get_admin_users');
+
+  if(userError) return fail('admin users',userError);
+
+  const myData = (users || []).find(u=>u.id===me.id);
+
+  $('whoami').textContent = myData?.username || me.email || me.id;
+  $('rolePill').textContent = isOwner() ? 'OWNER' : 'ADMIN';
+
+  profilesCache = users || [];
+
+  $('adminManage').hidden = !isOwner();
+  $('app').hidden = false;
+
+  bindNav();
+  await refreshAll();
+}
+
+function bindNav(){
+  document.querySelectorAll('[data-tab]').forEach(button=>{
+    button.addEventListener('click',()=>{
+      document.querySelectorAll('[data-tab]').forEach(x=>{
+        x.classList.toggle('active',x===button);
+      });
+
+      document.querySelectorAll('.section').forEach(section=>{
+        section.classList.toggle('active',section.id==='tab-'+button.dataset.tab);
+      });
+
+      const titles = {
+        pending:['پست‌های منتشرنشده','بررسی مقاله‌های کاربران'],
+        rejected:['پست‌های ردشده','سوابق مقاله‌های ردشده'],
+        users:['کاربران','اعضای BINDEX'],
+        banned:['کاربران بن‌شده','مدیریت وضعیت بن'],
+        requests:['درخواست‌های بن','بررسی درخواست مدیران'],
+        admins:['مدیران','سطوح دسترسی مدیریت'],
+        games:['ساخت پست دانلود بازی','مدیریت محتوای دانلود بازی']
+      };
+
+      $('pageTitle').textContent = titles[button.dataset.tab][0];
+      $('pageDesc').textContent = titles[button.dataset.tab][1];
+    });
+  });
+
+  $('refresh').onclick = refreshAll;
+  $('signOut').onclick = async()=>{
+    await db.auth.signOut();
+    location.href = AUTH_URL;
+  };
+
+  $('userSearch').addEventListener('input',()=>renderUsers(profilesCache));
+  $('gameForm').addEventListener('submit',saveGame);
+  $('saveAdmin').addEventListener('click',setAdminRole);
+}
+
+async function refreshAll(){
+  document.body.classList.add('loading');
+
+  try{
+    await Promise.all([
+      loadStats(),
+      loadPending(),
+      loadRejected(),
+      loadUsers(),
+      loadBanned(),
+      loadRequests(),
+      loadAdmins(),
+      loadGames()
     ]);
-    $('statUsers').textContent=u.count??'—'; $('statPending').textContent=p.count??'—'; $('statBanned').textContent=b.count??'—'; $('statGames').textContent=g.count??'—';
+  }finally{
+    document.body.classList.remove('loading');
   }
-  function table(headers,rows){return `<div class="table-wrap"><table><thead><tr>${headers.map(x=>`<th>${x}</th>`).join('')}</tr></thead><tbody>${rows||''}</tbody></table></div>`;}
-  function noData(msg){return `<div class="empty"><i class="fa-regular fa-folder-open"></i><div>${msg}</div></div>`;}
-  async function loadPending(){
-    const {data,error}=await db.from('posts').select('id,author_id,title,description,content,image_url,category,created_at').eq('status','pending').order('created_at',{ascending:false});
-    if(error){$('pendingBox').innerHTML=noData('دریافت مقاله‌ها ناموفق بود');return fail('pending',error);}
-    if(!data?.length){$('pendingBox').innerHTML=noData('مقاله در انتظار بررسی وجود ندارد.');return;}
-    $('pendingBox').innerHTML=data.map(p=>`<article style="border-bottom:1px solid var(--line);padding:14px 0"><div style="display:flex;gap:14px;align-items:flex-start">${p.image_url?`<img src="${esc(p.image_url)}" alt="" style="width:105px;height:78px;object-fit:cover;border-radius:10px" onerror="this.style.display='none'">`:''}<div style="min-width:0;flex:1"><span class="tag yellow">${esc(p.category||'Gaming')}</span><h3 style="margin:7px 0">${esc(p.title)}</h3><p class="muted" style="font-size:12px">${esc(p.description||'بدون توضیح کوتاه')}</p><small class="muted">نویسنده: ${esc(p.author_id)} · ${new Date(p.created_at).toLocaleString('fa-IR')}</small></div></div><details style="margin:10px 0"><summary style="cursor:pointer;color:var(--cyan)">خواندن متن کامل مقاله</summary><div style="white-space:pre-wrap;line-height:2;padding:12px;color:#c4d6e8">${esc(p.content)}</div></details><div class="actions"><button class="btn success" data-review="${p.id}" data-status="approved">تأیید و انتشار</button><button class="btn danger" data-review="${p.id}" data-status="rejected">رد مقاله</button></div></article>`).join('');
-    $('pendingBox').querySelectorAll('[data-review]').forEach(b=>b.onclick=()=>reviewPost(b.dataset.review,b.dataset.status));
+}
+
+async function loadStats(){
+  const [users,pending,games] = await Promise.all([
+    db.rpc('get_admin_users'),
+    db.from('posts').select('id',{count:'exact',head:true}).eq('status','pending'),
+    db.from('game_downloads').select('id',{count:'exact',head:true}).eq('status','published')
+  ]);
+
+  if(users.error) return fail('stats users',users.error);
+  if(pending.error) return fail('stats pending',pending.error);
+  if(games.error) return fail('stats games',games.error);
+
+  const list = users.data || [];
+
+  $('statUsers').textContent = list.length;
+  $('statPending').textContent = pending.count ?? '—';
+  $('statBanned').textContent = list.filter(u=>u.is_banned).length;
+  $('statGames').textContent = games.count ?? '—';
+
+  profilesCache = list;
+}
+
+async function loadPending(){
+  const {data,error} = await db.from('posts')
+    .select('id,author_id,title,description,content,image_url,category,created_at')
+    .eq('status','pending')
+    .order('created_at',{ascending:false});
+
+  if(error){
+    $('pendingBox').innerHTML=noData('دریافت مقاله‌ها ناموفق بود');
+    return fail('pending',error);
   }
-  async function reviewPost(id,status){
-    if(!confirm(status==='approved'?'این مقاله منتشر شود؟':'این مقاله رد شود؟'))return;
-    const {error}=await db.from('posts').update({status,reviewed_by:me.id,reviewed_at:new Date().toISOString()}).eq('id',id);
-    if(error)return fail('review',error); toast(status==='approved'?'مقاله منتشر شد.':'مقاله رد شد.'); await refreshAll();
+
+  if(!data?.length){
+    $('pendingBox').innerHTML=noData('مقاله‌ای در انتظار بررسی نیست.');
+    return;
   }
-  async function loadRejected(){
-    const {data,error}=await db.from('posts').select('id,title,author_id,category,created_at').eq('status','rejected').order('created_at',{ascending:false});
-    if(error){$('rejectedBox').innerHTML=noData('دریافت پست‌ها ناموفق بود');return fail('rejected',error);}
-    $('rejectedBox').innerHTML=data?.length?table(['عنوان','دسته‌بندی','شناسه نویسنده','تاریخ'],data.map(p=>`<tr><td>${esc(p.title)}</td><td>${esc(p.category)}</td><td>${esc(p.author_id)}</td><td>${new Date(p.created_at).toLocaleDateString('fa-IR')}</td></tr>`).join('')):noData('پست ردشده‌ای وجود ندارد.');
+
+  const users = profilesCache;
+
+  $('pendingBox').innerHTML = data.map(p=>{
+    const author = users.find(u=>u.id===p.author_id);
+
+    return `
+    <article style="border-bottom:1px solid var(--line);padding:15px 0">
+      <div style="display:flex;gap:13px;align-items:flex-start">
+        ${p.image_url ? `<img src="${esc(p.image_url)}" alt="" style="width:100px;height:75px;object-fit:cover;border-radius:8px" onerror="this.style.display='none'">`:''}
+        <div style="min-width:0;flex:1">
+          <span class="tag yellow">${esc(p.category||'Gaming')}</span>
+          <h3 style="margin:8px 0">${esc(p.title)}</h3>
+          <p class="muted" style="font-size:12px">${esc(p.description||'بدون توضیح کوتاه')}</p>
+          <small class="muted">نویسنده: ${esc(author?.username||p.author_id)} · ${new Date(p.created_at).toLocaleString('fa-IR')}</small>
+        </div>
+      </div>
+
+      <details style="margin:12px 0">
+        <summary style="cursor:pointer;color:#9fc4f2">خواندن متن کامل مقاله</summary>
+        <div style="white-space:pre-wrap;line-height:2;padding:12px">${esc(p.content)}</div>
+      </details>
+
+      <div class="actions">
+        <button class="btn success" data-review="${p.id}" data-status="approved">تأیید و انتشار</button>
+        <button class="btn danger" data-review="${p.id}" data-status="rejected">رد مقاله</button>
+      </div>
+    </article>`;
+  }).join('');
+
+  $('pendingBox').querySelectorAll('[data-review]').forEach(button=>{
+    button.onclick=()=>reviewPost(button.dataset.review,button.dataset.status);
+  });
+}
+
+async function reviewPost(id,status){
+  if(!confirm(status==='approved'?'این مقاله منتشر شود؟':'این مقاله رد شود؟')) return;
+
+  const {error} = await db.from('posts').update({
+    status,
+    reviewed_by:me.id,
+    reviewed_at:new Date().toISOString()
+  }).eq('id',id);
+
+  if(error) return fail('review',error);
+
+  toast(status==='approved'?'مقاله منتشر شد.':'مقاله رد شد.');
+  await refreshAll();
+}
+
+async function loadRejected(){
+  const {data,error} = await db.from('posts')
+    .select('id,title,author_id,category,created_at')
+    .eq('status','rejected')
+    .order('created_at',{ascending:false});
+
+  if(error){
+    $('rejectedBox').innerHTML=noData('دریافت پست‌ها ناموفق بود');
+    return fail('rejected',error);
   }
-  async function loadUsers(){
-    const {data,error}=await db.from('profiles').select('id,username,display_name,is_admin,is_owner,is_banned,created_at').order('created_at',{ascending:false}).limit(500);
-    if(error){$('usersBox').innerHTML=noData('دریافت کاربران ناموفق بود');return fail('users',error);}
-    profilesCache=data||[];renderUsers(profilesCache);
+
+  $('rejectedBox').innerHTML = data?.length
+    ? table(['عنوان','دسته‌بندی','شناسه نویسنده','تاریخ'],data.map(p=>`
+      <tr>
+        <td>${esc(p.title)}</td>
+        <td>${esc(p.category)}</td>
+        <td>${esc(p.author_id)}</td>
+        <td>${new Date(p.created_at).toLocaleDateString('fa-IR')}</td>
+      </tr>`).join(''))
+    : noData('پست ردشده‌ای وجود ندارد.');
+}
+
+async function loadUsers(){
+  const {data,error} = await db.rpc('get_admin_users');
+
+  if(error){
+    $('usersBox').innerHTML=noData('دریافت کاربران ناموفق بود');
+    return fail('users',error);
   }
-  function renderUsers(data){
-    const q=($('userSearch').value||'').toLowerCase();
-    const list=(data||[]).filter(u=>`${u.username||''} ${u.display_name||''} ${u.id||''}`.toLowerCase().includes(q));
-    $('usersBox').innerHTML=list.length?table(['کاربر','شناسه','نقش','وضعیت'],list.map(u=>`<tr><td><b>${esc(u.display_name||u.username||'بدون نام')}</b><br><span class="muted">@${esc(u.username||'')}</span></td><td style="direction:ltr;text-align:right">${esc(u.id)}</td><td>${u.is_owner?'<span class="tag yellow">OWNER</span>':u.is_admin?'<span class="tag">ADMIN</span>':'کاربر'}</td><td>${u.is_banned?'<span class="tag red">بن‌شده</span>':'<span class="tag green">فعال</span>'}</td></tr>`).join('')):noData('کاربری پیدا نشد.');
+
+  profilesCache = data || [];
+  renderUsers(profilesCache);
+}
+
+function renderUsers(data){
+  const q = ($('userSearch').value||'').toLowerCase();
+
+  const list = (data||[]).filter(u=>
+    `${u.username||''} ${u.display_name||''} ${u.id||''}`.toLowerCase().includes(q)
+  );
+
+  $('usersBox').innerHTML = list.length
+    ? table(['کاربر','شناسه','نقش','وضعیت'],list.map(u=>`
+      <tr>
+        <td><b>${esc(u.display_name||u.username||'بدون نام')}</b><br><span class="muted">@${esc(u.username||'')}</span></td>
+        <td style="direction:ltr;text-align:right">${esc(u.id)}</td>
+        <td>${u.is_owner?'<span class="tag yellow">OWNER</span>':u.is_admin?'<span class="tag">ADMIN</span>':'کاربر'}</td>
+        <td>${u.is_banned?'<span class="tag red">بن‌شده</span>':'<span class="tag green">فعال</span>'}</td>
+      </tr>`).join(''))
+    : noData('کاربری پیدا نشد.');
+}
+
+async function loadBanned(){
+  const {data,error} = await db.rpc('get_admin_users');
+
+  if(error){
+    $('bannedBox').innerHTML=noData('دریافت فهرست بن‌شده‌ها ناموفق بود');
+    return fail('banned',error);
   }
-  async function loadBanned(){
-    const {data,error}=await db.from('profiles').select('id,username,display_name,ban_reason,banned_at,banned_until,is_owner').eq('is_banned',true).order('banned_at',{ascending:false});
-    if(error){$('bannedBox').innerHTML=noData('دریافت فهرست بن‌شده‌ها ناموفق بود');return fail('banned',error);}
-    $('bannedBox').innerHTML=data?.length?table(['کاربر','دلیل بن','تاریخ','عملیات'],data.map(u=>`<tr><td>${esc(u.display_name||u.username||u.id)}</td><td>${esc(u.ban_reason||'ثبت نشده')}</td><td>${u.banned_at?new Date(u.banned_at).toLocaleDateString('fa-IR'):'—'}</td><td>${isOwner()&&!u.is_owner?`<button class="btn success" data-unban="${u.id}">رفع بن</button>`:'—'}</td></tr>`).join('')):noData('کاربر بن‌شده‌ای وجود ندارد.');
-    $('bannedBox').querySelectorAll('[data-unban]').forEach(b=>b.onclick=()=>unban(b.dataset.unban));
+
+  const banned = (data||[]).filter(u=>u.is_banned);
+
+  $('bannedBox').innerHTML = banned.length
+    ? table(['کاربر','شناسه','عملیات'],banned.map(u=>`
+      <tr>
+        <td>${esc(u.display_name||u.username||'بدون نام')}</td>
+        <td style="direction:ltr;text-align:right">${esc(u.id)}</td>
+        <td>${isOwner()&&!u.is_owner
+          ? `<button class="btn success" data-unban="${u.id}">رفع بن</button>`
+          : '—'}</td>
+      </tr>`).join(''))
+    : noData('کاربر بن‌شده‌ای وجود ندارد.');
+
+  $('bannedBox').querySelectorAll('[data-unban]').forEach(button=>{
+    button.onclick=()=>unban(button.dataset.unban);
+  });
+}
+
+async function unban(id){
+  if(!isOwner()) return toast('فقط Owner اجازه رفع بن دارد.');
+  if(!confirm('از بن خارج شود؟')) return;
+
+  const {error} = await db.rpc('unban_user',{target_id:id});
+
+  if(error) return fail('unban',error);
+
+  toast('بن کاربر برداشته شد.');
+  await refreshAll();
+}
+
+async function loadRequests(){
+  const {data,error} = await db.from('ban_requests')
+    .select('id,target_user_id,requested_by,reason,status,created_at')
+    .order('created_at',{ascending:false});
+
+  if(error){
+    $('requestsBox').innerHTML=noData('دریافت درخواست‌ها ناموفق بود');
+    return fail('requests',error);
   }
-  async function unban(id){
-    if(!isOwner())return toast('فقط Owner اجازه رفع بن دارد.');
-    if(!confirm('از بن خارج شود؟'))return;
-    const {error}=await db.rpc('unban_user',{target_id:id});
-    if(error)return fail('unban',error);toast('بن کاربر برداشته شد.');await refreshAll();
+
+  if(!data?.length){
+    $('requestsBox').innerHTML=noData('درخواستی ثبت نشده است.');
+    return;
   }
-  async function loadRequests(){
-    const {data,error}=await db.from('ban_requests').select('id,target_user_id,requested_by,reason,status,created_at').order('created_at',{ascending:false});
-    if(error){$('requestsBox').innerHTML=noData('دریافت درخواست‌ها ناموفق بود');return fail('requests',error);}
-    if(!data?.length){$('requestsBox').innerHTML=noData('درخواستی ثبت نشده است.');return;}
-    $('requestsBox').innerHTML=table(['کاربر هدف','درخواست‌دهنده','دلیل','وضعیت','عملیات'],data.map(r=>`<tr><td>${esc(r.target_user_id)}</td><td>${esc(r.requested_by)}</td><td>${esc(r.reason)}</td><td>${r.status==='pending'?'<span class="tag yellow">در انتظار</span>':r.status==='approved'?'<span class="tag green">تأییدشده</span>':'<span class="tag red">ردشده</span>'}</td><td>${isOwner()&&r.status==='pending'?`<div class="actions"><button class="btn success" data-banreview="${r.id}" data-status="approved">تأیید بن</button><button class="btn danger" data-banreview="${r.id}" data-status="rejected">رد درخواست</button></div>`:'—'}</td></tr>`).join(''));
-    $('requestsBox').querySelectorAll('[data-banreview]').forEach(b=>b.onclick=()=>reviewBan(b.dataset.banreview,b.dataset.status));
+
+  $('requestsBox').innerHTML = table(
+    ['کاربر هدف','درخواست‌دهنده','دلیل','وضعیت','عملیات'],
+    data.map(r=>`
+      <tr>
+        <td>${esc(r.target_user_id)}</td>
+        <td>${esc(r.requested_by)}</td>
+        <td>${esc(r.reason)}</td>
+        <td>${r.status==='pending'
+          ? '<span class="tag yellow">در انتظار</span>'
+          : r.status==='approved'
+          ? '<span class="tag green">تأییدشده</span>'
+          : '<span class="tag red">ردشده</span>'}</td>
+        <td>${isOwner()&&r.status==='pending'
+          ? `<div class="actions">
+              <button class="btn success" data-banreview="${r.id}" data-status="approved">تأیید بن</button>
+              <button class="btn danger" data-banreview="${r.id}" data-status="rejected">رد درخواست</button>
+            </div>`
+          : '—'}</td>
+      </tr>`).join('')
+  );
+
+  $('requestsBox').querySelectorAll('[data-banreview]').forEach(button=>{
+    button.onclick=()=>reviewBan(button.dataset.banreview,button.dataset.status);
+  });
+}
+
+async function reviewBan(id,status){
+  if(!isOwner()) return toast('فقط Owner می‌تواند درخواست بن را بررسی کند.');
+
+  if(!confirm(status==='approved'?'درخواست تأیید و کاربر بن شود؟':'درخواست رد شود؟')) return;
+
+  const {error} = await db.from('ban_requests').update({
+    status,
+    reviewed_by:me.id,
+    reviewed_at:new Date().toISOString()
+  }).eq('id',id);
+
+  if(error) return fail('ban review',error);
+
+  toast('درخواست بررسی شد.');
+  await refreshAll();
+}
+
+async function loadAdmins(){
+  const {data,error} = await db.rpc('get_admin_users');
+
+  if(error){
+    $('adminsBox').innerHTML=noData('دریافت مدیران ناموفق بود');
+    return fail('admins',error);
   }
-  async function reviewBan(id,status){
-    if(!isOwner())return toast('فقط Owner می‌تواند درخواست بن را بررسی کند.');
-    if(!confirm(status==='approved'?'درخواست تأیید و کاربر بن شود؟':'درخواست رد شود؟'))return;
-    const {error}=await db.from('ban_requests').update({status,reviewed_by:me.id,reviewed_at:new Date().toISOString()}).eq('id',id);
-    if(error)return fail('ban review',error);toast('درخواست بررسی شد.');await refreshAll();
+
+  const admins = (data||[]).filter(u=>u.is_admin);
+
+  $('adminsBox').innerHTML = admins.length
+    ? table(['مدیر','شناسه','نقش'],admins.map(a=>`
+      <tr>
+        <td>${esc(a.display_name||a.username||'بدون نام')}</td>
+        <td style="direction:ltr;text-align:right">${esc(a.id)}</td>
+        <td>${a.is_owner?'<span class="tag yellow">OWNER</span>':'<span class="tag">ADMIN</span>'}</td>
+      </tr>`).join(''))
+    : noData('مدیری ثبت نشده است.');
+}
+
+async function setAdminRole(){
+  if(!isOwner()) return toast('فقط Owner اجازه مدیریت مدیران را دارد.');
+
+  const userId = $('adminUserId').value.trim();
+  const makeAdmin = $('adminAction').value==='true';
+
+  if(!userId) return toast('شناسه کاربر را وارد کن.');
+
+  const {error} = await db.rpc('set_admin_role',{
+    target_id:userId,
+    make_admin:makeAdmin
+  });
+
+  if(error) return fail('set admin role',error);
+
+  toast('نقش مدیر بروزرسانی شد.');
+  $('adminUserId').value='';
+  await loadAdmins();
+  await loadUsers();
+}
+
+async function saveGame(e){
+  e.preventDefault();
+
+  const payload = {
+    author_id:me.id,
+    title:$('gameTitle').value.trim(),
+    game_version:$('gameVersion').value.trim()||null,
+    platform:$('gamePlatform').value,
+    cover_image_url:$('gameCover').value.trim()||null,
+    description:$('gameDescription').value.trim()||null,
+    download_url:$('gameDownload').value.trim(),
+    status:$('gameStatus').value
+  };
+
+  if(!payload.title||!payload.download_url){
+    return toast('نام بازی و لینک دانلود الزامی است.');
   }
-  async function loadAdmins(){
-    const {data,error}=await db.from('profiles').select('id,username,display_name,is_owner,is_admin').eq('is_admin',true).order('username');
-    if(error){$('adminsBox').innerHTML=noData('دریافت مدیران ناموفق بود');return fail('admins',error);}
-    $('adminsBox').innerHTML=data?.length?table(['مدیر','شناسه','نقش'],data.map(a=>`<tr><td>${esc(a.display_name||a.username||'بدون نام')}</td><td style="direction:ltr;text-align:right">${esc(a.id)}</td><td>${a.is_owner?'<span class="tag yellow">OWNER</span>':'<span class="tag">ADMIN</span>'}</td></tr>`).join('')):noData('مدیری ثبت نشده است.');
+
+  const {error} = await db.from('game_downloads').insert(payload);
+
+  if(error) return fail('save game',error);
+
+  toast('پست دانلود بازی ذخیره شد.');
+  $('gameForm').reset();
+
+  await loadGames();
+  await loadStats();
+}
+
+async function loadGames(){
+  const {data,error} = await db.from('game_downloads')
+    .select('id,title,game_version,platform,status,created_at')
+    .order('created_at',{ascending:false})
+    .limit(100);
+
+  if(error){
+    $('gamesBox').innerHTML=noData('دریافت بازی‌ها ناموفق بود');
+    return fail('games',error);
   }
-  async function setAdminRole(){
-    if(!isOwner())return toast('فقط Owner اجازه مدیریت مدیران را دارد.');
-    const userId=$('adminUserId').value.trim(),makeAdmin=$('adminAction').value==='true';
-    if(!userId)return toast('شناسه کاربر را وارد کن.');
-    const {error}=await db.rpc('set_admin_role',{target_id:userId,make_admin:makeAdmin});
-    if(error)return fail('set admin role',error);
-    toast('نقش مدیر بروزرسانی شد.');$('adminUserId').value='';await loadAdmins();
-  }
-  async function saveGame(e){
-    e.preventDefault();
-    const payload={author_id:me.id,title:$('gameTitle').value.trim(),game_version:$('gameVersion').value.trim()||null,platform:$('gamePlatform').value,cover_image_url:$('gameCover').value.trim()||null,description:$('gameDescription').value.trim()||null,download_url:$('gameDownload').value.trim(),status:$('gameStatus').value};
-    if(!payload.title||!payload.download_url)return toast('نام بازی و لینک دانلود الزامی است.');
-    const {error}=await db.from('game_downloads').insert(payload);
-    if(error)return fail('save game',error);
-    toast('پست دانلود بازی ذخیره شد.');$('gameForm').reset();await loadGames();await loadStats();
-  }
-  async function loadGames(){
-    const {data,error}=await db.from('game_downloads').select('id,title,game_version,platform,status,created_at').order('created_at',{ascending:false}).limit(100);
-    if(error){$('gamesBox').innerHTML=noData('دریافت بازی‌ها ناموفق بود');return fail('games',error);}
-    $('gamesBox').innerHTML=data?.length?table(['بازی','نسخه','پلتفرم','وضعیت','عملیات'],data.map(g=>`<tr><td>${esc(g.title)}</td><td>${esc(g.game_version||'—')}</td><td>${esc(g.platform||'—')}</td><td>${g.status==='published'?'<span class="tag green">منتشرشده</span>':'<span class="tag yellow">پیش‌نویس</span>'}</td><td><button class="btn danger" data-delgame="${g.id}">حذف</button></td></tr>`).join('')):noData('هنوز بازی‌ای ثبت نشده است.');
-    $('gamesBox').querySelectorAll('[data-delgame]').forEach(b=>b.onclick=()=>deleteGame(b.dataset.delgame));
-  }
-  async function deleteGame(id){
-    if(!confirm('این پست دانلود حذف شود؟'))return;
-    const {error}=await db.from('game_downloads').delete().eq('id',id);
-    if(error)return fail('delete game',error);toast('پست دانلود حذف شد.');await loadGames();await loadStats();
-  }
-  init().catch(e=>fail('init',e));
+
+  $('gamesBox').innerHTML = data?.length
+    ? table(['بازی','نسخه','پلتفرم','وضعیت','عملیات'],data.map(g=>`
+      <tr>
+        <td>${esc(g.title)}</td>
+        <td>${esc(g.game_version||'—')}</td>
+        <td>${esc(g.platform||'—')}</td>
+        <td>${g.status==='published'
+          ? '<span class="tag green">منتشرشده</span>'
+          : '<span class="tag yellow">پیش‌نویس</span>'}</td>
+        <td><button class="btn danger" data-delgame="${g.id}">حذف</button></td>
+      </tr>`).join(''))
+    : noData('هنوز بازی‌ای ثبت نشده است.');
+
+  $('gamesBox').querySelectorAll('[data-delgame]').forEach(button=>{
+    button.onclick=()=>deleteGame(button.dataset.delgame);
+  });
+}
+
+async function deleteGame(id){
+  if(!confirm('این پست دانلود حذف شود؟')) return;
+
+  const {error} = await db.from('game_downloads').delete().eq('id',id);
+
+  if(error) return fail('delete game',error);
+
+  toast('پست دانلود حذف شد.');
+  await loadGames();
+  await loadStats();
+}
+
+init().catch(error=>fail('init',error));
+
 })();
 </script>
 </body>
