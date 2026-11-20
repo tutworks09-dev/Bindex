@@ -167,7 +167,73 @@ footer{border-top:1px solid var(--line);background:#060b10;padding:35px 0 22px}.
     pointer-events: auto;
   }
 }
-  
+
+  /* Dynamic community posts */
+.post-loading,
+.post-empty,
+.post-error {
+  padding: 28px;
+  text-align: center;
+  color: var(--muted);
+  background: #ffffff05;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  font-size: 12px;
+}
+
+.post-loading i {
+  color: var(--accent2);
+  margin-left: 8px;
+}
+
+.post-dynamic {
+  min-width: 0;
+}
+
+.post-art img {
+  width: 100%;
+  height: 100%;
+  min-height: 100px;
+  object-fit: cover;
+  border-radius: 13px;
+}
+
+.post-art .post-placeholder {
+  font-size: 30px;
+}
+
+.post-foot {
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.post-like {
+  border: 0;
+  background: transparent;
+  color: #91a3b1;
+  font-size: 10px;
+  padding: 0;
+  cursor: pointer;
+}
+
+.post-like.liked {
+  color: #ff6685;
+}
+
+.post-like:disabled {
+  opacity: .6;
+  cursor: wait;
+}
+
+.create-post-link {
+  white-space: nowrap;
+}
+
+@media(max-width:680px) {
+  .auth-area .create-post-link {
+    flex: 1;
+  }
+}
 </style>
 </head>
 <body>
@@ -202,11 +268,14 @@ footer{border-top:1px solid var(--line);background:#060b10;padding:35px 0 22px}.
 <a class="game searchable" href="#community"><span class="game-icon"><i class="fa-solid fa-dragon"></i></span><span><h3>Fortnite</h3><span>بتل رویال و خلاقیت</span></span></a>
 <a class="game searchable" href="#community"><span class="game-icon"><i class="fa-solid fa-chess-knight"></i></span><span><h3>Valorant</h3><span>تیمی و تاکتیکی</span></span></a>
 </div></div></section>
-<section class="section" id="community"><div class="wrap"><div class="section-head"><div><h2>تازه‌های کامیونیتی</h2><p>بحث‌ها و مطالبی که گیمرها دنبال می‌کنند.</p></div><a class="view-all" href="#join">مشاهده همه <i class="fa-solid fa-arrow-left"></i></a></div>
+<section class="section" id="community"><div class="wrap"><div class="section-head"><div><h2>تازه‌های کامیونیتی</h2><p>بحث‌ها و مطالبی که گیمرها دنبال می‌کنند.</p></div><a class="view-all" href="posts.html">
+  نمایش پست‌های بیشتر <i class="fa-solid fa-arrow-left"></i>
+</a></div>
 <div class="content-grid"><div class="posts" id="postList">
-<article class="post searchable"><div class="post-art"><i class="fa-solid fa-cubes"></i></div><div class="post-body"><span class="tag">ماینکرفت · بحث آزاد</span><h3>بهترین مودهای ماینکرفت برای تجربه چندنفره کدام‌اند؟</h3><p>مودهای موردعلاقه‌ات رو معرفی کن و تجربه‌ات رو با بقیه به اشتراک بذار.</p><div class="post-foot"><span><i class="fa-regular fa-user"></i> کاربر کامیونیتی</span><span><i class="fa-regular fa-message"></i> گفت‌وگو</span></div></div></article>
-<article class="post searchable"><div class="post-art"><i class="fa-solid fa-crosshairs"></i></div><div class="post-body"><span class="tag">گیمینگ · هم‌تیمی</span><h3>دنبال هم‌تیمی برای بازی‌های رقابتی هستی؟</h3><p>بازی و سبک موردعلاقه‌ات رو بنویس تا بازیکن‌های هم‌سطح رو پیدا کنی.</p><div class="post-foot"><span><i class="fa-regular fa-user"></i> تالار بازیکنان</span><span><i class="fa-regular fa-message"></i> پیدا کردن تیم</span></div></div></article>
-<article class="post searchable"><div class="post-art"><i class="fa-solid fa-headset"></i></div><div class="post-body"><span class="tag">سخت‌افزار · راهنما</span><h3>تجربه‌ات از بازی روی موبایل یا PC چطوره؟</h3><p>تنظیمات، ابزارها و پیشنهادهای کاربردی خودت رو با جامعه به اشتراک بذار.</p><div class="post-foot"><span><i class="fa-regular fa-user"></i> تالار گفتگو</span><span><i class="fa-regular fa-message"></i> تبادل تجربه</span></div></div></article>
+  <div class="post-loading">
+    <i class="fa-solid fa-spinner fa-spin"></i>
+    در حال دریافت پست‌ها...
+  </div>
 </div><aside class="side-stack">
 <div class="panel" id="events"><h3><i class="fa-regular fa-calendar" style="color:#43c8ef;margin-left:7px"></i>رویدادهای پیش‌رو</h3><div class="event"><div class="datebox"><b>01</b><small>به‌زودی</small></div><div><strong>چالش هفتگی کامیونیتی</strong><span>جزئیات رویداد به‌زودی اعلام می‌شود</span></div></div><div class="event"><div class="datebox"><b>02</b><small>به‌زودی</small></div><div><strong>دورهمی گیمرها</strong><span>زمان‌بندی در حال آماده‌سازی</span></div></div></div>
 <div class="panel" id="servers"><h3><i class="fa-solid fa-server" style="color:#43c8ef;margin-left:7px"></i>سرورهای کامیونیتی</h3><div class="server"><span>Minecraft<small>سرورهای پیشنهادی</small></span><span class="status">در حال معرفی</span></div><div class="server"><span>Discord / Voice<small>ارتباط با هم‌تیمی‌ها</small></span><span class="status">به‌زودی</span></div></div>
@@ -240,6 +309,11 @@ const authArea = document.getElementById('authArea');
 const menuBtn = document.getElementById('menuBtn');
 const nav = document.getElementById('nav');
 const toast = document.getElementById('toast');
+const postList = document.getElementById('postList');
+
+let currentUser = null;
+let postsCache = [];
+let likedPosts = new Set();
 
 function showToast(message = 'این بخش در نسخه نمایشی فعال نیست.') {
   if (!toast) return;
@@ -255,13 +329,32 @@ function showToast(message = 'این بخش در نسخه نمایشی فعال 
 }
 
 function escapeHTML(value) {
-  return String(value).replace(/[&<>"']/g, char => ({
+  return String(value ?? '').replace(/[&<>"']/g, char => ({
     '&': '&amp;',
     '<': '&lt;',
     '>': '&gt;',
     '"': '&quot;',
     "'": '&#039;'
   })[char]);
+}
+
+function safeImageURL(value) {
+  if (!value) return '';
+
+  try {
+    const url = new URL(value);
+    return ['https:', 'http:'].includes(url.protocol) ? url.href : '';
+  } catch {
+    return '';
+  }
+}
+
+function formatDate(value) {
+  if (!value) return 'تاریخ نامشخص';
+
+  return new Intl.DateTimeFormat('fa-IR', {
+    dateStyle: 'medium'
+  }).format(new Date(value));
 }
 
 // Mobile menu
@@ -290,15 +383,23 @@ document.querySelectorAll('a[href="#join"]').forEach(a => {
   });
 });
 
-// Profile
+// Navbar
 async function updateNavbar(user) {
   if (!authArea) return;
 
+  currentUser = user;
+
   if (!user) {
     authArea.innerHTML = `
-    <a class="btn btn-primary" href="https://tutworks09-dev.github.io/Bindex/auth.html">
-   ورود / ثبت‌نام
-    </a>
+      <a class="btn btn-primary" href="create-post.html">
+        <i class="fa-solid fa-plus"></i>
+        ساخت پست جدید
+      </a>
+
+      <a class="btn btn-soft"
+         href="https://tutworks09-dev.github.io/Bindex/auth.html">
+        ورود / ثبت‌نام
+      </a>
     `;
     return;
   }
@@ -314,15 +415,16 @@ async function updateNavbar(user) {
     .eq('id', user.id)
     .maybeSingle();
 
-  if (error) {
-    console.error('Profile error:', error.message);
-  }
+  if (error) console.error('Profile error:', error.message);
 
-  if (data?.username) {
-    username = data.username;
-  }
+  if (data?.username) username = data.username;
 
   authArea.innerHTML = `
+    <a class="btn btn-primary create-post-link" href="create-post.html">
+      <i class="fa-solid fa-plus"></i>
+      ساخت پست جدید
+    </a>
+
     <div class="profile-menu" id="profileMenu">
       <button class="profile-trigger" id="profileTrigger" type="button">
         <img
@@ -334,6 +436,12 @@ async function updateNavbar(user) {
       </button>
 
       <div class="profile-dropdown">
+        <a href="profile.html?u=${encodeURIComponent(username)}"
+           style="display:block;padding:10px;font-size:12px">
+          <i class="fa-regular fa-user"></i>
+          پروفایل من
+        </a>
+
         <button id="logoutButton" type="button">
           <i class="fa-solid fa-right-from-bracket"></i>
           خروج از حساب
@@ -342,11 +450,11 @@ async function updateNavbar(user) {
     </div>
   `;
 
-  document.getElementById('profileTrigger').addEventListener('click', () => {
-    document.getElementById('profileMenu').classList.toggle('open');
+  document.getElementById('profileTrigger')?.addEventListener('click', () => {
+    document.getElementById('profileMenu')?.classList.toggle('open');
   });
 
-  document.getElementById('logoutButton').addEventListener('click', async () => {
+  document.getElementById('logoutButton')?.addEventListener('click', async () => {
     const { error } = await supabaseClient.auth.signOut();
 
     if (error) {
@@ -356,6 +464,248 @@ async function updateNavbar(user) {
     }
 
     showToast('با موفقیت خارج شدی!');
+  });
+}
+
+// Load likes of current user
+async function loadMyLikes(posts) {
+  likedPosts.clear();
+
+  if (!currentUser || !posts.length) return;
+
+  const postIds = posts.map(post => post.id);
+
+  const { data, error } = await supabaseClient
+    .from('post_likes')
+    .select('post_id')
+    .eq('user_id', currentUser.id)
+    .in('post_id', postIds);
+
+  if (error) {
+    console.error('Likes error:', error.message);
+    return;
+  }
+
+  (data || []).forEach(item => likedPosts.add(item.post_id));
+}
+
+// Render posts
+function renderPosts(posts) {
+  if (!postList) return;
+
+  if (!posts.length) {
+    postList.innerHTML = `
+      <div class="post-empty">
+        <i class="fa-regular fa-newspaper"></i>
+        <p>هنوز پست تأییدشده‌ای منتشر نشده.</p>
+      </div>
+    `;
+    return;
+  }
+
+  postList.innerHTML = posts.map(post => {
+    const title = escapeHTML(post.title || 'بدون عنوان');
+    const description = escapeHTML(
+      post.description || post.content || 'بدون توضیحات'
+    );
+
+    const category = escapeHTML(post.category || 'عمومی');
+    const author = escapeHTML(post.author_name || 'کاربر کامیونیتی');
+    const image = safeImageURL(post.image_url);
+
+    const isLiked = likedPosts.has(post.id);
+
+    const art = image
+      ? `<img src="${escapeHTML(image)}" alt="${title}" loading="lazy">`
+      : `<i class="fa-solid fa-gamepad post-placeholder"></i>`;
+
+    return `
+      <article class="post post-dynamic">
+        <a class="post-art"
+           href="posts.html?id=${encodeURIComponent(post.id)}">
+          ${art}
+        </a>
+
+        <div class="post-body">
+          <span class="tag">${category}</span>
+
+          <h3>
+            <a href="posts.html?id=${encodeURIComponent(post.id)}">
+              ${title}
+            </a>
+          </h3>
+
+          <p>${description}</p>
+
+          <div class="post-foot">
+            <span>
+              <i class="fa-regular fa-user"></i>
+              ${author}
+            </span>
+
+            <span>
+              <i class="fa-regular fa-calendar"></i>
+              ${formatDate(post.created_at)}
+            </span>
+
+            <span>
+              <i class="fa-regular fa-eye"></i>
+              ${Number(post.views || 0).toLocaleString('fa-IR')}
+            </span>
+
+            <button
+              class="post-like ${isLiked ? 'liked' : ''}"
+              data-like="${escapeHTML(post.id)}"
+              type="button"
+              aria-label="لایک پست"
+            >
+              <i class="${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+              <span>${Number(post.likes_count || 0).toLocaleString('fa-IR')}</span>
+            </button>
+          </div>
+        </div>
+      </article>
+    `;
+  }).join('');
+}
+
+// Load homepage posts
+async function loadPosts() {
+  if (!postList) return;
+
+  postList.innerHTML = `
+    <div class="post-loading">
+      <i class="fa-solid fa-spinner fa-spin"></i>
+      در حال دریافت پست‌ها...
+    </div>
+  `;
+
+  const { data, error } = await supabaseClient
+    .from('posts')
+    .select(`
+      id,
+      author_id,
+      title,
+      description,
+      content,
+      image_url,
+      category,
+      views,
+      likes_count,
+      created_at
+    `)
+    .eq('status', 'approved')
+    .order('created_at', { ascending: false })
+    .limit(3);
+
+  if (error) {
+    console.error('Posts error:', error.message);
+
+    postList.innerHTML = `
+      <div class="post-error">
+        دریافت پست‌ها ناموفق بود.
+        <br>
+        لطفاً کمی بعد دوباره تلاش کن.
+      </div>
+    `;
+    return;
+  }
+
+  postsCache = data || [];
+
+  // Load public usernames
+  const authorIds = [...new Set(
+    postsCache.map(post => post.author_id).filter(Boolean)
+  )];
+
+  let profiles = [];
+
+  if (authorIds.length) {
+    const { data: profileData, error: profileError } =
+      await supabaseClient
+        .from('profiles')
+        .select('id, username, display_name')
+        .in('id', authorIds);
+
+    if (profileError) {
+      console.error('Authors error:', profileError.message);
+    } else {
+      profiles = profileData || [];
+    }
+  }
+
+  const profileMap = new Map(
+    profiles.map(profile => [
+      profile.id,
+      profile.display_name || profile.username || 'کاربر کامیونیتی'
+    ])
+  );
+
+  postsCache = postsCache.map(post => ({
+    ...post,
+    author_name: profileMap.get(post.author_id) || 'کاربر کامیونیتی'
+  }));
+
+  await loadMyLikes(postsCache);
+  renderPosts(postsCache);
+}
+
+// Like / Unlike
+if (postList) {
+  postList.addEventListener('click', async event => {
+    const button = event.target.closest('[data-like]');
+    if (!button) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (!currentUser) {
+      showToast('برای لایک کردن ابتدا وارد حساب شو.');
+      return;
+    }
+
+    const postId = button.dataset.like;
+    const post = postsCache.find(item => item.id === postId);
+
+    if (!post) return;
+
+    button.disabled = true;
+
+    const alreadyLiked = likedPosts.has(postId);
+
+    let result;
+
+    if (alreadyLiked) {
+      result = await supabaseClient
+        .from('post_likes')
+        .delete()
+        .eq('post_id', postId)
+        .eq('user_id', currentUser.id);
+    } else {
+      result = await supabaseClient
+        .from('post_likes')
+        .insert({
+          post_id: postId,
+          user_id: currentUser.id
+        });
+    }
+
+    if (result.error) {
+      console.error('Like error:', result.error.message);
+      showToast('ثبت لایک انجام نشد.');
+      button.disabled = false;
+      return;
+    }
+
+    if (alreadyLiked) {
+      likedPosts.delete(postId);
+      post.likes_count = Math.max(0, Number(post.likes_count || 0) - 1);
+    } else {
+      likedPosts.add(postId);
+      post.likes_count = Number(post.likes_count || 0) + 1;
+    }
+
+    renderPosts(postsCache);
   });
 }
 
@@ -369,12 +719,14 @@ async function initializeAuth() {
   }
 
   await updateNavbar(data.session?.user || null);
+  await loadPosts();
 }
 
 // Auth listener
 supabaseClient.auth.onAuthStateChange((event, session) => {
-  setTimeout(() => {
-    updateNavbar(session?.user || null);
+  setTimeout(async () => {
+    await updateNavbar(session?.user || null);
+    await loadPosts();
   }, 0);
 });
 
