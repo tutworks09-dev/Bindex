@@ -477,23 +477,17 @@ async function updateNavbar(user) {
         <i class="fa-solid fa-chevron-down"></i>
       </button>
 
-      <div class="profile-dropdown">
-        <a href="profile.html?u=${encodeURIComponent(username)}"
-           style="display:block;padding:10px;font-size:12px">
-          <i class="fa-regular fa-user"></i>
-          پروفایل من
-        </a>
-        <button type="button">
-<a href="profile.html?u=${encodeURIComponent(username)}">
-  <i class="fa-solid fa-user"></i>
-  پروفایل من
-</button>
-</a>
-        <button id="logoutButton" type="button">
-          <i class="fa-solid fa-right-from-bracket"></i>
-          خروج از حساب
-        </button>
-      </div>
+<div class="profile-dropdown">
+  <a href="profile.html?u=${encodeURIComponent(username)}">
+    <i class="fa-solid fa-user"></i>
+    پروفایل من
+  </a>
+
+  <button id="logoutButton" type="button">
+    <i class="fa-solid fa-right-from-bracket"></i>
+    خروج از حساب
+  </button>
+</div>
     </div>
   `;
 
