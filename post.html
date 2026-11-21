@@ -785,17 +785,24 @@ async function loadPost() {
 likeButton.addEventListener('click', async () => {
   if (!currentPost || isLoadingLike) return;
 
-  if (!currentUser) {
-    showToast('برای لایک کردن ابتدا وارد حساب کاربری شو.');
-    return;
-  }
-
   isLoadingLike = true;
   likeButton.disabled = true;
 
   try {
+    // بررسی حساب کاربری واقعی
+    const { data: authData, error: authError } =
+      await supabaseClient.auth.getUser();
+
+    if (authError) throw authError;
+
+    currentUser = authData.user;
+
+    if (!currentUser) {
+      showToast('ابتدا وارد حساب کاربری شو.');
+      return;
+    }
+
     if (isLiked) {
-      // Remove like
       const { error } = await supabaseClient
         .from('post_likes')
         .delete()
@@ -805,41 +812,45 @@ likeButton.addEventListener('click', async () => {
       if (error) throw error;
 
       isLiked = false;
-      showToast('لایک برداشته شد.');
     } else {
-      // Add like
-      const { error } = await supabaseClient
+      const { data, error } = await supabaseClient
         .from('post_likes')
         .insert({
           post_id: currentPost.id,
           user_id: currentUser.id
-        });
+        })
+        .select();
 
       if (error) throw error;
 
+      console.log('LIKE INSERT SUCCESS:', data);
       isLiked = true;
-      showToast('پست رو پسندیدی! ❤️');
     }
 
-    // Get real like count from database
-    const { data, error: countError } = await supabaseClient
+    // دریافت تعداد واقعی لایک‌ها
+    const { data, error } = await supabaseClient
       .from('posts')
       .select('likes_count')
       .eq('id', currentPost.id)
       .single();
 
-    if (countError) throw countError;
+    if (error) throw error;
 
     currentPost.likes_count = Number(data.likes_count || 0);
 
     renderLike();
+    showToast(isLiked ? 'لایک ثبت شد ❤️' : 'لایک حذف شد.');
 
   } catch (error) {
-    console.error('Like action error:', error);
-    showToast('عملیات لایک ناموفق بود: ' + error.message);
+    console.error('LIKE ERROR:', error);
 
-    // Refresh actual like status
-    await loadLikeStatus();
+    alert(
+      'خطای ثبت لایک:\n\n' +
+      'Message: ' + (error.message || 'Unknown') + '\n\n' +
+      'Code: ' + (error.code || '-') + '\n\n' +
+      'Details: ' + (error.details || '-') + '\n\n' +
+      'Hint: ' + (error.hint || '-')
+    );
 
   } finally {
     isLoadingLike = false;
