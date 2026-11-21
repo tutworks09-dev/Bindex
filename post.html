@@ -414,6 +414,141 @@ footer {
     flex: 1;
   }
 }
+
+  /* BINDEX Markdown */
+
+.post-content {
+  color: #d2dce3;
+  font-size: 14px;
+  line-height: 2.3;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.post-content h1,
+.post-content h2,
+.post-content h3,
+.post-content h4 {
+  color: #f4f8fb;
+  font-weight: 900;
+  line-height: 1.8;
+  margin: 28px 0 14px;
+}
+
+.post-content h1 {
+  font-size: 27px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 12px;
+}
+
+.post-content h2 {
+  font-size: 22px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 9px;
+}
+
+.post-content h3 {
+  font-size: 18px;
+}
+
+.post-content p {
+  margin: 13px 0;
+}
+
+.post-content a {
+  color: #31b9e8;
+  text-decoration: underline;
+}
+
+.post-content strong {
+  color: #fff;
+  font-weight: 900;
+}
+
+.post-content em {
+  color: #a9dff0;
+}
+
+.post-content ul,
+.post-content ol {
+  padding-right: 25px;
+  margin: 15px 0;
+}
+
+.post-content li {
+  padding: 3px 0;
+}
+
+.post-content blockquote {
+  margin: 18px 0;
+  padding: 12px 17px;
+  border-right: 3px solid var(--accent);
+  background: #009ace12;
+  color: #aebdc8;
+  border-radius: 8px 0 0 8px;
+}
+
+.post-content code {
+  direction: ltr;
+  display: inline-block;
+  background: #ffffff0d;
+  color: #67d5f7;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 13px;
+}
+
+.post-content pre {
+  direction: ltr;
+  text-align: left;
+  overflow-x: auto;
+  padding: 18px;
+  background: #070d13;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  margin: 18px 0;
+}
+
+.post-content pre code {
+  display: block;
+  padding: 0;
+  background: transparent;
+  color: #c9e5f0;
+  line-height: 1.8;
+}
+
+.post-content hr {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: 25px 0;
+}
+
+.post-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  margin: 12px 0;
+}
+
+.post-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  overflow: hidden;
+}
+
+.post-content th,
+.post-content td {
+  padding: 11px;
+  border: 1px solid var(--line);
+  text-align: right;
+}
+
+.post-content th {
+  background: #009ace18;
+  color: #67d5f7;
+}
 </style>
 </head>
 
@@ -508,7 +643,8 @@ footer {
 </footer>
 
 <div class="toast" id="toast"></div>
-
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
 <script>
 const SUPABASE_URL = 'https://hlescjwegrtvwgtqsemm.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_9rR5jxE8CFQJMm-oy74wOw_VRtHgguY';
@@ -733,8 +869,16 @@ async function loadPost() {
   document.getElementById('description').textContent =
     post.description || '';
 
-  document.getElementById('content').textContent =
-    post.content || '';
+const contentElement = document.getElementById('content');
+
+marked.setOptions({
+  gfm: true,
+  breaks: true
+});
+
+const markdownHTML = marked.parse(post.content || '');
+
+contentElement.innerHTML = DOMPurify.sanitize(markdownHTML);
 
   document.getElementById('category').innerHTML = `
     <i class="fa-solid fa-hashtag"></i>
