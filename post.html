@@ -606,8 +606,22 @@ function renderLike() {
   `;
 }
 
+function renderLike() {
+  likeButton.classList.toggle('liked', isLiked);
+
+  likeButton.innerHTML = `
+    <i class="${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+    <span id="likeCount">
+      ${Number(currentPost?.likes_count || 0).toLocaleString('fa-IR')}
+    </span>
+    ${isLiked ? 'پسندیده‌شده' : 'پسندیدن'}
+  `;
+}
+
 async function loadLikeStatus() {
-  if (!currentUser || !currentPost) {
+  if (!currentPost) return;
+
+  if (!currentUser) {
     isLiked = false;
     renderLike();
     return;
@@ -621,14 +635,14 @@ async function loadLikeStatus() {
     .maybeSingle();
 
   if (error) {
-    console.error('Like status error:', error.message);
+    console.error('Like status error:', error);
+    showToast('دریافت وضعیت لایک ناموفق بود.');
     return;
   }
 
   isLiked = !!data;
   renderLike();
 }
-
 async function loadPost() {
   if (!postId) {
     showError('پست پیدا نشد!', 'شناسه پست در آدرس صفحه وجود ندارد.');
@@ -779,43 +793,58 @@ likeButton.addEventListener('click', async () => {
   isLoadingLike = true;
   likeButton.disabled = true;
 
-  let error;
+  try {
+    if (isLiked) {
+      // Remove like
+      const { error } = await supabaseClient
+        .from('post_likes')
+        .delete()
+        .eq('post_id', currentPost.id)
+        .eq('user_id', currentUser.id);
 
-  if (isLiked) {
-    const result = await supabaseClient
-      .from('post_likes')
-      .delete()
-      .eq('post_id', currentPost.id)
-      .eq('user_id', currentUser.id);
+      if (error) throw error;
 
-    error = result.error;
-  } else {
-    const result = await supabaseClient
-      .from('post_likes')
-      .insert({
-        post_id: currentPost.id,
-        user_id: currentUser.id
-      });
+      isLiked = false;
+      showToast('لایک برداشته شد.');
+    } else {
+      // Add like
+      const { error } = await supabaseClient
+        .from('post_likes')
+        .insert({
+          post_id: currentPost.id,
+          user_id: currentUser.id
+        });
 
-    error = result.error;
-  }
+      if (error) throw error;
 
-  if (error) {
-    console.error('Like action error:', error.message);
-    showToast('تغییر وضعیت لایک انجام نشد.');
-  } else {
-    isLiked = !isLiked;
+      isLiked = true;
+      showToast('پست رو پسندیدی! ❤️');
+    }
 
-    currentPost.likes_count = Math.max(
-      0,
-      Number(currentPost.likes_count || 0) + (isLiked ? 1 : -1)
-    );
+    // Get real like count from database
+    const { data, error: countError } = await supabaseClient
+      .from('posts')
+      .select('likes_count')
+      .eq('id', currentPost.id)
+      .single();
+
+    if (countError) throw countError;
+
+    currentPost.likes_count = Number(data.likes_count || 0);
 
     renderLike();
-  }
 
-  isLoadingLike = false;
-  likeButton.disabled = false;
+  } catch (error) {
+    console.error('Like action error:', error);
+    showToast('عملیات لایک ناموفق بود: ' + error.message);
+
+    // Refresh actual like status
+    await loadLikeStatus();
+
+  } finally {
+    isLoadingLike = false;
+    likeButton.disabled = false;
+  }
 });
 
 // Start
