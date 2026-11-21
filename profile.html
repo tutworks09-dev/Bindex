@@ -861,19 +861,19 @@ header {
       <div class="stats">
         <div class="stat">
           <i class="fa-solid fa-file-lines"></i>
-          <strong>0</strong>
+          <strong id="postsCount">0</strong>
           <span>پست</span>
         </div>
 
         <div class="stat">
           <i class="fa-solid fa-users"></i>
-          <strong>0</strong>
+          <strong id="followersCount">0</strong>
           <span>دنبال‌کننده</span>
         </div>
 
         <div class="stat">
           <i class="fa-solid fa-user"></i>
-          <strong>0</strong>
+          <strong id="followingCount">0</strong>
           <span>دنبال‌شونده</span>
         </div>
       </div>
@@ -1062,10 +1062,147 @@ const supabaseClient = window.supabase.createClient(
 let currentUser = null;
 let currentProfile = null;
 
+  const FOUNDER_ID = '08643793-2858-4060-b4ec-d671fda4b68c';
+
+let isFollowingProfile = false;
+let followBusy = false;
+
 function showMessage(message) {
   alert(message);
 }
 
+// دریافت وضعیت فالو و آمار
+async function loadFollowData(profileId) {
+  const button = document.getElementById('accountActionButton');
+
+  try {
+    const [followersResult, followingResult] = await Promise.all([
+      supabaseClient
+        .from('follows')
+        .select('id', { count: 'exact', head: true })
+        .eq('following_id', profileId),
+
+      supabaseClient
+        .from('follows')
+        .select('id', { count: 'exact', head: true })
+        .eq('follower_id', profileId)
+    ]);
+
+    if (followersResult.error) throw followersResult.error;
+    if (followingResult.error) throw followingResult.error;
+
+    document.getElementById('followersCount').textContent =
+      followersResult.count ?? 0;
+
+    document.getElementById('followingCount').textContent =
+      followingResult.count ?? 0;
+
+    if (!currentUser || currentUser.id === profileId) return;
+
+    const { data, error } = await supabaseClient
+      .from('follows')
+      .select('id')
+      .eq('follower_id', currentUser.id)
+      .eq('following_id', profileId)
+      .maybeSingle();
+
+    if (error) throw error;
+
+    isFollowingProfile = !!data;
+
+    updateFollowButton();
+
+  } catch (error) {
+    console.error('Follow data error:', error);
+    button.textContent = 'خطا در دریافت وضعیت دنبال‌کردن';
+  }
+}
+
+
+// تنظیم ظاهر دکمه
+function updateFollowButton() {
+  const button = document.getElementById('accountActionButton');
+
+  if (!currentProfile || currentUser?.id === currentProfile.id) {
+    button.disabled = false;
+    return;
+  }
+
+  if (currentProfile.id === FOUNDER_ID) {
+    button.innerHTML =
+      '<i class="fa-solid fa-crown"></i> دنبال می‌کنید';
+    button.disabled = true;
+    return;
+  }
+
+  if (isFollowingProfile) {
+    button.innerHTML =
+      '<i class="fa-solid fa-user-check"></i> دنبال می‌کنید';
+  } else {
+    button.innerHTML =
+      '<i class="fa-solid fa-user-plus"></i> دنبال کردن';
+  }
+
+  button.disabled = followBusy;
+}
+
+
+// فالو و آنفالو
+async function toggleFollow() {
+  if (!currentUser) {
+    showMessage('برای دنبال‌کردن کاربران ابتدا وارد حساب خود شو.');
+    return;
+  }
+
+  if (!currentProfile || followBusy) return;
+
+  if (currentProfile.id === currentUser.id) return;
+
+  if (currentProfile.id === FOUNDER_ID) {
+    showMessage('امکان لغو دنبال‌کردن بنیان‌گذار وجود ندارد.');
+    return;
+  }
+
+  followBusy = true;
+  updateFollowButton();
+
+  try {
+    if (isFollowingProfile) {
+      const { error } = await supabaseClient
+        .from('follows')
+        .delete()
+        .eq('follower_id', currentUser.id)
+        .eq('following_id', currentProfile.id);
+
+      if (error) throw error;
+
+      isFollowingProfile = false;
+
+    } else {
+      const { error } = await supabaseClient
+        .from('follows')
+        .insert({
+          follower_id: currentUser.id,
+          following_id: currentProfile.id
+        });
+
+      if (error) throw error;
+
+      isFollowingProfile = true;
+    }
+
+    await loadFollowData(currentProfile.id);
+
+  } catch (error) {
+    console.error('Follow action error:', error);
+    showMessage('خطا در تغییر وضعیت دنبال‌کردن: ' + error.message);
+
+  } finally {
+    followBusy = false;
+    updateFollowButton();
+  }
+}
+  
 // دریافت پروفایل
 async function loadProfile() {
   try {
@@ -1108,7 +1245,7 @@ if (isOwner) {
     '<i class="fa-solid fa-pen"></i> ویرایش اکانت';
 } else {
   actionButton.innerHTML =
-    '<i class="fa-solid fa-user-plus"></i> دنبال کردن';
+    '<i class="fa-solid fa-spinner fa-spin"></i> در حال بارگذاری';
 }
 
     // نمایش دکمه‌های ویرایش فقط برای صاحب پروفایل
@@ -1120,6 +1257,8 @@ if (isOwner) {
     renderProfile(profile);
 
     loadUserPosts(profile.id);
+
+    loadFollowData(profile.id);
 
   } catch (error) {
     console.error('Profile loading error:', error);
@@ -1298,9 +1437,7 @@ async function loadUserPosts(userId) {
     if (error) throw error;
 
     // تعداد پست‌های منتشرشده
-    document.querySelector(
-      '.stats .stat:first-child strong'
-    ).textContent = posts.length;
+document.getElementById('postsCount').textContent = posts.length;
 
     if (!posts.length) {
       list.innerHTML = `
@@ -1547,7 +1684,7 @@ document.getElementById('accountActionButton')
     if (currentUser?.id === currentProfile?.id) {
       openEditModal();
     } else {
-      showMessage('قابلیت دنبال کردن به‌زودی فعال می‌شود.');
+      toggleFollow();
     }
   });
 
